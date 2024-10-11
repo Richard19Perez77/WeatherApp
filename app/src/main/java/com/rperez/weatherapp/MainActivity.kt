@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun WeatherScreen(viewModel: WeatherViewModel) {
-    val apiKey = "ef223f0f1b77ed7bce92fd0f1bfbb450"
+    val apiKey = BuildConfig.API_KEY
 
     var cityName by remember { mutableStateOf("Tokyo") }
     val weatherData by viewModel.weatherData.observeAsState()

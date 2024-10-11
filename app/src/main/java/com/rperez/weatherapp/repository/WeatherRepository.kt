@@ -29,22 +29,4 @@ class WeatherRepository {
             )
         }
     }
-
-//    suspend fun getWeatherData(cityName: String, apiKey: String): LiveData<WeatherResponse> {
-//        val data = MutableLiveData<WeatherResponse>()
-//
-//        try {
-//            val response = weatherService.getWeather(cityName, apiKey)
-//            data.postValue(response) // Post the result on success
-//        } catch (e: HttpException) {
-//            data.postValue(WeatherResponse(
-//                Main(temp = 0.0, humidity =  0),
-//                listOf(Weather(description = "${e.message}", icon = ""))
-//            ))
-//        } catch (e: Exception) {
-//            data.postValue(WeatherResponse(Main(temp = 0.0, humidity =  0), listOf(Weather(description = "${e.message}", icon = ""))))
-//        }
-//
-//        return data
-//    }
 }

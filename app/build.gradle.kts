@@ -18,6 +18,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -25,6 +29,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "API_KEY", "\"ef223f0f1b77ed7bce92fd0f1bfbb450\"")
+        }
+        debug {
+            buildConfigField("String", "API_KEY", "\"ef223f0f1b77ed7bce92fd0f1bfbb450\"")
         }
     }
     compileOptions {

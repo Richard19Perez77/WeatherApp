@@ -26,6 +26,9 @@ import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import com.rperez.weatherapp.viewmodel.WeatherViewModelFactory
 import java.util.Locale
 
+/**
+ * MainActivity starting point of application.
+ */
 class MainActivity : ComponentActivity() {
 
     private val viewModel: WeatherViewModel by viewModels {

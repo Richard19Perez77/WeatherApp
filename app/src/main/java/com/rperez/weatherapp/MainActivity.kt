@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -59,6 +60,7 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
         onValueChange = { cityName = it },
         label = { Text("Enter City Name") },
         modifier = Modifier
+            .testTag("search_text")
             .fillMaxWidth()
             .padding(16.dp)
     )
@@ -74,14 +76,21 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
             onClick = {
                 viewModel.getWeather(cityName, apiKey)
             },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .testTag("search_button")
+                .padding(16.dp)
         ) {
             Text(text = "Search Weather")
         }
 
         weatherData?.let { weather ->
-            Text(text = "Temperature: ${weather.main.temp}°C", style = MaterialTheme.typography.bodyMedium)
             Text(
+                modifier = Modifier.testTag("temp_text"),
+                text = "Temperature: ${weather.main.temp}°C",
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Text(
+                modifier = Modifier.testTag("description_text"),
                 text = weather.weather[0].description.capitalize(Locale.ROOT),
                 style = MaterialTheme.typography.headlineLarge
             )
@@ -90,7 +99,7 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
             val iconUrl = "https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png"
             WeatherIcon(iconUrl = iconUrl)
         } ?: run {
-            Text(text = "Loading...", style = MaterialTheme.typography.bodyLarge)
+            Text(text = "Loading...", style = MaterialTheme.typography.headlineMedium)
         }
     }
 }

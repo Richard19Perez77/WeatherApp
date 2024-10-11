@@ -91,7 +91,7 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
             )
             Text(
                 modifier = Modifier.testTag("description_text"),
-                text = weather.weather[0].description.capitalize(Locale.ROOT),
+                text = weather.weather.firstOrNull()?.description?.replaceFirstChar { it.uppercase(Locale.ROOT) } ?: "",
                 style = MaterialTheme.typography.headlineLarge
             )
 

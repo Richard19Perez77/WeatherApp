@@ -5,20 +5,15 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.Rule
 import org.junit.Assert.*
-import com.rperez.weatherapp.ui.theme.WeatherAppTheme
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import org.junit.Before
 import android.content.Context
-import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
-import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.platform.app.InstrumentationRegistry
@@ -30,7 +25,7 @@ import androidx.test.platform.app.InstrumentationRegistry
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
+class CheckFarAwayLocationsHaveDifferentWeatherTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()

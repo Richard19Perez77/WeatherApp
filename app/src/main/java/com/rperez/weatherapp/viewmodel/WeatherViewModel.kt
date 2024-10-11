@@ -22,7 +22,6 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
             response?.let {
                 _weatherData.postValue(it)
             } ?: run {
-                // Handle error case
                 _weatherData.postValue(
                     WeatherResponse(
                         Main(0.0, 0),

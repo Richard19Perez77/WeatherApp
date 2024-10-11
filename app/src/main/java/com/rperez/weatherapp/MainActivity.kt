@@ -6,8 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
@@ -80,17 +80,17 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
         }
 
         weatherData?.let { weather ->
-            Text(text = "Temperature: ${weather.main.temp}°C", style = MaterialTheme.typography.h4)
+            Text(text = "Temperature: ${weather.main.temp}°C", style = MaterialTheme.typography.bodyMedium)
             Text(
                 text = weather.weather[0].description.capitalize(Locale.ROOT),
-                style = MaterialTheme.typography.h6
+                style = MaterialTheme.typography.headlineLarge
             )
 
             // Show the weather icon using Coil for Compose
             val iconUrl = "https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png"
             WeatherIcon(iconUrl = iconUrl)
         } ?: run {
-            Text(text = "Loading...", style = MaterialTheme.typography.h5)
+            Text(text = "Loading...", style = MaterialTheme.typography.bodyLarge)
         }
     }
 }

@@ -95,7 +95,6 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                 style = MaterialTheme.typography.headlineLarge
             )
 
-            // Show the weather icon using Coil for Compose
             val iconUrl = "https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png"
             WeatherIcon(iconUrl = iconUrl)
         } ?: run {

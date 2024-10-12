@@ -8,6 +8,9 @@ import com.rperez.weatherapp.ui.screen.TemperatureScreen
 import com.rperez.weatherapp.ui.screen.WeatherScreen
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
 
+/**
+ *  Holds NavHost and sends screens data from the view model
+ */
 @Composable
 fun WeatherAppNavHost(
     navController: NavHostController,

@@ -4,6 +4,9 @@ import com.rperez.weatherapp.model.WeatherResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+/**
+ * Weather Service API
+ */
 interface WeatherService {
 
     @GET("weather")

@@ -7,6 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.rperez.weatherapp.viewmodel.WeatherState
 
+/**
+ * Temperature Screen is only the temperature in large font
+ */
 @Composable
 fun TemperatureScreen(weatherState: WeatherState?) {
     Text(

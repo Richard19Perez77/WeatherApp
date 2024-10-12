@@ -8,6 +8,9 @@ import retrofit2.HttpException
 
 class WeatherException(message: String) : Exception(message)
 
+/**
+ * Performs work to get weather data, holds API Key and may throw a WeatherException
+ */
 class WeatherRepositoryImpl : WeatherRepository {
 
     var apiKey = BuildConfig.API_KEY

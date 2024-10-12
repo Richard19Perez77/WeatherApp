@@ -11,6 +11,9 @@ import com.rperez.weatherapp.viewmodel.WeatherState.Success
 import com.rperez.weatherapp.viewmodel.WeatherState.Failure
 import kotlinx.coroutines.launch
 
+/**
+ * View model to hold the Weather State as calls change it.
+ */
 class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() {
 
     private val _weatherState = MutableLiveData<WeatherState>()
@@ -30,6 +33,9 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     }
 }
 
+/**
+ * State of calls to be reflected in UI
+ */
 sealed class WeatherState {
     data class Success(val data: WeatherResponse?) : WeatherState()
     data class Failure(val data: WeatherException?) : WeatherState()

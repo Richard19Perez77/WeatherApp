@@ -9,6 +9,9 @@ import com.rperez.weatherapp.ui.screen.WeatherIcon
 import com.rperez.weatherapp.viewmodel.WeatherState
 import java.util.Locale
 
+/**
+ * UI Composable for Successful update of city weather call
+ */
 @Composable
 fun WeatherStateSuccess(weatherData: WeatherState?) {
     Text(

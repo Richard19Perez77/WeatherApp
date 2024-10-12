@@ -1,6 +1,5 @@
 package com.rperez.weatherapp.ui.screen
 
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import com.rperez.weatherapp.ui.components.WeatherStateSuccess
 import com.rperez.weatherapp.viewmodel.WeatherState
-import org.intellij.lang.annotations.JdkConstants
 
 /**
  * Basic screen to show weather and allow user to change city.

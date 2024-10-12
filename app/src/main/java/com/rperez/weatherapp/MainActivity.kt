@@ -22,6 +22,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.rperez.weatherapp.repository.WeatherRepository
 import com.rperez.weatherapp.ui.theme.WeatherAppTheme
+import com.rperez.weatherapp.viewmodel.WeatherState
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import com.rperez.weatherapp.viewmodel.WeatherViewModelFactory
 import java.util.Locale
@@ -55,10 +56,10 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
     val apiKey = BuildConfig.API_KEY
 
     var cityName by remember { mutableStateOf("Tokyo") }
-    val weatherData by viewModel.weatherData.observeAsState()
+    val weatherData by viewModel.weatherState.observeAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.getWeather(cityName, apiKey)
+        viewModel.getWeather(cityName)
     }
 
     TextField(
@@ -80,7 +81,7 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
     ) {
         Button(
             onClick = {
-                viewModel.getWeather(cityName, apiKey)
+                viewModel.getWeather(cityName)
             },
             modifier = Modifier
                 .testTag("search_button")
@@ -89,22 +90,34 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
             Text(text = "Search Weather")
         }
 
-        weatherData?.let { weather ->
-            Text(
-                modifier = Modifier.testTag("temp_text"),
-                text = "Temperature: ${weather.main.temp}°C",
-                style = MaterialTheme.typography.headlineMedium
-            )
-            Text(
-                modifier = Modifier.testTag("description_text"),
-                text = weather.weather.firstOrNull()?.description?.replaceFirstChar { it.uppercase(Locale.ROOT) } ?: "",
-                style = MaterialTheme.typography.headlineLarge
-            )
+        when (weatherData) {
+            is WeatherState.Success -> {
+                Text(
+                    modifier = Modifier.testTag("temp_text"),
+                    text = "Temperature: ${(weatherData as WeatherState.Success).data?.main?.temp}°C",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                Text(
+                    modifier = Modifier.testTag("description_text"),
+                    text = (weatherData as WeatherState.Success).data?.weather?.firstOrNull()?.description?.replaceFirstChar { it.uppercase(Locale.ROOT) } ?: "",
+                    style = MaterialTheme.typography.headlineLarge
+                )
 
-            val iconUrl = "https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png"
-            WeatherIcon(iconUrl = iconUrl)
-        } ?: run {
-            Text(text = "Loading...", style = MaterialTheme.typography.headlineMedium)
+                val iconUrl = "https://openweathermap.org/img/wn/${(weatherData as WeatherState.Success).data?.weather[0]?.icon}@2x.png"
+                WeatherIcon(iconUrl = iconUrl)
+            }
+
+            is WeatherState.Failure -> {
+                Text(text = "Failure: ${(weatherData as WeatherState.Failure).data?.message}", style = MaterialTheme.typography.headlineMedium)
+            }
+
+            is WeatherState.Loading -> {
+                Text(text = "Loading...", style = MaterialTheme.typography.headlineMedium)
+            }
+
+            null -> {
+                Text(text = "Empty...", style = MaterialTheme.typography.headlineMedium)
+            }
         }
     }
 }

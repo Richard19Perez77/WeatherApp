@@ -1,32 +1,28 @@
 package com.rperez.weatherapp.repository
 
-import retrofit2.HttpException
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.rperez.weatherapp.model.Main
-import com.rperez.weatherapp.model.Weather
+import com.rperez.weatherapp.BuildConfig
 import com.rperez.weatherapp.model.WeatherResponse
 import com.rperez.weatherapp.network.ApiClient
 import com.rperez.weatherapp.network.WeatherService
+import retrofit2.HttpException
+
+class WeatherException(message: String) : Exception(message)
 
 class WeatherRepository {
+
+    var apiKey = BuildConfig.API_KEY
 
     private val weatherService: WeatherService =
         ApiClient.getClient().create(WeatherService::class.java)
 
-    suspend fun getWeatherData(cityName: String, apiKey: String): WeatherResponse? {
+    suspend fun getWeatherData(cityName: String): Result<WeatherResponse> {
         return try {
-            weatherService.getWeather(cityName, apiKey)
+            val response = weatherService.getWeather(cityName, apiKey)
+            Result.success(response)
         } catch (e: HttpException) {
-            WeatherResponse(
-                Main(temp = 0.0, humidity = 0),
-                listOf(Weather(description = "${e.message}", icon = ""))
-            )
+            Result.failure(WeatherException("HTTP Error: ${e.message}"))
         } catch (e: Exception) {
-            WeatherResponse(
-                Main(temp = 0.0, humidity = 0),
-                listOf(Weather(description = "${e.message}", icon = ""))
-            )
+            Result.failure(WeatherException("Network Error: ${e.message}"))
         }
-    }
-}
+    }}
+

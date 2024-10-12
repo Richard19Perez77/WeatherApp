@@ -5,32 +5,36 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.rperez.weatherapp.model.Main
-import com.rperez.weatherapp.model.Weather
 import com.rperez.weatherapp.model.WeatherResponse
+import com.rperez.weatherapp.repository.WeatherException
 import com.rperez.weatherapp.repository.WeatherRepository
+import com.rperez.weatherapp.viewmodel.WeatherState.Success
+import com.rperez.weatherapp.viewmodel.WeatherState.Failure
 import kotlinx.coroutines.launch
 
 class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() {
 
-    private val _weatherData = MutableLiveData<WeatherResponse>()
-    val weatherData: LiveData<WeatherResponse> = _weatherData
+    private val _weatherState = MutableLiveData<WeatherState>()
+    val weatherState: LiveData<WeatherState> = _weatherState
 
-    fun getWeather(cityName: String, apiKey: String) {
+    fun getWeather(cityName: String) {
         viewModelScope.launch {
-            val response = repository.getWeatherData(cityName, apiKey)
-            response?.let {
-                _weatherData.postValue(it)
-            } ?: run {
-                _weatherData.postValue(
-                    WeatherResponse(
-                        Main(0.0, 0),
-                        listOf(Weather("Error fetching data", ""))
-                    )
-                )
+            _weatherState.value = WeatherState.Loading
+            val result = repository.getWeatherData(cityName)
+            result.onSuccess {
+                _weatherState.value = Success(result.getOrNull())
+            }
+            result.onFailure {
+                _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
             }
         }
     }
+}
+
+sealed class WeatherState {
+    data class Success(val data: WeatherResponse?) : WeatherState()
+    data class Failure(val data: WeatherException?) : WeatherState()
+    object Loading : WeatherState()
 }
 
 class WeatherViewModelFactory(private val repository: WeatherRepository) : ViewModelProvider.Factory {

@@ -41,7 +41,10 @@ fun WeatherScreen(
         getWeather.invoke(cityName)
     }
 
-    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         TextField(
             value = cityName,
             onValueChange = { cityName = it },

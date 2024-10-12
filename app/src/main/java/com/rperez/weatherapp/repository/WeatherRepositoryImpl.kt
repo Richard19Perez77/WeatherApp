@@ -13,7 +13,7 @@ class WeatherRepositoryImpl : WeatherRepository {
     var apiKey = BuildConfig.API_KEY
 
     private val weatherService: WeatherService =
-        ApiClient.getClient().create(WeatherService::class.java)
+        ApiClient.retrofit.create(WeatherService::class.java)
 
     override suspend fun getWeatherData(cityName: String): Result<WeatherResponse> {
         return try {

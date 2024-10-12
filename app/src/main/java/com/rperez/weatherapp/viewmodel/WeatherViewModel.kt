@@ -3,7 +3,6 @@ package com.rperez.weatherapp.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.rperez.weatherapp.model.WeatherResponse
 import com.rperez.weatherapp.repository.WeatherException
@@ -35,14 +34,4 @@ sealed class WeatherState {
     data class Success(val data: WeatherResponse?) : WeatherState()
     data class Failure(val data: WeatherException?) : WeatherState()
     object Loading : WeatherState()
-}
-
-class WeatherViewModelFactory(private val repository: WeatherRepository) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(WeatherViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return WeatherViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
 }

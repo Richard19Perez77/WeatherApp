@@ -3,6 +3,7 @@ agp = "8.7.0"
 coilCompose = "2.7.0"
 coil = "2.7.0"
 converterGson = "2.11.0"
+gradle = "8.0.2"
 insertKoinKoinAndroid = "4.0.0"
 kotlin = "2.0.20"
 coreKtx = "1.13.1"
@@ -29,6 +30,7 @@ androidx-runtime-rxjava2 = { module = "androidx.compose.runtime:runtime-rxjava2"
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 io-insert-koin-koin-android = { module = "io.insert-koin:koin-android", version.ref = "insertKoinKoinAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

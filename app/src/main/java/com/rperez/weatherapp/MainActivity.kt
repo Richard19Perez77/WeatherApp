@@ -3,7 +3,6 @@ package com.rperez.weatherapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -20,11 +19,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.rperez.weatherapp.repository.WeatherRepository
 import com.rperez.weatherapp.ui.theme.WeatherAppTheme
 import com.rperez.weatherapp.viewmodel.WeatherState
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
-import com.rperez.weatherapp.viewmodel.WeatherViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
 
 /**
@@ -32,11 +30,7 @@ import java.util.Locale
  */
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: WeatherViewModel by viewModels {
-        WeatherViewModelFactory(
-            WeatherRepository()
-        )
-    }
+    private val viewModel: WeatherViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,8 +47,6 @@ class MainActivity : ComponentActivity() {
  */
 @Composable
 fun WeatherScreen(viewModel: WeatherViewModel) {
-    val apiKey = BuildConfig.API_KEY
-
     var cityName by remember { mutableStateOf("Tokyo") }
     val weatherData by viewModel.weatherState.observeAsState()
 
@@ -137,4 +129,3 @@ fun WeatherIcon(iconUrl: String) {
         contentScale = ContentScale.FillBounds
     )
 }
-

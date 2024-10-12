@@ -47,6 +47,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Basic screen to show weather and allow user to change city.
+ */
 @Composable
 fun WeatherScreen(viewModel: WeatherViewModel) {
     val apiKey = BuildConfig.API_KEY

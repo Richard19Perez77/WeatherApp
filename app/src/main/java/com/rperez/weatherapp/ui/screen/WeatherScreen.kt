@@ -20,20 +20,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
 import com.rperez.weatherapp.viewmodel.WeatherState
-import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import java.util.Locale
 
 /**
  * Basic screen to show weather and allow user to change city.
  */
 @Composable
-fun WeatherScreen(viewModel: WeatherViewModel) {
+fun WeatherScreen(
+    getWeather: (String) -> Unit,
+    weatherState: LiveData<WeatherState>
+) {
     var cityName by remember { mutableStateOf("Tokyo") }
-    val weatherData by viewModel.weatherState.observeAsState()
+    val weatherData by weatherState.observeAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.getWeather(cityName)
+        getWeather.invoke(cityName)
     }
 
     TextField(
@@ -55,7 +58,7 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
     ) {
         Button(
             onClick = {
-                viewModel.getWeather(cityName)
+                getWeather.invoke(cityName)
             },
             modifier = Modifier
                 .testTag("search_button")

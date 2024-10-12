@@ -3,7 +3,8 @@ package com.rperez.weatherapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.rperez.weatherapp.ui.screen.WeatherScreen
+import androidx.navigation.compose.rememberNavController
+import com.rperez.weatherapp.navigation.WeatherAppNavHost
 import com.rperez.weatherapp.ui.theme.WeatherAppTheme
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -19,7 +20,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             WeatherAppTheme {
-                WeatherScreen(viewModel = viewModel)
+                val navController = rememberNavController()
+                WeatherAppNavHost(navController = navController, viewModel = viewModel)
             }
         }
     }

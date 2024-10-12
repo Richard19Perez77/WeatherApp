@@ -2,6 +2,7 @@ package com.rperez.weatherapp.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,10 +19,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
+import androidx.navigation.NavController
+import com.rperez.weatherapp.navigation.Screen
 import com.rperez.weatherapp.ui.components.WeatherStateSuccess
+import com.rperez.weatherapp.ui.components.WeatherStateSuccessLandscape
 import com.rperez.weatherapp.viewmodel.WeatherState
 
 /**
@@ -29,6 +34,7 @@ import com.rperez.weatherapp.viewmodel.WeatherState
  */
 @Composable
 fun WeatherScreen(
+    navController: NavController,
     getWeather: (String) -> Unit,
     weatherState: LiveData<WeatherState>
 ) {
@@ -50,7 +56,7 @@ fun WeatherScreen(
             modifier = Modifier
                 .testTag("search_text")
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(8.dp)
         )
         Button(
             onClick = {
@@ -58,7 +64,7 @@ fun WeatherScreen(
             },
             modifier = Modifier
                 .testTag("search_button")
-                .padding(16.dp)
+                .padding(8.dp)
         ) {
             Text(text = "Search Weather")
         }
@@ -67,14 +73,36 @@ fun WeatherScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
 
         when (weatherData) {
             is WeatherState.Success -> {
-                WeatherStateSuccess(weatherData)
+                val configuration = LocalConfiguration.current
+                val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+                if (isLandscape) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        WeatherStateSuccessLandscape(weatherData)
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        WeatherStateSuccess(weatherData)
+                    }
+                }
             }
 
             is WeatherState.Failure -> {
@@ -97,15 +125,16 @@ fun WeatherScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
         Button(
             onClick = {
+                navController.navigate(Screen.Temp.route)
             },
             modifier = Modifier
-                .padding(16.dp)
+                .padding(8.dp)
         ) {
             Text(text = "Temperature Zoom")
         }

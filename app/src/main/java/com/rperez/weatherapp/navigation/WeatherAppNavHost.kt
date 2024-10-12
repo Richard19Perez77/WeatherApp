@@ -18,10 +18,14 @@ fun WeatherAppNavHost(
 ) {
     NavHost(navController = navController, startDestination = Screen.Search.route) {
         composable(Screen.Search.route) {
-            WeatherScreen(getWeather = viewModel::getWeather, viewModel.weatherState)
+            WeatherScreen(
+                navController = navController,
+                getWeather = viewModel::getWeather,
+                viewModel.weatherState
+            )
         }
         composable(Screen.Temp.route) {
-            TemperatureScreen(weatherState = viewModel.weatherState.value)
+            TemperatureScreen(weatherState = viewModel.weatherState)
         }
     }
 }

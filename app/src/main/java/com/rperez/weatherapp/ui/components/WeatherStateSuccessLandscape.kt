@@ -30,7 +30,7 @@ fun WeatherStateSuccessLandscape(weatherData: WeatherState?) {
         )
 
         val iconUrl =
-            "https://openweathermap.org/img/wn/${(weatherData as WeatherState.Success).data?.weather[0]?.icon}@2x.png"
+            "https://openweathermap.org/img/wn/${weatherData.data?.weather[0]?.icon}@2x.png"
         WeatherIcon(iconUrl = iconUrl)
 
         Text(

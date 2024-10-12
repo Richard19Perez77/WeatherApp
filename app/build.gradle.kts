@@ -52,6 +52,7 @@ android {
 
 dependencies {
     implementation(project.dependencies.platform(libs.koin.bom))
+    implementation(libs.io.insert.koin.koin.android)
     implementation(libs.koin.core)
     implementation(libs.coil.compose)
     implementation(libs.coil)

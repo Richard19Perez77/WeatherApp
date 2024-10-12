@@ -1,5 +1,6 @@
 package com.rperez.weatherapp.ui.screen
 
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,8 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
+import com.rperez.weatherapp.ui.components.WeatherStateSuccess
 import com.rperez.weatherapp.viewmodel.WeatherState
-import java.util.Locale
+import org.intellij.lang.annotations.JdkConstants
 
 /**
  * Basic screen to show weather and allow user to change city.
@@ -39,23 +41,16 @@ fun WeatherScreen(
         getWeather.invoke(cityName)
     }
 
-    TextField(
-        value = cityName,
-        onValueChange = { cityName = it },
-        label = { Text("Enter City Name") },
-        modifier = Modifier
-            .testTag("search_text")
-            .fillMaxWidth()
-            .padding(16.dp)
-    )
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        TextField(
+            value = cityName,
+            onValueChange = { cityName = it },
+            label = { Text("Enter City Name") },
+            modifier = Modifier
+                .testTag("search_text")
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
         Button(
             onClick = {
                 getWeather.invoke(cityName)
@@ -66,26 +61,26 @@ fun WeatherScreen(
         ) {
             Text(text = "Search Weather")
         }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
 
         when (weatherData) {
             is WeatherState.Success -> {
-                Text(
-                    modifier = Modifier.testTag("temp_text"),
-                    text = "Temperature: ${(weatherData as WeatherState.Success).data?.main?.temp}°C",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-                Text(
-                    modifier = Modifier.testTag("description_text"),
-                    text = (weatherData as WeatherState.Success).data?.weather?.firstOrNull()?.description?.replaceFirstChar { it.uppercase(Locale.ROOT) } ?: "",
-                    style = MaterialTheme.typography.headlineLarge
-                )
-
-                val iconUrl = "https://openweathermap.org/img/wn/${(weatherData as WeatherState.Success).data?.weather[0]?.icon}@2x.png"
-                WeatherIcon(iconUrl = iconUrl)
+                WeatherStateSuccess(weatherData)
             }
 
             is WeatherState.Failure -> {
-                Text(text = "Failure: ${(weatherData as WeatherState.Failure).data?.message}", style = MaterialTheme.typography.headlineMedium)
+                Text(
+                    text = "Failure: ${(weatherData as WeatherState.Failure).data?.message}",
+                    style = MaterialTheme.typography.headlineMedium
+                )
             }
 
             is WeatherState.Loading -> {
@@ -95,6 +90,23 @@ fun WeatherScreen(
             null -> {
                 Text(text = "Empty...", style = MaterialTheme.typography.headlineMedium)
             }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Bottom
+    ) {
+        Button(
+            onClick = {
+            },
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            Text(text = "Temperature Zoom")
         }
     }
 }

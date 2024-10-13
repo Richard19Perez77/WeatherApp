@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +41,7 @@ fun TemperatureScreen(weatherState: LiveData<WeatherState>) {
         contentAlignment = Alignment.Center
     ) {
         Text(
+            modifier = Modifier.testTag("temp_zoom_text"),
             text = "${temp}°C",
             style = MaterialTheme.typography.headlineLarge.copy(fontSize = fontSize.sp)
         )

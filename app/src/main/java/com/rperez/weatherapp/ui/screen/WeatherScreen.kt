@@ -107,17 +107,22 @@ fun WeatherScreen(
 
             is WeatherState.Failure -> {
                 Text(
+                    modifier = Modifier.testTag("fail_text"),
                     text = "Failure: ${(weatherData as WeatherState.Failure).data?.message}",
                     style = MaterialTheme.typography.headlineMedium
                 )
             }
 
             is WeatherState.Loading -> {
-                Text(text = "Loading...", style = MaterialTheme.typography.headlineMedium)
+                Text(
+                    modifier = Modifier.testTag("loading_text"),
+                    text = "Loading...", style = MaterialTheme.typography.headlineMedium)
             }
 
             null -> {
-                Text(text = "Empty...", style = MaterialTheme.typography.headlineMedium)
+                Text(
+                    modifier = Modifier.testTag("null"),
+                    text = "Empty...", style = MaterialTheme.typography.headlineMedium)
             }
         }
     }
@@ -134,9 +139,11 @@ fun WeatherScreen(
                 navController.navigate(Screen.Temp.route)
             },
             modifier = Modifier
-                .padding(8.dp)
+                .padding(8.dp).testTag("zoom_button")
         ) {
-            Text(text = "Temperature Zoom")
+            Text(
+                modifier = Modifier.testTag("zoom_text"),
+                text = "Temperature Zoom")
         }
     }
 }

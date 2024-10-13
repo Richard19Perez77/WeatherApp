@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -21,7 +22,7 @@ fun WeatherIcon(iconUrl: String) {
     Image(
         painter = painter,
         contentDescription = null,
-        modifier = Modifier.size(128.dp),
+        modifier = Modifier.size(128.dp).testTag("icon_image"),
         contentScale = ContentScale.FillBounds
     )
 }

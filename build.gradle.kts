@@ -8,5 +8,6 @@ plugins {
 buildscript {
     dependencies {
         classpath(libs.gradle)
+        classpath(libs.compose.lint.checks)
     }
 }

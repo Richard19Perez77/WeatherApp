@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.rperez.weatherapp.ui.screen.WeatherIcon
 import com.rperez.weatherapp.viewmodel.WeatherState
 import java.util.Locale
@@ -24,7 +26,11 @@ fun WeatherStateSuccessLandscape(weatherData: WeatherState?) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            modifier = Modifier.testTag("temp_text"),
+            modifier = Modifier
+                .testTag("temp_text")
+                .semantics {
+                    contentDescription = "Current temperature in degrees Celsius is ${(weatherData as WeatherState.Success).data?.main?.temp}°C"
+                },
             text = "Temperature: ${(weatherData as WeatherState.Success).data?.main?.temp}°C",
             style = MaterialTheme.typography.headlineMedium
         )
@@ -34,12 +40,21 @@ fun WeatherStateSuccessLandscape(weatherData: WeatherState?) {
         WeatherIcon(iconUrl = iconUrl)
 
         Text(
-            modifier = Modifier.testTag("description_text"),
-            text = weatherData.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
+            modifier = Modifier
+                .semantics {
+                    contentDescription =
+                        ("" + weatherData.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
+                            it.uppercase(
+                                Locale.ROOT
+                            )
+                        })
+                }
+                .testTag("description_text"),
+            text = ("" + weatherData.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
                 it.uppercase(
                     Locale.ROOT
                 )
-            } ?: "",
+            }),
             style = MaterialTheme.typography.headlineLarge
         )
     }

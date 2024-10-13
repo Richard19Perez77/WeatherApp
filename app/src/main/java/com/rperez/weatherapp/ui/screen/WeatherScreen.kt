@@ -1,5 +1,6 @@
 package com.rperez.weatherapp.ui.screen
 
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
@@ -57,6 +62,9 @@ fun WeatherScreen(
                 .testTag("search_text")
                 .fillMaxWidth()
                 .padding(8.dp)
+                .semantics {
+                    contentDescription = "City name input field"
+                }
         )
         Button(
             onClick = {
@@ -65,6 +73,9 @@ fun WeatherScreen(
             modifier = Modifier
                 .testTag("search_button")
                 .padding(8.dp)
+                .semantics {
+                    contentDescription = "Search weather for the entered city"
+                }
         ) {
             Text(modifier = Modifier.testTag("search_button_text"), text = "Search Weather")
         }
@@ -108,7 +119,11 @@ fun WeatherScreen(
 
             is WeatherState.Failure -> {
                 Text(
-                    modifier = Modifier.testTag("fail_text"),
+                    modifier = Modifier
+                        .semantics {
+                            contentDescription = "Failed to load weather data. Error: ${(weatherData as WeatherState.Failure).data?.message}"
+                        }
+                        .testTag("fail_text"),
                     text = "Failure: ${(weatherData as WeatherState.Failure).data?.message}",
                     style = MaterialTheme.typography.headlineMedium
                 )
@@ -116,14 +131,22 @@ fun WeatherScreen(
 
             is WeatherState.Loading -> {
                 Text(
-                    modifier = Modifier.testTag("loading_text"),
+                    modifier = Modifier
+                        .semantics {
+                            contentDescription = "Loading weather data"
+                        }
+                        .testTag("loading_text"),
                     text = "Loading...", style = MaterialTheme.typography.headlineMedium
                 )
             }
 
             null -> {
                 Text(
-                    modifier = Modifier.testTag("null"),
+                    modifier = Modifier
+                        .semantics {
+                            contentDescription = "No weather data available"
+                        }
+                        .testTag("null"),
                     text = "Empty...", style = MaterialTheme.typography.headlineMedium
                 )
             }
@@ -144,6 +167,9 @@ fun WeatherScreen(
             modifier = Modifier
                 .padding(8.dp)
                 .testTag("zoom_button")
+                .semantics {
+                    contentDescription = "Navigate to temperature zoom screen"
+                }
         ) {
             Text(
                 modifier = Modifier.testTag("zoom_text"),

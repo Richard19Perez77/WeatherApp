@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -22,7 +24,11 @@ fun WeatherIcon(iconUrl: String) {
     Image(
         painter = painter,
         contentDescription = null,
-        modifier = Modifier.size(128.dp).testTag("icon_image").testTag("icon_image"),
+        modifier = Modifier
+            .semantics {
+                contentDescription = "Weather icon representing weather"
+            }
+            .size(128.dp).testTag("icon_image").testTag("icon_image"),
         contentScale = ContentScale.FillBounds
     )
 }

@@ -1,4 +1,4 @@
-package com.rperez.weatherapp
+package com.rperez.weatherapp.action
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Test
@@ -17,6 +17,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.platform.app.InstrumentationRegistry
+import com.rperez.weatherapp.MainActivity
 
 
 /**
@@ -25,7 +26,7 @@ import androidx.test.platform.app.InstrumentationRegistry
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
-class OpeningLayoutTestTest {
+class CheckFarAwayLocationsHaveDifferentWeatherTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
@@ -91,28 +92,4 @@ class OpeningLayoutTestTest {
         var newPair = Pair(tempStringCurr, tempString)
         assertNotEquals(oldPair, newPair)
     }
-
-    // test enter city name appears at top
-
-    // test tokyo appears as default in text field
-
-    // text can enter chars in text edit field
-
-    // test search window button shows
-
-    // test search button is clickable with new text for search results
-
-    // test tokyo temperature works
-
-    // test tokyo description works
-
-    // test tokyo icon works
-
-    // test temperature zoom button shows
-
-    // test temperature zoom button is clickable to new screen
-
-    // test new screen shows temperature only
-
-    // test can go to zoom screen and back
 }

@@ -22,7 +22,7 @@ fun WeatherIcon(iconUrl: String) {
     Image(
         painter = painter,
         contentDescription = null,
-        modifier = Modifier.size(128.dp).testTag("icon_image"),
+        modifier = Modifier.size(128.dp).testTag("icon_image").testTag("icon_image"),
         contentScale = ContentScale.FillBounds
     )
 }

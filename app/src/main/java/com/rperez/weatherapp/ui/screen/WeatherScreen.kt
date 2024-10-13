@@ -52,7 +52,7 @@ fun WeatherScreen(
         TextField(
             value = cityName,
             onValueChange = { cityName = it },
-            label = { Text("Enter City Name") },
+            label = { Text(modifier = Modifier.testTag("search_label"), text = "Enter City Name") },
             modifier = Modifier
                 .testTag("search_text")
                 .fillMaxWidth()
@@ -66,7 +66,7 @@ fun WeatherScreen(
                 .testTag("search_button")
                 .padding(8.dp)
         ) {
-            Text(text = "Search Weather")
+            Text(modifier = Modifier.testTag("search_button_text"), text = "Search Weather")
         }
     }
 
@@ -81,7 +81,8 @@ fun WeatherScreen(
         when (weatherData) {
             is WeatherState.Success -> {
                 val configuration = LocalConfiguration.current
-                val isLandscape = configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+                val isLandscape =
+                    configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
                 if (isLandscape) {
                     Row(
                         modifier = Modifier
@@ -116,13 +117,15 @@ fun WeatherScreen(
             is WeatherState.Loading -> {
                 Text(
                     modifier = Modifier.testTag("loading_text"),
-                    text = "Loading...", style = MaterialTheme.typography.headlineMedium)
+                    text = "Loading...", style = MaterialTheme.typography.headlineMedium
+                )
             }
 
             null -> {
                 Text(
                     modifier = Modifier.testTag("null"),
-                    text = "Empty...", style = MaterialTheme.typography.headlineMedium)
+                    text = "Empty...", style = MaterialTheme.typography.headlineMedium
+                )
             }
         }
     }
@@ -139,11 +142,13 @@ fun WeatherScreen(
                 navController.navigate(Screen.Temp.route)
             },
             modifier = Modifier
-                .padding(8.dp).testTag("zoom_button")
+                .padding(8.dp)
+                .testTag("zoom_button")
         ) {
             Text(
                 modifier = Modifier.testTag("zoom_text"),
-                text = "Temperature Zoom")
+                text = "Temperature Zoom"
+            )
         }
     }
 }

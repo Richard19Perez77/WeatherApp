@@ -1,6 +1,7 @@
 package com.rperez.weatherapp.ui.screen
 
 
+import android.content.Context.MODE_PRIVATE
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,9 +43,10 @@ import com.rperez.weatherapp.viewmodel.WeatherState
 fun WeatherScreen(
     navController: NavController,
     getWeather: (String) -> Unit,
+    initialCity: String,
     weatherState: LiveData<WeatherState>
 ) {
-    var cityName by remember { mutableStateOf("Tokyo") }
+    var cityName by rememberSaveable { mutableStateOf(initialCity) }
     val weatherData by weatherState.observeAsState()
 
     LaunchedEffect(Unit) {
@@ -69,6 +72,11 @@ fun WeatherScreen(
         Button(
             onClick = {
                 getWeather.invoke(cityName)
+                val sharedPreferences = navController.context.getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
+                with(sharedPreferences.edit()) {
+                    putString("CITY_NAME", cityName)
+                    apply()
+                }
             },
             modifier = Modifier
                 .testTag("search_button")

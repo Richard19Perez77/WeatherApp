@@ -14,13 +14,15 @@ import com.rperez.weatherapp.viewmodel.WeatherViewModel
 @Composable
 fun WeatherAppNavHost(
     navController: NavHostController,
-    viewModel: WeatherViewModel
+    viewModel: WeatherViewModel,
+    initialCity: String
 ) {
     NavHost(navController = navController, startDestination = Screen.Search.route) {
         composable(Screen.Search.route) {
             WeatherScreen(
                 navController = navController,
                 getWeather = viewModel::getWeather,
+                initialCity = initialCity,
                 viewModel.weatherState
             )
         }

@@ -18,10 +18,18 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
+        val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo")
+
         setContent {
             WeatherAppTheme {
                 val navController = rememberNavController()
-                WeatherAppNavHost(navController = navController, viewModel = viewModel)
+                WeatherAppNavHost(
+                    navController = navController,
+                    viewModel = viewModel,
+                    initialCity = savedCity ?: "Tokyo"
+                )
             }
         }
     }

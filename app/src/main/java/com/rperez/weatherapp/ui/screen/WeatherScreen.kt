@@ -1,7 +1,7 @@
 package com.rperez.weatherapp.ui.screen
 
 
-import android.content.Context.MODE_PRIVATE
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,19 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
@@ -42,15 +37,15 @@ import com.rperez.weatherapp.viewmodel.WeatherState
 @Composable
 fun WeatherScreen(
     navController: NavController,
+    setCityName: (String) -> Unit,
     getWeather: (String) -> Unit,
-    initialCity: String,
+    cityName: State<String>,
     weatherState: LiveData<WeatherState>
 ) {
-    var cityName by rememberSaveable { mutableStateOf(initialCity) }
     val weatherData by weatherState.observeAsState()
 
     LaunchedEffect(Unit) {
-        getWeather.invoke(cityName)
+        getWeather.invoke(cityName.value)
     }
 
     Column(
@@ -58,8 +53,8 @@ fun WeatherScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextField(
-            value = cityName,
-            onValueChange = { cityName = it },
+            value = cityName.value,
+            onValueChange = { setCityName(it) },
             label = { Text(modifier = Modifier.testTag("search_label"), text = "Enter City Name") },
             modifier = Modifier
                 .testTag("search_text")
@@ -71,12 +66,7 @@ fun WeatherScreen(
         )
         Button(
             onClick = {
-                getWeather.invoke(cityName)
-                val sharedPreferences = navController.context.getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
-                with(sharedPreferences.edit()) {
-                    putString("CITY_NAME", cityName)
-                    apply()
-                }
+                getWeather.invoke(cityName.value)
             },
             modifier = Modifier
                 .testTag("search_button")
@@ -101,7 +91,7 @@ fun WeatherScreen(
             is WeatherState.Success -> {
                 val configuration = LocalConfiguration.current
                 val isLandscape =
-                    configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+                    configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
                 if (isLandscape) {
                     Row(
                         modifier = Modifier
@@ -129,7 +119,8 @@ fun WeatherScreen(
                 Text(
                     modifier = Modifier
                         .semantics {
-                            contentDescription = "Failed to load weather data. Error: ${(weatherData as WeatherState.Failure).data?.message}"
+                            contentDescription =
+                                "Failed to load weather data. Error: ${(weatherData as WeatherState.Failure).data?.message}"
                         }
                         .testTag("fail_text"),
                     text = "Failure: ${(weatherData as WeatherState.Failure).data?.message}",

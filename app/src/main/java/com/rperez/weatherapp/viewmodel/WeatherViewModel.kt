@@ -1,5 +1,7 @@
 package com.rperez.weatherapp.viewmodel
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,8 +18,19 @@ import kotlinx.coroutines.launch
  */
 class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() {
 
+    private val _cityName = mutableStateOf("")
+    val cityName = _cityName
+
     private val _weatherState = MutableLiveData<WeatherState>()
     val weatherState: LiveData<WeatherState> = _weatherState
+
+    fun getCityName(): State<String> {
+        return cityName
+    }
+
+    fun setCityName(cityName: String) {
+        _cityName.value = cityName
+    }
 
     fun getWeather(cityName: String) {
         viewModelScope.launch {

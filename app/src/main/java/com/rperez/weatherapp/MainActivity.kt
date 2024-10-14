@@ -20,7 +20,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
-        val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo")
+        val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo") ?: "Tokyo"
+        viewModel.setCityName(savedCity)
 
         setContent {
             WeatherAppTheme {
@@ -28,9 +29,17 @@ class MainActivity : ComponentActivity() {
                 WeatherAppNavHost(
                     navController = navController,
                     viewModel = viewModel,
-                    initialCity = savedCity ?: "Tokyo"
                 )
             }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putString("CITY_NAME", viewModel.getCityName().value)
+            apply()
         }
     }
 }

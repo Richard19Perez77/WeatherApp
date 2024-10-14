@@ -36,13 +36,28 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         if (cityName.isNotEmpty()) {
             viewModelScope.launch {
                 _weatherState.value = WeatherState.Loading
-                val result = repository.getWeatherData(cityName)
+                val result = repository.getWeatherByCityData(cityName)
                 result.onSuccess {
                     _weatherState.value = Success(result.getOrNull())
                 }
                 result.onFailure {
                     _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
                 }
+            }
+        }
+    }
+
+    fun getLocalWeather() {
+        // get geo from device
+
+        viewModelScope.launch {
+            _weatherState.value = WeatherState.Loading
+            val result = repository.getWeatherGeoData(35.652832, 139.839478)
+            result.onSuccess {
+                _weatherState.value = Success(result.getOrNull())
+            }
+            result.onFailure {
+                _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
             }
         }
     }

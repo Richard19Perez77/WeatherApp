@@ -22,6 +22,7 @@ fun WeatherAppNavHost(
                 navController = navController,
                 setCityName = viewModel::setCityName,
                 getWeather = viewModel::getWeather,
+                getLocalWeather = viewModel::getLocalWeather,
                 cityName = viewModel.cityName,
                 weatherState = viewModel.weatherState
             )

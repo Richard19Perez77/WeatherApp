@@ -37,6 +37,7 @@ fun WeatherScreen(
     navController: NavController,
     setCityName: (String) -> Unit,
     getWeather: (String) -> Unit,
+    getLocalWeather: () -> Unit,
     cityName: State<String>,
     weatherState: LiveData<WeatherState>
 ) {
@@ -70,6 +71,20 @@ fun WeatherScreen(
                 }
         ) {
             Text(modifier = Modifier.testTag("search_button_text"), text = "Search Weather")
+        }
+        Button(
+            onClick = {
+                getLocalWeather.invoke()
+                setCityName("Tokyo")
+            },
+            modifier = Modifier
+                .testTag("search_local_button")
+                .padding(8.dp)
+                .semantics {
+                    contentDescription = "Search weather for local Weather by Geo-coords"
+                }
+        ) {
+            Text(modifier = Modifier.testTag("search_button_text"), text = "Search Local Weather")
         }
     }
 

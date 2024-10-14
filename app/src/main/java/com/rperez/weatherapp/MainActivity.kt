@@ -21,8 +21,9 @@ class MainActivity : ComponentActivity() {
 
         val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
         val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo") ?: "Tokyo"
-        viewModel.setCityName(savedCity)
-        viewModel.getWeather(savedCity)
+        // viewModel.setCityName(savedCity)
+        viewModel.setCityName("Tokyo")
+        viewModel.getLocalWeather()
 
         setContent {
             WeatherAppTheme {

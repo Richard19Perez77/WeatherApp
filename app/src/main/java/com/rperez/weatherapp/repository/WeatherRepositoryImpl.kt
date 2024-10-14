@@ -18,9 +18,25 @@ class WeatherRepositoryImpl : WeatherRepository {
     private val weatherService: WeatherService =
         ApiClient.retrofit.create(WeatherService::class.java)
 
-    override suspend fun getWeatherData(cityName: String): Result<WeatherResponse> {
+    override suspend fun getWeatherByCityData(
+        cityName: String
+    ): Result<WeatherResponse> {
         return try {
             val response = weatherService.getWeather(cityName, apiKey)
+            Result.success(response)
+        } catch (e: HttpException) {
+            Result.failure(WeatherException("HTTP Error: ${e.message}"))
+        } catch (e: Exception) {
+            Result.failure(WeatherException("Network Error: ${e.message}"))
+        }
+    }
+
+    override suspend fun getWeatherGeoData(
+        lat: Double,
+        lon: Double
+    ): Result<WeatherResponse> {
+        return try {
+            val response = weatherService.getGeoCoordWeather(lat, lon, apiKey)
             Result.success(response)
         } catch (e: HttpException) {
             Result.failure(WeatherException("HTTP Error: ${e.message}"))

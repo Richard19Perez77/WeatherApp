@@ -15,4 +15,12 @@ interface WeatherService {
         @Query("appid") apiKey: String,
         @Query("units") units: String = "metric"
     ): WeatherResponse
+
+    @GET("weather")
+    suspend fun getGeoCoordWeather(
+        @Query("lat") lat: Double,
+        @Query("lon") long: Double,
+        @Query("appid") apiKey: String,
+        @Query("units") units: String = "metric"
+    ): WeatherResponse
 }

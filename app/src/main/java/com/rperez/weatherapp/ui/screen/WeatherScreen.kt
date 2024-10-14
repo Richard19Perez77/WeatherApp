@@ -60,7 +60,7 @@ fun WeatherScreen(
         )
         Button(
             onClick = {
-                if (cityName.value.isNotEmpty()) getWeather.invoke(cityName.value)
+                getWeather.invoke(cityName.value)
             },
             modifier = Modifier
                 .testTag("search_button")

@@ -44,10 +44,6 @@ fun WeatherScreen(
 ) {
     val weatherData by weatherState.observeAsState()
 
-    LaunchedEffect(Unit) {
-        getWeather.invoke(cityName.value)
-    }
-
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -146,7 +142,7 @@ fun WeatherScreen(
                             contentDescription = "No weather data available"
                         }
                         .testTag("null"),
-                    text = "Empty...", style = MaterialTheme.typography.headlineMedium
+                    text = "Press Search Weather", style = MaterialTheme.typography.headlineMedium
                 )
             }
         }

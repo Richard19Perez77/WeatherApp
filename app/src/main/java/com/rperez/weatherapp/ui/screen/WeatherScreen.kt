@@ -1,6 +1,5 @@
 package com.rperez.weatherapp.ui.screen
 
-
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -61,7 +60,7 @@ fun WeatherScreen(
         )
         Button(
             onClick = {
-                getWeather.invoke(cityName.value)
+                if (cityName.value.isNotEmpty()) getWeather.invoke(cityName.value)
             },
             modifier = Modifier
                 .testTag("search_button")

@@ -1,5 +1,6 @@
 package com.rperez.weatherapp.ui.screen
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -37,7 +39,7 @@ fun WeatherScreen(
     navController: NavController,
     setCityName: (String) -> Unit,
     getWeather: (String) -> Unit,
-    getLocalWeather: () -> Unit,
+    getLocalWeather: (Context) -> Unit,
     cityName: State<String>,
     weatherState: LiveData<WeatherState>
 ) {
@@ -70,11 +72,12 @@ fun WeatherScreen(
                     contentDescription = "Search weather for the entered city"
                 }
         ) {
-            Text(modifier = Modifier.testTag("search_button_text"), text = "Search Weather")
+            Text(modifier = Modifier.testTag("search_city_button_text"), text = "Search City Weather")
         }
+        var context = LocalContext.current
         Button(
             onClick = {
-                getLocalWeather.invoke()
+                getLocalWeather.invoke(context)
                 setCityName("Tokyo")
             },
             modifier = Modifier
@@ -84,7 +87,7 @@ fun WeatherScreen(
                     contentDescription = "Search weather for local Weather by Geo-coords"
                 }
         ) {
-            Text(modifier = Modifier.testTag("search_button_text"), text = "Search Local Weather")
+            Text(modifier = Modifier.testTag("search_local_button_text"), text = "Search Local Weather")
         }
     }
 

@@ -44,6 +44,9 @@ fun WeatherScreen(
     weatherState: LiveData<WeatherState>
 ) {
     var context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val isLandscape =
+        configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val weatherData by weatherState.observeAsState()
 
     Column(
@@ -62,37 +65,78 @@ fun WeatherScreen(
                     contentDescription = "City name input field"
                 }
         )
-        Button(
-            onClick = {
-                getWeather.invoke(cityName.value)
-            },
-            modifier = Modifier
-                .testTag("search_button")
-                .padding(8.dp)
-                .semantics {
-                    contentDescription = "Search weather for the entered city"
+        if (isLandscape) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = {
+                        getWeather.invoke(cityName.value)
+                    },
+                    modifier = Modifier
+                        .testTag("search_button")
+                        .padding(8.dp)
+                        .semantics {
+                            contentDescription = "Search weather for the entered city"
+                        }
+                ) {
+                    Text(
+                        modifier = Modifier.testTag("search_city_button_text"),
+                        text = "Search City Weather"
+                    )
                 }
-        ) {
-            Text(
-                modifier = Modifier.testTag("search_city_button_text"),
-                text = "Search City Weather"
-            )
-        }
-        Button(
-            onClick = {
-                getLocalWeather.invoke(context)
-            },
-            modifier = Modifier
-                .testTag("search_local_button")
-                .padding(8.dp)
-                .semantics {
-                    contentDescription = "Search weather for local Weather by Geo-coords"
+                Button(
+                    onClick = {
+                        getLocalWeather.invoke(context)
+                    },
+                    modifier = Modifier
+                        .testTag("search_local_button")
+                        .padding(8.dp)
+                        .semantics {
+                            contentDescription = "Search weather for local Weather by Geo-coords"
+                        }
+                ) {
+                    Text(
+                        modifier = Modifier.testTag("search_local_button_text"),
+                        text = "Search Local Weather"
+                    )
                 }
-        ) {
-            Text(
-                modifier = Modifier.testTag("search_local_button_text"),
-                text = "Search Local Weather"
-            )
+            }
+        } else {
+            Button(
+                onClick = {
+                    getWeather.invoke(cityName.value)
+                },
+                modifier = Modifier
+                    .testTag("search_button")
+                    .padding(8.dp)
+                    .semantics {
+                        contentDescription = "Search weather for the entered city"
+                    }
+            ) {
+                Text(
+                    modifier = Modifier.testTag("search_city_button_text"),
+                    text = "Search City Weather"
+                )
+            }
+            Button(
+                onClick = {
+                    getLocalWeather.invoke(context)
+                },
+                modifier = Modifier
+                    .testTag("search_local_button")
+                    .padding(8.dp)
+                    .semantics {
+                        contentDescription = "Search weather for local Weather by Geo-coords"
+                    }
+            ) {
+                Text(
+                    modifier = Modifier.testTag("search_local_button_text"),
+                    text = "Search Local Weather"
+                )
+            }
         }
     }
 
@@ -105,9 +149,6 @@ fun WeatherScreen(
     ) {
         when (weatherData) {
             is WeatherState.Success -> {
-                val configuration = LocalConfiguration.current
-                val isLandscape =
-                    configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
                 if (isLandscape) {
                     Row(
                         modifier = Modifier

@@ -2,12 +2,7 @@ package com.rperez.weatherapp.ui.screen
 
 import android.content.Context
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,9 +26,6 @@ import com.rperez.weatherapp.ui.components.WeatherStateSuccess
 import com.rperez.weatherapp.ui.components.WeatherStateSuccessLandscape
 import com.rperez.weatherapp.viewmodel.WeatherState
 
-/**
- * Basic screen to show weather and allow user to change city.
- */
 @Composable
 fun WeatherScreen(
     navController: NavController,
@@ -43,10 +35,9 @@ fun WeatherScreen(
     cityName: State<String>,
     weatherState: LiveData<WeatherState>
 ) {
-    var context = LocalContext.current
+    val context = LocalContext.current
     val configuration = LocalConfiguration.current
-    val isLandscape =
-        configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val weatherData by weatherState.observeAsState()
 
     Column(
@@ -55,91 +46,80 @@ fun WeatherScreen(
     ) {
         TextField(
             value = cityName.value,
-            onValueChange = { setCityName(it) },
+            onValueChange = setCityName,
             label = { Text(modifier = Modifier.testTag("search_label"), text = "Enter City Name") },
             modifier = Modifier
                 .testTag("search_text")
                 .fillMaxWidth()
                 .padding(8.dp)
-                .semantics {
-                    contentDescription = "City name input field"
-                }
+                .semantics { contentDescription = "City name input field" }
         )
-        if (isLandscape) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Button(
-                    onClick = {
-                        getWeather.invoke(cityName.value)
-                    },
-                    modifier = Modifier
-                        .testTag("search_button")
-                        .padding(8.dp)
-                        .semantics {
-                            contentDescription = "Search weather for the entered city"
-                        }
-                ) {
-                    Text(
-                        modifier = Modifier.testTag("search_city_button_text"),
-                        text = "Search City Weather"
-                    )
-                }
-                Button(
-                    onClick = {
-                        getLocalWeather.invoke(context)
-                    },
-                    modifier = Modifier
-                        .testTag("search_local_button")
-                        .padding(8.dp)
-                        .semantics {
-                            contentDescription = "Search weather for local Weather by Geo-coords"
-                        }
-                ) {
-                    Text(
-                        modifier = Modifier.testTag("search_local_button_text"),
-                        text = "Search Local Weather"
-                    )
-                }
-            }
-        } else {
-            Button(
-                onClick = {
-                    getWeather.invoke(cityName.value)
-                },
-                modifier = Modifier
-                    .testTag("search_button")
-                    .padding(8.dp)
-                    .semantics {
-                        contentDescription = "Search weather for the entered city"
-                    }
-            ) {
-                Text(
-                    modifier = Modifier.testTag("search_city_button_text"),
-                    text = "Search City Weather"
-                )
-            }
-            Button(
-                onClick = {
-                    getLocalWeather.invoke(context)
-                },
-                modifier = Modifier
-                    .testTag("search_local_button")
-                    .padding(8.dp)
-                    .semantics {
-                        contentDescription = "Search weather for local Weather by Geo-coords"
-                    }
-            ) {
-                Text(
-                    modifier = Modifier.testTag("search_local_button_text"),
-                    text = "Search Local Weather"
-                )
-            }
-        }
+        WeatherButtons(isLandscape, cityName.value, getWeather, getLocalWeather, context)
     }
 
+    WeatherDataDisplay(weatherData, isLandscape)
+
+    BottomNavigationButton(navController)
+}
+
+@Composable
+fun WeatherButtons(
+    isLandscape: Boolean,
+    cityName: String,
+    getWeather: (String) -> Unit,
+    getLocalWeather: (Context) -> Unit,
+    context: Context
+) {
+    if (isLandscape) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            WeatherButton(
+                onClick = { getWeather(cityName) },
+                tag = "search_button",
+                text = "Search City Weather",
+                description = "Search weather for the entered city"
+            )
+            WeatherButton(
+                onClick = { getLocalWeather(context) },
+                tag = "search_local_button",
+                text = "Search Local Weather",
+                description = "Search weather for local Weather by Geo-coords"
+            )
+        }
+    } else {
+        WeatherButton(
+            onClick = { getWeather(cityName) },
+            tag = "search_button",
+            text = "Search City Weather",
+            description = "Search weather for the entered city"
+        )
+        WeatherButton(
+            onClick = { getLocalWeather(context) },
+            tag = "search_local_button",
+            text = "Search Local Weather",
+            description = "Search weather for local Weather by Geo-coords"
+        )
+    }
+}
+
+@Composable
+fun WeatherButton(onClick: () -> Unit, tag: String, text: String, description: String) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .testTag(tag)
+            .padding(8.dp)
+            .semantics { contentDescription = description }
+    ) {
+        Text(modifier = Modifier.testTag("${tag}_text"), text = text)
+    }
+}
+
+@Composable
+fun WeatherDataDisplay(weatherData: WeatherState?, isLandscape: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -150,65 +130,37 @@ fun WeatherScreen(
         when (weatherData) {
             is WeatherState.Success -> {
                 if (isLandscape) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        WeatherStateSuccessLandscape(weatherData)
-                    }
+                    WeatherStateSuccessLandscape(weatherData)
                 } else {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        WeatherStateSuccess(weatherData)
-                    }
+                    WeatherStateSuccess(weatherData)
                 }
             }
-
             is WeatherState.Failure -> {
-                Text(
-                    modifier = Modifier
-                        .semantics {
-                            contentDescription =
-                                "Failed to load weather data. Error: ${(weatherData as WeatherState.Failure).data?.message}"
-                        }
-                        .testTag("fail_text"),
-                    text = "Failure: ${(weatherData as WeatherState.Failure).data?.message}",
-                    style = MaterialTheme.typography.headlineMedium
-                )
+                ErrorMessage("Failure: ${weatherData.data?.message}", "Failed to load weather data.")
             }
-
             is WeatherState.Loading -> {
-                Text(
-                    modifier = Modifier
-                        .semantics {
-                            contentDescription = "Loading weather data"
-                        }
-                        .testTag("loading_text"),
-                    text = "Loading...", style = MaterialTheme.typography.headlineMedium
-                )
+                ErrorMessage("Loading...", "Loading weather data")
             }
-
             null -> {
-                Text(
-                    modifier = Modifier
-                        .semantics {
-                            contentDescription = "No weather data available"
-                        }
-                        .testTag("null"),
-                    text = "Press Search Weather", style = MaterialTheme.typography.headlineMedium
-                )
+                ErrorMessage("Press Search Weather", "No weather data available")
             }
         }
     }
+}
 
+@Composable
+fun ErrorMessage(message: String, contentDescription: String) {
+    Text(
+        modifier = Modifier
+            .semantics { this.contentDescription = contentDescription }
+            .testTag("error_text"),
+        text = message,
+        style = MaterialTheme.typography.headlineMedium
+    )
+}
+
+@Composable
+fun BottomNavigationButton(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -217,20 +169,13 @@ fun WeatherScreen(
         verticalArrangement = Arrangement.Bottom
     ) {
         Button(
-            onClick = {
-                navController.navigate(Screen.Temp.route)
-            },
+            onClick = { navController.navigate(Screen.Temp.route) },
             modifier = Modifier
                 .padding(8.dp)
                 .testTag("zoom_button")
-                .semantics {
-                    contentDescription = "Navigate to temperature zoom screen"
-                }
+                .semantics { contentDescription = "Navigate to temperature zoom screen" }
         ) {
-            Text(
-                modifier = Modifier.testTag("zoom_text"),
-                text = "Temperature Zoom"
-            )
+            Text(modifier = Modifier.testTag("zoom_text"), text = "Temperature Zoom")
         }
     }
 }

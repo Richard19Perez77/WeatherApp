@@ -43,6 +43,7 @@ fun WeatherScreen(
     cityName: State<String>,
     weatherState: LiveData<WeatherState>
 ) {
+    var context = LocalContext.current
     val weatherData by weatherState.observeAsState()
 
     Column(
@@ -72,13 +73,14 @@ fun WeatherScreen(
                     contentDescription = "Search weather for the entered city"
                 }
         ) {
-            Text(modifier = Modifier.testTag("search_city_button_text"), text = "Search City Weather")
+            Text(
+                modifier = Modifier.testTag("search_city_button_text"),
+                text = "Search City Weather"
+            )
         }
-        var context = LocalContext.current
         Button(
             onClick = {
                 getLocalWeather.invoke(context)
-                setCityName("Tokyo")
             },
             modifier = Modifier
                 .testTag("search_local_button")
@@ -87,7 +89,10 @@ fun WeatherScreen(
                     contentDescription = "Search weather for local Weather by Geo-coords"
                 }
         ) {
-            Text(modifier = Modifier.testTag("search_local_button_text"), text = "Search Local Weather")
+            Text(
+                modifier = Modifier.testTag("search_local_button_text"),
+                text = "Search Local Weather"
+            )
         }
     }
 
@@ -98,7 +103,6 @@ fun WeatherScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         when (weatherData) {
             is WeatherState.Success -> {
                 val configuration = LocalConfiguration.current

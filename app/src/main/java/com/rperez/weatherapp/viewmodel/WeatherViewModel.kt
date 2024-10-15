@@ -56,6 +56,9 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         }
     }
 
+    /**
+     * Use Location to get local weather, not by city
+     */
     fun getLocalWeather(context: Context) {
         var lat = 0.0
         var lon = 0.0
@@ -80,7 +83,6 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                     return@addOnFailureListener
                 }
         } else {
-            // Request the location permission
             ActivityCompat.requestPermissions(
                 (context as Activity),
                 arrayOf(ACCESS_FINE_LOCATION),

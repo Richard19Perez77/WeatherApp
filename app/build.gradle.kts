@@ -81,6 +81,7 @@ dependencies {
     testImplementation(libs.androidx.runner)
     testImplementation(libs.androidx.core)
     testImplementation(libs.robolectric)
+    testImplementation("org.mockito:mockito-core:5.14.1")
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.espresso.core)

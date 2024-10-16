@@ -20,9 +20,6 @@
       <SelectionState runConfigName="testDefaultTokyoIsShown()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="DefaultLayoutTestTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
     </selectionStates>
   </component>
 </project>

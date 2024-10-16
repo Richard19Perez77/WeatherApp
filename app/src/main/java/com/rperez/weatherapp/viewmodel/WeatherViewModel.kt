@@ -4,6 +4,8 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
@@ -25,6 +27,8 @@ const val LOCATION_PERMISSION_REQUEST_CODE = 1010101
  * View model to hold the Weather State as calls change it.
  */
 class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() {
+
+    lateinit var launcher: ActivityResultLauncher<String>
 
     private val _cityName = mutableStateOf("")
     val cityName = _cityName
@@ -75,7 +79,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                 }
             }
         } else {
-            LocationService(context).getLatLon(
+            LocationService(context, launcher).getLatLon(
                 onLocationReceived = { lat, lon ->
                     coords = Pair(lat, lon)
                     getLocalWeather(context)
@@ -85,17 +89,17 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the location permission to fetch weather data for your current location.")
                         .setPositiveButton("Grant") { _, _ ->
-                            ActivityCompat.requestPermissions(
-                                context as Activity,
-                                arrayOf(ACCESS_FINE_LOCATION),
-                                LOCATION_PERMISSION_REQUEST_CODE
-                            )
+                            launcher.launch(ACCESS_FINE_LOCATION)
                         }
                         .setNegativeButton("Cancel", null)
                         .show()
                 }
             )
         }
+    }
+
+    fun setRequestLocationPermissionLauncher(launcher: androidx.activity.result.ActivityResultLauncher<kotlin.String>) {
+        this.launcher = launcher
     }
 }
 

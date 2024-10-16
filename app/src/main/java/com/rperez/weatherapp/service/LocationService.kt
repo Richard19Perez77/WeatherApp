@@ -5,12 +5,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
-import com.rperez.weatherapp.viewmodel.LOCATION_PERMISSION_REQUEST_CODE
 
-class LocationService(private val context: Context) {
+class LocationService(private val context: Context, private val launcher: ActivityResultLauncher<String>) {
 
     fun getLatLon(onLocationReceived: (Double, Double) -> Unit, onPermissionRequired: () -> Unit) {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -31,11 +31,7 @@ class LocationService(private val context: Context) {
                 onPermissionRequired()
             } else {
                 // Directly request the permission
-                ActivityCompat.requestPermissions(
-                    context,
-                    arrayOf(ACCESS_FINE_LOCATION),
-                    LOCATION_PERMISSION_REQUEST_CODE
-                )
+                launcher.launch(ACCESS_FINE_LOCATION)
             }
         }
     }

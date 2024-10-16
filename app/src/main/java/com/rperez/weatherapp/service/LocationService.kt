@@ -37,7 +37,7 @@ class LocationService(private val context: Context, private val launcher: Activi
     }
 
     /**
-     * Check if the location permission is permanently denied.
+     * Check if the location permission is permanently denied. I have this in a loop to prevent it from happening but could leave it disabled.
      */
     fun isPermissionPermanentlyDenied(activity: Activity): Boolean {
         return !ActivityCompat.shouldShowRequestPermissionRationale(activity, ACCESS_FINE_LOCATION)

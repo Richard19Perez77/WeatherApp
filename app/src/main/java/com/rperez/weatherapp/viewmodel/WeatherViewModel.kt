@@ -98,7 +98,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         }
     }
 
-    fun setRequestLocationPermissionLauncher(launcher: androidx.activity.result.ActivityResultLauncher<kotlin.String>) {
+    fun setRequestLocationPermissionLauncher(launcher: ActivityResultLauncher<String>) {
         this.launcher = launcher
     }
 }

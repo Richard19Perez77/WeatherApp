@@ -1,14 +1,11 @@
 package com.rperez.weatherapp.viewmodel
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,8 +17,6 @@ import com.rperez.weatherapp.service.LocationService
 import com.rperez.weatherapp.viewmodel.WeatherState.Failure
 import com.rperez.weatherapp.viewmodel.WeatherState.Success
 import kotlinx.coroutines.launch
-
-const val LOCATION_PERMISSION_REQUEST_CODE = 1010101
 
 /**
  * View model to hold the Weather State as calls change it.
@@ -61,6 +56,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
             }
         }
     }
+
 
     /**
      * Use Location to get local weather, not by city

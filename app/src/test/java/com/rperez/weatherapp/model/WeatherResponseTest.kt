@@ -9,7 +9,7 @@ class WeatherResponseTest {
     fun `test WeatherResponse instantiation`() {
         val main = Main(temp = 22.5, humidity = 60)
         val weather = listOf(Weather(description = "clear sky", icon = "01d"))
-        val weatherResponse = WeatherResponse(main = main, weather = weather)
+        val weatherResponse = WeatherResponse(main = main, weather = weather, name = "city name")
 
         assertEquals(22.5, weatherResponse.main.temp)
         assertEquals(60, weatherResponse.main.humidity)

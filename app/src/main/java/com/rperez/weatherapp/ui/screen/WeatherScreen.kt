@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import com.rperez.weatherapp.navigation.Screen
+import com.rperez.weatherapp.network.ConnectivityManager
 import com.rperez.weatherapp.ui.components.WeatherStateSuccess
 import com.rperez.weatherapp.ui.components.WeatherStateSuccessLandscape
 import com.rperez.weatherapp.viewmodel.WeatherState
@@ -35,7 +36,6 @@ fun WeatherScreen(
     cityName: State<String>,
     weatherState: LiveData<WeatherState>
 ) {
-    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val weatherData by weatherState.observeAsState()
@@ -54,7 +54,7 @@ fun WeatherScreen(
                 .padding(8.dp)
                 .semantics { contentDescription = "City name input field" }
         )
-        WeatherButtons(isLandscape, cityName.value, getWeather, getLocalWeather, context)
+        WeatherButtons(isLandscape, cityName.value, getWeather, getLocalWeather)
     }
 
     WeatherDataDisplay(weatherData, isLandscape)
@@ -68,8 +68,8 @@ fun WeatherButtons(
     cityName: String,
     getWeather: (String) -> Unit,
     getLocalWeather: (Context) -> Unit,
-    context: Context
 ) {
+    var context = LocalContext.current
     if (isLandscape) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -135,25 +135,39 @@ fun WeatherDataDisplay(weatherData: WeatherState?, isLandscape: Boolean) {
                     WeatherStateSuccess(weatherData)
                 }
             }
+
             is WeatherState.Failure -> {
-                ErrorMessage("Failure: ${weatherData.data?.message}", "Failed to load weather data.")
+                var hasInternet = ConnectivityManager.isInternetAvailable(LocalContext.current)
+                if (hasInternet) {
+                    CustomMessage(
+                        "Failure: ${weatherData.data?.message}",
+                        "Failed to load weather data."
+                    )
+                } else {
+                    CustomMessage(
+                        "No Internet: ${weatherData.data?.message}",
+                        "Failed from no internet."
+                    )
+                }
             }
+
             is WeatherState.Loading -> {
-                ErrorMessage("Loading...", "Loading weather data")
+                CustomMessage("Loading...", "Loading weather data")
             }
+
             null -> {
-                ErrorMessage("Press Search Weather", "No weather data available")
+                CustomMessage("Press Search Weather", "No weather data available")
             }
         }
     }
 }
 
 @Composable
-fun ErrorMessage(message: String, contentDescription: String) {
+fun CustomMessage(message: String, contentDescription: String) {
     Text(
         modifier = Modifier
             .semantics { this.contentDescription = contentDescription }
-            .testTag("error_text"),
+            .testTag("custom_text"),
         text = message,
         style = MaterialTheme.typography.headlineMedium
     )

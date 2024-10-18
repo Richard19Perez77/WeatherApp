@@ -11,7 +11,16 @@ import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
- * MainActivity starting point of application.
+ * Future implementations: help people be aware of problems in weather's effect on them.
+ *
+ * 1. illness associated with current temperature
+ * 2. body difficulties in changing temperature
+ * 3. humidity
+ * 4. time of year seasonal transition alerts
+ * 5. age as a factor, previous health concern
+ *
+ * A. DB for daily temp storage, if going to a new local, check complications that could arise from moving too fast, like pores not sweating as you expect even though you can usually handle really hot weather.
+ *
  */
 class MainActivity : ComponentActivity() {
 

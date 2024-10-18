@@ -5,10 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.compose.rememberNavController
+import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import com.rperez.weatherapp.navigation.WeatherAppNavHost
 import com.rperez.weatherapp.ui.theme.WeatherAppTheme
+import com.rperez.weatherapp.viewmodel.TemperatureViewModel
+import com.rperez.weatherapp.viewmodel.WeatherState.Success
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.time.LocalDateTime
 
 /**
  * Future implementations: help people be aware of problems in weather's effect on them.
@@ -25,6 +29,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : ComponentActivity() {
 
     private val viewModel: WeatherViewModel by viewModel()
+    private val temperatureViewModel: TemperatureViewModel by viewModel()
 
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -41,6 +46,19 @@ class MainActivity : ComponentActivity() {
         val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo") ?: "Tokyo"
         viewModel.setCityName(savedCity)
         viewModel.getWeather(savedCity)
+        viewModel.weatherState.observeForever { observer ->
+            if (viewModel.weatherState.value is Success) {
+                var successTemp =
+                    (viewModel.weatherState.value as Success).data?.main?.temp?.toDouble()
+                if (successTemp != null) {
+                    var temperatureEntity = TemperatureEntity(
+                        date = "${LocalDateTime.now()}",
+                        temperature = successTemp,
+                    )
+                    temperatureViewModel.insertTemperature(temperatureEntity)
+                }
+            }
+        }
         viewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
 
         setContent {

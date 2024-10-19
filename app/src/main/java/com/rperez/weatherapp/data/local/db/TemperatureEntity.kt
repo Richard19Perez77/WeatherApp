@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class TemperatureEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: String,
-    val temperature: Double
+    val temperature: Double,
+    val local: Boolean,
 )

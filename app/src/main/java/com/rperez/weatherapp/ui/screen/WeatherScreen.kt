@@ -128,7 +128,15 @@ fun WeatherDataDisplay(weatherData: WeatherState?, isLandscape: Boolean) {
         verticalArrangement = Arrangement.Center
     ) {
         when (weatherData) {
-            is WeatherState.Success -> {
+            is WeatherState.CitySuccess -> {
+                if (isLandscape) {
+                    WeatherStateSuccessLandscape(weatherData)
+                } else {
+                    WeatherStateSuccess(weatherData)
+                }
+            }
+
+            is WeatherState.LocalSuccess -> {
                 if (isLandscape) {
                     WeatherStateSuccessLandscape(weatherData)
                 } else {

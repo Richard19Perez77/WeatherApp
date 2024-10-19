@@ -26,7 +26,24 @@ import kotlin.math.min
 @Composable
 fun TemperatureScreen(weatherState: LiveData<WeatherState>) {
     var tempState = weatherState.observeAsState()
-    val temp = (tempState.value as? WeatherState.Success)?.data?.main?.temp?.toString() ?: "N/A"
+    var temp = ""
+    when (tempState.value) {
+        is WeatherState.CitySuccess -> {
+            temp = (tempState.value as WeatherState.CitySuccess).data?.main?.temp?.toString() ?: "N/A"
+        }
+        is WeatherState.LocalSuccess -> {
+            temp = (tempState.value as WeatherState.LocalSuccess).data?.main?.temp?.toString() ?: "N/A"
+        }
+        is WeatherState.Failure -> {
+            temp = "N/A"
+        }
+        WeatherState.Loading -> {
+            temp = "N/A"
+        }
+        null -> {
+            temp = "N/A"
+        }
+    }
 
     val configuration = LocalConfiguration.current
     val screenWidthDp = configuration.screenWidthDp.dp

@@ -9,10 +9,12 @@ import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import com.rperez.weatherapp.navigation.WeatherAppNavHost
 import com.rperez.weatherapp.ui.theme.WeatherAppTheme
 import com.rperez.weatherapp.viewmodel.TemperatureViewModel
-import com.rperez.weatherapp.viewmodel.WeatherState.Success
+import com.rperez.weatherapp.viewmodel.WeatherState
+import com.rperez.weatherapp.viewmodel.WeatherState.CitySuccess
+import com.rperez.weatherapp.viewmodel.WeatherState.LocalSuccess
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 /**
  * Future implementations: help people be aware of problems in weather's effect on them.
@@ -34,29 +36,49 @@ class MainActivity : ComponentActivity() {
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                // Permission was granted, now fetch the local weather
                 viewModel.getLocalWeather(this)
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
         val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo") ?: "Tokyo"
         viewModel.setCityName(savedCity)
         viewModel.getWeather(savedCity)
         viewModel.weatherState.observeForever { observer ->
-            if (viewModel.weatherState.value is Success) {
-                var successTemp =
-                    (viewModel.weatherState.value as Success).data?.main?.temp?.toDouble()
-                if (successTemp != null) {
-                    var temperatureEntity = TemperatureEntity(
-                        date = "${LocalDateTime.now()}",
-                        temperature = successTemp,
-                    )
-                    temperatureViewModel.insertTemperature(temperatureEntity)
+            var data = "${LocalDate.now()}"
+            when (viewModel.weatherState.value) {
+                is CitySuccess -> {
+                    (viewModel.weatherState.value as CitySuccess).data?.main?.temp?.toDouble().let {
+                        if (it != null) {
+                            var temperatureEntity = TemperatureEntity(
+                                date = data,
+                                temperature = it,
+                                local = false
+                            )
+                            temperatureViewModel.insertTemperature(temperatureEntity)
+                        }
+                    }
                 }
+
+                is LocalSuccess -> {
+                    (viewModel.weatherState.value as LocalSuccess).data?.main?.temp?.toDouble()
+                        .let {
+                            if (it != null) {
+                                var temperatureEntity = TemperatureEntity(
+                                    date = data,
+                                    temperature = it,
+                                    local = true
+                                )
+                                temperatureViewModel.insertTemperature(temperatureEntity)
+                            }
+                        }
+                }
+
+                is WeatherState.Failure -> {}
+                WeatherState.Loading -> {}
+                null -> {}
             }
         }
         viewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)

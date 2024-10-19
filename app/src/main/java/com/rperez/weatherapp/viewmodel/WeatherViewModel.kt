@@ -14,8 +14,9 @@ import com.rperez.weatherapp.model.WeatherResponse
 import com.rperez.weatherapp.repository.WeatherException
 import com.rperez.weatherapp.repository.WeatherRepository
 import com.rperez.weatherapp.service.LocationService
+import com.rperez.weatherapp.viewmodel.WeatherState.CitySuccess
 import com.rperez.weatherapp.viewmodel.WeatherState.Failure
-import com.rperez.weatherapp.viewmodel.WeatherState.Success
+import com.rperez.weatherapp.viewmodel.WeatherState.LocalSuccess
 import kotlinx.coroutines.launch
 
 /**
@@ -47,8 +48,8 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                 _weatherState.value = WeatherState.Loading
                 val result = repository.getWeatherByCityData(cityName)
                 result.onSuccess {
-                    _weatherState.value = Success(result.getOrNull())
-                    _cityName.value = (_weatherState.value as Success).data?.name ?: ""
+                    _weatherState.value = CitySuccess(result.getOrNull())
+                    _cityName.value = (_weatherState.value as CitySuccess).data?.name ?: ""
                 }
                 result.onFailure {
                     _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
@@ -67,8 +68,8 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                 _weatherState.value = WeatherState.Loading
                 val result = repository.getWeatherGeoData(coords.first, coords.second)
                 result.onSuccess {
-                    _weatherState.value = Success(result.getOrNull())
-                    _cityName.value = (_weatherState.value as Success).data?.name ?: ""
+                    _weatherState.value = LocalSuccess(result.getOrNull())
+                    _cityName.value = (_weatherState.value as LocalSuccess).data?.name ?: ""
                 }
                 result.onFailure {
                     _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
@@ -103,7 +104,8 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
  * State of calls to be reflected in UI
  */
 sealed class WeatherState {
-    data class Success(val data: WeatherResponse?) : WeatherState()
+    data class CitySuccess(val data: WeatherResponse?) : WeatherState()
+    data class LocalSuccess(val data: WeatherResponse?) : WeatherState()
     data class Failure(val data: WeatherException?) : WeatherState()
     object Loading : WeatherState()
 }

@@ -16,35 +16,58 @@ import java.util.Locale
  */
 @Composable
 fun WeatherStateSuccess(weatherData: WeatherState?) {
+    var temp: Double? = null
+    var desc: String? = null
+    var icon: String? = null
+    when (weatherData) {
+        is WeatherState.CitySuccess -> {
+            temp = weatherData.data?.main?.temp?.toDouble()
+            desc = weatherData.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
+                it.uppercase(Locale.ROOT)
+            }.toString()
+            icon = weatherData.data?.weather[0]?.icon
+        }
+
+        is WeatherState.LocalSuccess -> {
+            temp = weatherData.data?.main?.temp?.toDouble()
+            desc = weatherData.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
+                it.uppercase(Locale.ROOT)
+            }.toString()
+            icon = weatherData.data?.weather[0]?.icon
+        }
+
+        is WeatherState.Failure -> {
+            null
+        }
+
+        is WeatherState.Loading -> {
+            null
+        }
+
+        null -> {
+            null
+        }
+    }
     Text(
         modifier = Modifier
             .semantics {
-                contentDescription = "Current temperature in degrees Celsius is ${(weatherData as WeatherState.Success).data?.main?.temp}°C"
+                contentDescription = "Current temperature in degrees Celsius is $temp°C"
             }
             .testTag("temp_text"),
-        text = "Temperature: ${(weatherData as WeatherState.Success).data?.main?.temp}°C",
+        text = "Temperature: $temp°C",
         style = MaterialTheme.typography.headlineMedium
     )
     Text(
         modifier = Modifier
             .semantics {
-                contentDescription =
-                    ("" + weatherData.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-                        it.uppercase(
-                            Locale.ROOT
-                        )
-                    })
+                contentDescription = desc ?: ""
             }
             .testTag("description_text"),
-        text = weatherData.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-            it.uppercase(
-                Locale.ROOT
-            )
-        } ?: "",
+        text = desc ?: "",
         style = MaterialTheme.typography.headlineLarge
     )
 
     val iconUrl =
-        "https://openweathermap.org/img/wn/${weatherData.data?.weather[0]?.icon}@2x.png"
+        "https://openweathermap.org/img/wn/$icon@2x.png"
     WeatherIcon(iconUrl = iconUrl)
 }

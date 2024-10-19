@@ -1,6 +1,7 @@
 package com.rperez.weatherapp.ui.screen
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
@@ -47,7 +48,7 @@ fun HeartScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(8.dp, 0.dp, 8.dp, 0.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
@@ -64,26 +65,47 @@ fun TemperatureItem(temperature: TemperatureEntity) {
     var alertList = getAlerts(temperature)
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+            .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(12.dp)
         ) {
-            Text(
-                text = "Date: ${temperature.date} Temperature: ${temperature.temperature}°C",
-                style = MaterialTheme.typography.titleMedium
-            )
-            var locationText =
-                if (temperature.local) "Local Data for ${temperature.city}: ${temperature.desc}" else "Remote Data for ${temperature.city}: ${temperature.desc}"
-            Text(text = locationText, style = MaterialTheme.typography.bodyMedium)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = temperature.city,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = temperature.date,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "${temperature.temperature} °C",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = temperature.desc,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
             if (alertList.isNotEmpty())
                 Text(
+                    modifier = Modifier.padding(8.dp),
                     text = alertList.joinToString(" "),
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
         }
     }

@@ -29,6 +29,7 @@ import com.rperez.weatherapp.viewmodel.WeatherState
 
 @Composable
 fun WeatherScreen(
+    modifier: Modifier,
     navController: NavController,
     setCityName: (String) -> Unit,
     getWeather: (String) -> Unit,
@@ -41,7 +42,7 @@ fun WeatherScreen(
     val weatherData by weatherState.observeAsState()
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextField(

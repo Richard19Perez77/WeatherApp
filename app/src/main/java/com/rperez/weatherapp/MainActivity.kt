@@ -30,13 +30,13 @@ import java.time.LocalDate
  */
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: WeatherViewModel by viewModel()
+    private val weatherViewModel: WeatherViewModel by viewModel()
     private val temperatureViewModel: TemperatureViewModel by viewModel()
 
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                viewModel.getLocalWeather(this)
+                weatherViewModel.getLocalWeather(this)
             }
         }
 
@@ -44,26 +44,27 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
         val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo") ?: "Tokyo"
-        viewModel.setCityName(savedCity)
-        viewModel.getWeather(savedCity)
-        viewModel.weatherState.observeForever { observer ->
+        weatherViewModel.setCityName(savedCity)
+        weatherViewModel.getWeather(savedCity)
+        weatherViewModel.weatherState.observeForever { observer ->
             var data = "${LocalDate.now()}"
-            when (viewModel.weatherState.value) {
+            when (weatherViewModel.weatherState.value) {
                 is CitySuccess -> {
-                    (viewModel.weatherState.value as CitySuccess).data?.main?.temp?.toDouble().let {
-                        if (it != null) {
-                            var temperatureEntity = TemperatureEntity(
-                                date = data,
-                                temperature = it,
-                                local = false
-                            )
-                            temperatureViewModel.insertTemperature(temperatureEntity)
+                    (weatherViewModel.weatherState.value as CitySuccess).data?.main?.temp?.toDouble()
+                        .let {
+                            if (it != null) {
+                                var temperatureEntity = TemperatureEntity(
+                                    date = data,
+                                    temperature = it,
+                                    local = false
+                                )
+                                temperatureViewModel.insertTemperature(temperatureEntity)
+                            }
                         }
-                    }
                 }
 
                 is LocalSuccess -> {
-                    (viewModel.weatherState.value as LocalSuccess).data?.main?.temp?.toDouble()
+                    (weatherViewModel.weatherState.value as LocalSuccess).data?.main?.temp?.toDouble()
                         .let {
                             if (it != null) {
                                 var temperatureEntity = TemperatureEntity(
@@ -81,14 +82,14 @@ class MainActivity : ComponentActivity() {
                 null -> {}
             }
         }
-        viewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
-
+        weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
         setContent {
             WeatherAppTheme {
                 val navController = rememberNavController()
                 WeatherAppNavHost(
                     navController = navController,
-                    viewModel = viewModel,
+                    weatherViewModel = weatherViewModel,
+                    temperatureViewModel = temperatureViewModel,
                 )
             }
         }
@@ -98,7 +99,7 @@ class MainActivity : ComponentActivity() {
         super.onPause()
         val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
         with(sharedPreferences.edit()) {
-            putString("CITY_NAME", viewModel.getCityName().value)
+            putString("CITY_NAME", weatherViewModel.getCityName().value)
             apply()
         }
     }

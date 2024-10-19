@@ -24,7 +24,7 @@ import kotlin.math.min
  * Temperature Screen is only the temperature in large font
  */
 @Composable
-fun TemperatureScreen(weatherState: LiveData<WeatherState>) {
+fun TemperatureScreen(modifier: Modifier, weatherState: LiveData<WeatherState>) {
     var tempState = weatherState.observeAsState()
     var temp = ""
     when (tempState.value) {
@@ -55,7 +55,7 @@ fun TemperatureScreen(weatherState: LiveData<WeatherState>) {
     }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {

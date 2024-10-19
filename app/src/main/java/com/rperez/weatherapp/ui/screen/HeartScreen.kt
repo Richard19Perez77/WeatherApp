@@ -30,8 +30,6 @@ fun HeartScreen(
             allTemps.value = getAllTemperatures()
             loading.value = false
             localWeatherList.addAll(allTemps.value.filter { it.local })
-            // store desc and look for not sun
-            // Mood Disorders (SAD): Typically linked to reduced sunlight exposure, which is more common in winter months when temperatures drop and daylight hours shorten.
         } catch (_: Exception) {
             error.value = "Error loading temperatures"
             loading.value = false
@@ -76,19 +74,18 @@ fun TemperatureItem(temperature: TemperatureEntity) {
             modifier = Modifier
                 .padding(16.dp)
         ) {
-            Text(text = "Date: ${temperature.date}", style = MaterialTheme.typography.titleMedium)
             Text(
-                text = "Temperature: ${temperature.temperature}°C",
-                style = MaterialTheme.typography.bodyLarge
+                text = "Date: ${temperature.date} Temperature: ${temperature.temperature}°C",
+                style = MaterialTheme.typography.titleMedium
             )
-
-            val locationText = if (temperature.local) "Local Data" else "Remote Data"
-            Text(text = locationText, style = MaterialTheme.typography.bodySmall)
+            var locationText =
+                if (temperature.local) "Local Data for ${temperature.city}: ${temperature.desc}" else "Remote Data for ${temperature.city}: ${temperature.desc}"
+            Text(text = locationText, style = MaterialTheme.typography.bodyMedium)
             if (alertList.isNotEmpty())
                 Text(
                     modifier = Modifier.background(Color.Red),
-                    text = alertList.joinToString("\n"),
-                    style = MaterialTheme.typography.bodySmall
+                    text = alertList.joinToString(" "),
+                    style = MaterialTheme.typography.bodySmall,
                 )
         }
     }

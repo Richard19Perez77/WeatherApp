@@ -15,6 +15,8 @@ import com.rperez.weatherapp.viewmodel.WeatherState.LocalSuccess
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
+import java.util.Locale
+import kotlin.text.uppercase
 
 /**
  * Future implementations: help people be aware of problems in weather's effect on them.
@@ -50,31 +52,39 @@ class MainActivity : ComponentActivity() {
             var data = "${LocalDate.now()}"
             when (weatherViewModel.weatherState.value) {
                 is CitySuccess -> {
-                    (weatherViewModel.weatherState.value as CitySuccess).data?.main?.temp?.toDouble()
-                        .let {
-                            if (it != null) {
-                                var temperatureEntity = TemperatureEntity(
-                                    date = data,
-                                    temperature = it,
-                                    local = false
-                                )
-                                temperatureViewModel.insertTemperature(temperatureEntity)
-                            }
+                    var item = (weatherViewModel.weatherState.value as CitySuccess)
+                    item.data?.main?.temp?.toDouble().let {
+                        if (it != null) {
+                            var temperatureEntity = TemperatureEntity(
+                                date = data,
+                                temperature = it,
+                                local = false,
+                                city = item.data?.name ?: "",
+                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
+                                    it.uppercase(Locale.ROOT)
+                                }.toString(),
+                            )
+                            temperatureViewModel.insertTemperature(temperatureEntity)
                         }
+                    }
                 }
 
                 is LocalSuccess -> {
-                    (weatherViewModel.weatherState.value as LocalSuccess).data?.main?.temp?.toDouble()
-                        .let {
-                            if (it != null) {
-                                var temperatureEntity = TemperatureEntity(
-                                    date = data,
-                                    temperature = it,
-                                    local = true
-                                )
-                                temperatureViewModel.insertTemperature(temperatureEntity)
-                            }
+                    var item = (weatherViewModel.weatherState.value as LocalSuccess)
+                    item.data?.main?.temp?.toDouble().let {
+                        if (it != null) {
+                            var temperatureEntity = TemperatureEntity(
+                                date = data,
+                                temperature = it,
+                                local = true,
+                                city = item.data?.name ?: "",
+                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
+                                    it.uppercase(Locale.ROOT)
+                                }.toString(),
+                            )
+                            temperatureViewModel.insertTemperature(temperatureEntity)
                         }
+                    }
                 }
 
                 is WeatherState.Failure -> {}

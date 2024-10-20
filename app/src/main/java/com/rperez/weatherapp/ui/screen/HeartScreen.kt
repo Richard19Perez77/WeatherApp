@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,14 +43,13 @@ fun HeartScreen(
     } else if (error.value != null) {
         Text(text = error.value.toString())
     } else {
-        Column {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = ""
-            )
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
+                    .weight(2f)
                     .padding(8.dp, 0.dp, 8.dp, 0.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
@@ -56,6 +57,20 @@ fun HeartScreen(
                 items(allTemps.value) { temperature ->
                     TemperatureItem(temperature)
                 }
+            }
+            Card(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxSize()
+                    .weight(1f),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .verticalScroll(rememberScrollState()),
+                    text = rareFacts
+                )
             }
         }
     }
@@ -172,3 +187,49 @@ fun getAlerts(temperature: TemperatureEntity): List<String> {
 
     return temp
 }
+
+var rareFacts = """
+Facts about weather and personal health:
+
+Cold Weather Can Boost Brain Function
+
+Exposure to cold weather can improve cognitive function, as the body works harder to maintain core temperature, leading to increased alertness and focus. Studies suggest that people tend to think more clearly in cooler environments compared to very hot conditions.
+
+Rain and Arthritis Pain
+
+There's a common belief that rainy weather worsens joint pain, but science hasn’t conclusively proven a direct link. However, changes in barometric pressure (which often occurs before rain) may cause joints to expand slightly, which could trigger pain in people with arthritis.
+
+Sunlight and Immune System
+
+Moderate sun exposure boosts vitamin D production, which is essential for immune function. Vitamin D helps the body fight off pathogens and may reduce the risk of autoimmune diseases. However, too much UV exposure can suppress the immune system, so balance is key.
+
+Thunderstorms Can Trigger Asthma
+
+Thunderstorms can cause a spike in asthma attacks due to a phenomenon called "thunderstorm asthma." During a storm, pollen grains and mold spores are broken into smaller fragments by rain and wind, making them easier to inhale and triggering asthma in sensitive individuals.
+
+Humidity and Dehydration
+
+In humid weather, the body's ability to cool itself by sweating is reduced. Because sweat doesn't evaporate as efficiently in high humidity, the body continues to produce more sweat, increasing the risk of dehydration without you realizing it.
+
+Dry Air and Skin
+
+Cold, dry weather causes moisture loss from the skin, leading to dry, flaky skin and exacerbating conditions like eczema. It's not just winter, though—air conditioning in the summer can also dry out your skin, so moisturizing year-round is important.
+
+Barometric Pressure and Migraines
+
+Changes in barometric pressure, especially a rapid drop, can trigger migraines. People who are sensitive to pressure changes may experience headaches even before a storm or drastic weather shift happens.
+
+Hot Weather and Mood Swings
+
+Higher temperatures can increase aggression and irritability in some individuals. Studies have shown a correlation between extremely hot weather and spikes in crime rates, possibly due to discomfort, dehydration, or the body's struggle to regulate heat.
+
+Wind and Mental Health
+
+Some studies suggest that strong, persistent winds (like those in windy regions) can negatively affect mood, leading to feelings of anxiety or depression. In particular, the dry, warm wind known as the Foehn wind has been linked to mood disturbances.
+
+Weather and Heart Attacks
+
+Cold weather puts extra strain on the cardiovascular system, increasing the risk of heart attacks. When it's cold, blood vessels constrict, and blood pressure rises, making it harder for the heart to pump blood efficiently. Sudden exertion in cold weather can increase heart attack risk, especially in people with pre-existing conditions.
+
+These are just a few examples of how weather can impact personal health in ways people might not expect!
+"""

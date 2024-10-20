@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import com.rperez.weatherapp.model.WeatherResponse
 import com.rperez.weatherapp.repository.WeatherException
 import com.rperez.weatherapp.repository.WeatherRepository
@@ -18,6 +19,8 @@ import com.rperez.weatherapp.viewmodel.WeatherState.CitySuccess
 import com.rperez.weatherapp.viewmodel.WeatherState.Failure
 import com.rperez.weatherapp.viewmodel.WeatherState.LocalSuccess
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.util.Locale
 
 /**
  * View model to hold the Weather State as calls change it.
@@ -33,6 +36,58 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     val weatherState: LiveData<WeatherState> = _weatherState
 
     lateinit var coords: Pair<Double, Double>
+
+    fun setupWeatherObserver(temperatureViewModel: TemperatureViewModel) {
+        weatherState.observeForever { observer ->
+            var data = "${LocalDate.now()}"
+            when (weatherState.value) {
+                is CitySuccess -> {
+                    var item = (weatherState.value as CitySuccess)
+                    item.data?.main?.temp?.toDouble().let {
+                        if (it != null) {
+                            var temperatureEntity = TemperatureEntity(
+                                date = data,
+                                temperature = it,
+                                local = false,
+                                city = item.data?.name ?: "",
+                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
+                                    it.uppercase(Locale.ROOT)
+                                }.toString(),
+                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
+                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
+                            )
+                            temperatureViewModel.insertTemperature(temperatureEntity)
+                        }
+                    }
+                }
+
+                is LocalSuccess -> {
+                    var item = (weatherState.value as LocalSuccess)
+                    item.data?.main?.temp?.toDouble().let {
+                        if (it != null) {
+                            var temperatureEntity = TemperatureEntity(
+                                date = data,
+                                temperature = it,
+                                local = true,
+                                city = item.data?.name ?: "",
+                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
+                                    it.uppercase(Locale.ROOT)
+                                }.toString(),
+                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
+                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
+                            )
+                            temperatureViewModel.insertTemperature(temperatureEntity)
+                        }
+                    }
+                }
+
+                is WeatherState.Failure -> {}
+                is WeatherState.Loading -> {}
+                null -> {}
+            }
+        }
+
+    }
 
     fun getCityName(): State<String> {
         return cityName

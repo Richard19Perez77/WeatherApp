@@ -21,13 +21,7 @@ import kotlin.text.uppercase
 /**
  * Future implementations: help people be aware of problems in weather's effect on them.
  *
- * 1. illness associated with current temperature
- * 2. body difficulties in changing temperature
- * 3. humidity
- * 4. time of year seasonal transition alerts
- * 5. age as a factor, previous health concern
- *
- * A. DB for daily temp storage, if going to a new local, check complications that could arise from moving too fast, like pores not sweating as you expect even though you can usually handle really hot weather.
+ * may need to alter the air pressure by city zip code for normal values or expected unhealthy values
  *
  */
 class MainActivity : ComponentActivity() {
@@ -46,57 +40,59 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
         val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo") ?: "Tokyo"
-        temperatureViewModel.insertMockTemperatures()
+        temperatureViewModel.deleteAllTemperatures()
+        // temperatureViewModel.insertMockTemperatures()
         weatherViewModel.setCityName(savedCity)
         weatherViewModel.getWeather(savedCity)
-        weatherViewModel.weatherState.observeForever { observer ->
-            var data = "${LocalDate.now()}"
-            when (weatherViewModel.weatherState.value) {
-                is CitySuccess -> {
-                    var item = (weatherViewModel.weatherState.value as CitySuccess)
-                    item.data?.main?.temp?.toDouble().let {
-                        if (it != null) {
-                            var temperatureEntity = TemperatureEntity(
-                                date = data,
-                                temperature = it,
-                                local = false,
-                                city = item.data?.name ?: "",
-                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-                                    it.uppercase(Locale.ROOT)
-                                }.toString(),
-                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
-                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
-                            )
-                            temperatureViewModel.insertTemperature(temperatureEntity)
-                        }
-                    }
-                }
-
-                is LocalSuccess -> {
-                    var item = (weatherViewModel.weatherState.value as LocalSuccess)
-                    item.data?.main?.temp?.toDouble().let {
-                        if (it != null) {
-                            var temperatureEntity = TemperatureEntity(
-                                date = data,
-                                temperature = it,
-                                local = true,
-                                city = item.data?.name ?: "",
-                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-                                    it.uppercase(Locale.ROOT)
-                                }.toString(),
-                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
-                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
-                            )
-                            temperatureViewModel.insertTemperature(temperatureEntity)
-                        }
-                    }
-                }
-
-                is WeatherState.Failure -> {}
-                is WeatherState.Loading -> {}
-                null -> {}
-            }
-        }
+        weatherViewModel.setupWeatherObserver(temperatureViewModel)
+//        weatherViewModel.weatherState.observeForever { observer ->
+//            var data = "${LocalDate.now()}"
+//            when (weatherViewModel.weatherState.value) {
+//                is CitySuccess -> {
+//                    var item = (weatherViewModel.weatherState.value as CitySuccess)
+//                    item.data?.main?.temp?.toDouble().let {
+//                        if (it != null) {
+//                            var temperatureEntity = TemperatureEntity(
+//                                date = data,
+//                                temperature = it,
+//                                local = false,
+//                                city = item.data?.name ?: "",
+//                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
+//                                    it.uppercase(Locale.ROOT)
+//                                }.toString(),
+//                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
+//                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
+//                            )
+//                            temperatureViewModel.insertTemperature(temperatureEntity)
+//                        }
+//                    }
+//                }
+//
+//                is LocalSuccess -> {
+//                    var item = (weatherViewModel.weatherState.value as LocalSuccess)
+//                    item.data?.main?.temp?.toDouble().let {
+//                        if (it != null) {
+//                            var temperatureEntity = TemperatureEntity(
+//                                date = data,
+//                                temperature = it,
+//                                local = true,
+//                                city = item.data?.name ?: "",
+//                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
+//                                    it.uppercase(Locale.ROOT)
+//                                }.toString(),
+//                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
+//                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
+//                            )
+//                            temperatureViewModel.insertTemperature(temperatureEntity)
+//                        }
+//                    }
+//                }
+//
+//                is WeatherState.Failure -> {}
+//                is WeatherState.Loading -> {}
+//                null -> {}
+//            }
+//        }
         weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
         setContent {
             WeatherAppTheme {

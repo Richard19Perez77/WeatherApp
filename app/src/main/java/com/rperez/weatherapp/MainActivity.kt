@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
         val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo") ?: "Tokyo"
+        temperatureViewModel.insertMockTemperatures()
         weatherViewModel.setCityName(savedCity)
         weatherViewModel.getWeather(savedCity)
         weatherViewModel.weatherState.observeForever { observer ->
@@ -63,6 +64,8 @@ class MainActivity : ComponentActivity() {
                                 desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
                                     it.uppercase(Locale.ROOT)
                                 }.toString(),
+                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
+                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
                             )
                             temperatureViewModel.insertTemperature(temperatureEntity)
                         }
@@ -81,6 +84,8 @@ class MainActivity : ComponentActivity() {
                                 desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
                                     it.uppercase(Locale.ROOT)
                                 }.toString(),
+                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
+                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
                             )
                             temperatureViewModel.insertTemperature(temperatureEntity)
                         }
@@ -88,7 +93,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 is WeatherState.Failure -> {}
-                WeatherState.Loading -> {}
+                is WeatherState.Loading -> {}
                 null -> {}
             }
         }

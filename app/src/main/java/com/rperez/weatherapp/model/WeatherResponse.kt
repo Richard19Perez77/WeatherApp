@@ -13,8 +13,9 @@ data class WeatherResponse(
  * Daily vars for weather
  */
 data class Main(
-    val temp: Double,   // Temperature
-    val humidity: Int   // Humidity
+    val temp: Double,
+    val humidity: Int,
+    val pressure: Int,
 )
 
 /**

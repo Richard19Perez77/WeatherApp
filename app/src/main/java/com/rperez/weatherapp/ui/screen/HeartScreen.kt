@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 
@@ -100,29 +101,41 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
-            if (alertList.isNotEmpty())
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "${temperature.humidity}% Humidity",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = "Air Pressure: ${temperature.pressure} hPa",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+            if (alertList.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = alertList.joinToString(" "),
+                    text = alertList.joinToString("\n\n"),
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.bodyLarge,
+                    overflow = TextOverflow.Visible,
                 )
+            }
         }
     }
 }
 
 fun getAlerts(temperature: TemperatureEntity): List<String> {
     var temp = mutableListOf<String>()
-    if (temperature.temperature in 0.0..10.0) {
-        temp.add("Hypothermia: Typically occurs when the body temperature drops below 95°F (35°C). Risk increases in temperatures below 50°F (10°C) with wind chill.")
-    }
     if (temperature.temperature < 10.0) {
+        temp.add("Hypothermia: Typically occurs when the body temperature drops below 95°F (35°C). Risk increases in temperatures below 50°F (10°C) with wind chill.")
         temp.add("Respiratory Issues: Cold air can affect individuals with asthma or COPD, often when temperatures drop below 50°F (10°C).")
     }
     if (temperature.temperature < 0) {
         temp.add("Frostbite: Can occur in temperatures below 32°F (0°C), especially with wind chill. Risk increases significantly in subzero temperatures.")
-    }
-    if (temperature.temperature < 0) {
         temp.add("Increased Heart Attack Risk: Increased risk can occur in temperatures below 32°F (0°C), especially for those with existing heart conditions.")
     }
     if (temperature.temperature > 27.0) {
@@ -138,5 +151,24 @@ fun getAlerts(temperature: TemperatureEntity): List<String> {
     if (temperature.temperature > 15.0) {
         temp.add("Allergies: Pollen counts can rise with temperatures as low as 60°F (15°C), depending on the plant species.")
     }
+    if (temperature.humidity < 30) {
+        temp.add("Humidity < 30%: Leads to respiratory irritation, dry skin, increased infection risk, static electricity discomfort.")
+    }
+    if (temperature.humidity > 50) {
+        temp.add("Humidity > 50%: Risk of mold and dust mite growth increases, increased sweat and discomfort begins.")
+    }
+    if (temperature.humidity > 60) {
+        temp.add("Humidity > 60%: Significant increase in mold, mildew, and dust mites; respiratory conditions may worsen.")
+    }
+    if (temperature.humidity > 70) {
+        temp.add("Humidity > 70%: Heat-related illnesses, severe discomfort, and heightened allergy or asthma problems and possible joint pains.")
+    }
+    if (temperature.pressure < 980) {
+        temp.add("Low Air Pressure (less than 980) threshold can vary by city but is associated with migraines, joint pain, respiratory issues (shortness of breath and asthma), sinus discomfort, altitude sickness and mood disturbances")
+    }
+    if (temperature.pressure > 1050) {
+        temp.add("High air pressure (more than 1050) threshold can cause health concerns including, barometric pressure headaches, sinus pressure and congestion, joint pain relief, and blood pressure and circulatory concerns.")
+    }
+
     return temp
 }

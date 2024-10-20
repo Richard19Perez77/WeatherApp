@@ -3,6 +3,7 @@ package com.rperez.weatherapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
+import com.rperez.weatherapp.data.local.mock.MockTemperatureEntities
 import com.rperez.weatherapp.data.repository.TemperatureRepository
 import kotlinx.coroutines.launch
 
@@ -11,6 +12,14 @@ class TemperatureViewModel(private val repository: TemperatureRepository) : View
     fun insertTemperature(temperature: TemperatureEntity) {
         viewModelScope.launch {
             repository.insertTemperature(temperature)
+        }
+    }
+
+    fun insertMockTemperatures() {
+        viewModelScope.launch {
+            for (item in MockTemperatureEntities.getMockTemperatureEntities()) {
+                repository.insertTemperature(item)
+            }
         }
     }
 

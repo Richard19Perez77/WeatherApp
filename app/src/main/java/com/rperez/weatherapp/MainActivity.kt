@@ -41,11 +41,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             WeatherAppTheme {
-                val navController = rememberNavController()
                 WeatherAppNavHost(
                     savedCity = savedCity,
                     requestLocationPermissionLauncher = requestLocationPermissionLauncher,
-                    navController = navController,
+                    navController = rememberNavController(),
                     weatherViewModel = weatherViewModel,
                     temperatureViewModel = temperatureViewModel,
                 )

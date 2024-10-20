@@ -19,8 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * trend graphs at all or a simple line graph per city, based on previous day small line trend with markers for temps
  * most likely move the view model int the composables and nav controller
  * defensive programming for api client successive calls
- *  detect small trends of temperature from default city to loca (city uses default city coords, local is variable by a small amount, user won't know city coords)
- *  remove fab for heartscreen
+ * detect small trends of temperature from default city to loca (city uses default city coords, local is variable by a small amount, user won't know city coords)
  *
  */
 class MainActivity : ComponentActivity() {
@@ -40,17 +39,12 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
         val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo") ?: "Tokyo"
 
-        temperatureViewModel.deleteAllTemperatures()
-        temperatureViewModel.insertMockTemperatures()
-        weatherViewModel.setCityName(savedCity)
-        weatherViewModel.getWeather(savedCity)
-        weatherViewModel.setupWeatherObserver(temperatureViewModel)
-        weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
-
         setContent {
             WeatherAppTheme {
                 val navController = rememberNavController()
                 WeatherAppNavHost(
+                    savedCity = savedCity,
+                    requestLocationPermissionLauncher = requestLocationPermissionLauncher,
                     navController = navController,
                     weatherViewModel = weatherViewModel,
                     temperatureViewModel = temperatureViewModel,

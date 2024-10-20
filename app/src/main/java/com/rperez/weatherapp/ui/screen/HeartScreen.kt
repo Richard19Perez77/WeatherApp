@@ -30,7 +30,7 @@ fun HeartScreen(
     LaunchedEffect(Unit) {
         try {
             loading.value = true
-            allTemps.value = getAllTemperatures()
+            allTemps.value = getAllTemperatures().reversed()
             loading.value = false
             localWeatherList.addAll(allTemps.value.filter { it.local })
         } catch (_: Exception) {

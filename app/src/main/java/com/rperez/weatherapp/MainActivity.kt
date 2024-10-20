@@ -5,23 +5,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.compose.rememberNavController
-import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import com.rperez.weatherapp.navigation.WeatherAppNavHost
 import com.rperez.weatherapp.ui.theme.WeatherAppTheme
 import com.rperez.weatherapp.viewmodel.TemperatureViewModel
-import com.rperez.weatherapp.viewmodel.WeatherState
-import com.rperez.weatherapp.viewmodel.WeatherState.CitySuccess
-import com.rperez.weatherapp.viewmodel.WeatherState.LocalSuccess
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.time.LocalDate
-import java.util.Locale
-import kotlin.text.uppercase
 
 /**
  * Future implementations: help people be aware of problems in weather's effect on them.
  *
  * may need to alter the air pressure by city zip code for normal values or expected unhealthy values
+ * what temperatures are most important in list, newest first
+ * trend graphs at all or a simple line graph per city, based on previous day small line trend with markers for temps
+ * most likely move the view model int the composables and nav controller
  *
  */
 class MainActivity : ComponentActivity() {
@@ -40,60 +36,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
         val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo") ?: "Tokyo"
+
         temperatureViewModel.deleteAllTemperatures()
-        // temperatureViewModel.insertMockTemperatures()
+        temperatureViewModel.insertMockTemperatures()
         weatherViewModel.setCityName(savedCity)
         weatherViewModel.getWeather(savedCity)
         weatherViewModel.setupWeatherObserver(temperatureViewModel)
-//        weatherViewModel.weatherState.observeForever { observer ->
-//            var data = "${LocalDate.now()}"
-//            when (weatherViewModel.weatherState.value) {
-//                is CitySuccess -> {
-//                    var item = (weatherViewModel.weatherState.value as CitySuccess)
-//                    item.data?.main?.temp?.toDouble().let {
-//                        if (it != null) {
-//                            var temperatureEntity = TemperatureEntity(
-//                                date = data,
-//                                temperature = it,
-//                                local = false,
-//                                city = item.data?.name ?: "",
-//                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-//                                    it.uppercase(Locale.ROOT)
-//                                }.toString(),
-//                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
-//                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
-//                            )
-//                            temperatureViewModel.insertTemperature(temperatureEntity)
-//                        }
-//                    }
-//                }
-//
-//                is LocalSuccess -> {
-//                    var item = (weatherViewModel.weatherState.value as LocalSuccess)
-//                    item.data?.main?.temp?.toDouble().let {
-//                        if (it != null) {
-//                            var temperatureEntity = TemperatureEntity(
-//                                date = data,
-//                                temperature = it,
-//                                local = true,
-//                                city = item.data?.name ?: "",
-//                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-//                                    it.uppercase(Locale.ROOT)
-//                                }.toString(),
-//                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
-//                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
-//                            )
-//                            temperatureViewModel.insertTemperature(temperatureEntity)
-//                        }
-//                    }
-//                }
-//
-//                is WeatherState.Failure -> {}
-//                is WeatherState.Loading -> {}
-//                null -> {}
-//            }
-//        }
         weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
+
         setContent {
             WeatherAppTheme {
                 val navController = rememberNavController()

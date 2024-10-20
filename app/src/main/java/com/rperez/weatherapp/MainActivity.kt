@@ -20,9 +20,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * most likely move the view model int the composables and nav controller
  * defensive programming for api client successive calls
  *  detect small trends of temperature from default city to loca (city uses default city coords, local is variable by a small amount, user won't know city coords)
- *  remove fab for heart screen
+ *  remove fab for heartscreen
  *
- * /
+ */
 class MainActivity : ComponentActivity() {
 
     private val weatherViewModel: WeatherViewModel by viewModel()

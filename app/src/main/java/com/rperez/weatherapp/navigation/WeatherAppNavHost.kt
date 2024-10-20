@@ -26,6 +26,7 @@ fun WeatherAppNavHost(
     weatherViewModel: WeatherViewModel,
     temperatureViewModel: TemperatureViewModel,
 ) {
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(

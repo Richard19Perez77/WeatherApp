@@ -1,6 +1,6 @@
 package com.rperez.weatherapp.network
 
-import com.rperez.weatherapp.model.WeatherResponse
+import com.rperez.weatherapp.network.model.WeatherResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

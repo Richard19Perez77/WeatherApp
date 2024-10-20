@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.dp
-import com.rperez.weatherapp.colors.RandomColor.getRandomColors
+import com.rperez.weatherapp.ui.util.colors.RandomColor.getRandomColors
 
 @Composable
 fun CustomGridLayout(modifier: Modifier, temp: String) {

@@ -1,6 +1,7 @@
 package com.rperez.weatherapp.repository
 
-import com.rperez.weatherapp.model.WeatherResponse
+import com.rperez.weatherapp.network.model.WeatherResponse
+
 
 /**
  * Generic Weather Repository

@@ -1,5 +1,8 @@
 package com.rperez.weatherapp.model
 
+import com.rperez.weatherapp.network.model.Main
+import com.rperez.weatherapp.network.model.Weather
+import com.rperez.weatherapp.network.model.WeatherResponse
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -7,7 +10,7 @@ class WeatherResponseTest {
 
     @Test
     fun `test WeatherResponse instantiation`() {
-        val main = Main(temp = 22.5, humidity = 60)
+        val main = Main(temp = 22.5, humidity = 60, pressure = 1000)
         val weather = listOf(Weather(description = "clear sky", icon = "01d"))
         val weatherResponse = WeatherResponse(main = main, weather = weather, name = "city name")
 
@@ -27,7 +30,7 @@ class WeatherResponseTest {
 
     @Test
     fun `test Main instantiation`() {
-        val main = Main(temp = 15.0, humidity = 80)
+        val main = Main(temp = 15.0, humidity = 80, pressure = 100)
 
         assertEquals(15.0, main.temp)
         assertEquals(80, main.humidity)

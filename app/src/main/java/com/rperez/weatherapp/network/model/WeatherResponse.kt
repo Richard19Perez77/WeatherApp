@@ -1,4 +1,4 @@
-package com.rperez.weatherapp.model
+package com.rperez.weatherapp.network.model
 
 /**
  * Map the response to a weather data class

@@ -1,4 +1,4 @@
-package com.rperez.weatherapp.colors
+package com.rperez.weatherapp.ui.util.colors
 
 import androidx.compose.ui.graphics.Color
 import kotlin.random.Random

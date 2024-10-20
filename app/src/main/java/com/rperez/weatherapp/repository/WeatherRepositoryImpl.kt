@@ -1,9 +1,9 @@
 package com.rperez.weatherapp.repository
 
 import com.rperez.weatherapp.BuildConfig
-import com.rperez.weatherapp.model.WeatherResponse
 import com.rperez.weatherapp.network.ApiClient
 import com.rperez.weatherapp.network.WeatherService
+import com.rperez.weatherapp.network.model.WeatherResponse
 import retrofit2.HttpException
 
 class WeatherException(message: String) : Exception(message)

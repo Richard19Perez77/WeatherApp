@@ -27,25 +27,18 @@ fun WeatherAppNavHost(
     temperatureViewModel: TemperatureViewModel,
 ) {
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    val currentBackStackEntry = navController.currentBackStackEntry
-                    if (currentBackStackEntry?.destination?.route != Screen.Heart.route) {
-                        navController.navigate(Screen.Heart.route) {
-                            popUpTo(Screen.Heart.route) { inclusive = false }
-                        }
-                    }
-                }
-            ) {
-                Icon(Icons.Filled.Favorite, contentDescription = "Heart")
-            }
-        },
-        content = { padding ->
-            var modifier = Modifier.padding(padding)
-            NavHost(navController = navController, startDestination = Screen.Search.route) {
-                composable(Screen.Search.route) {
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Search.route
+    ) {
+
+        composable(Screen.Search.route) {
+            Scaffold(
+                floatingActionButton = {
+                    Fab(navController)
+                },
+                content = { padding ->
+                    var modifier = Modifier.padding(padding)
                     WeatherScreen(
                         modifier = modifier,
                         navController = navController,
@@ -56,18 +49,51 @@ fun WeatherAppNavHost(
                         weatherState = weatherViewModel.weatherState
                     )
                 }
-                composable(Screen.Temp.route) {
+            )
+        }
+
+        composable(Screen.Temp.route) {
+            Scaffold(
+                floatingActionButton = {
+                    Fab(navController)
+                },
+                content = { padding ->
+                    var modifier = Modifier.padding(padding)
                     TemperatureScreen(
                         modifier = modifier,
                         weatherState = weatherViewModel.weatherState
                     )
                 }
-                composable(Screen.Heart.route) {
+            )
+        }
+
+        composable(Screen.Heart.route) {
+            Scaffold(
+                content = { padding ->
+                    var modifier = Modifier.padding(padding)
                     HeartScreen(
+                        modifier = modifier,
                         getAllTemperatures = temperatureViewModel::getAllTemperatures
                     )
+
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun Fab(navController: NavHostController) {
+    FloatingActionButton(
+        onClick = {
+            val currentBackStackEntry = navController.currentBackStackEntry
+            if (currentBackStackEntry?.destination?.route != Screen.Heart.route) {
+                navController.navigate(Screen.Heart.route) {
+                    popUpTo(Screen.Heart.route) { inclusive = false }
                 }
             }
         }
-    )
+    ) {
+        Icon(Icons.Filled.Favorite, contentDescription = "Heart")
+    }
 }

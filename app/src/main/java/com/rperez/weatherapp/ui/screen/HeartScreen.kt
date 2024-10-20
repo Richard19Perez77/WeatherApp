@@ -19,6 +19,7 @@ import com.rperez.weatherapp.data.local.db.TemperatureEntity
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HeartScreen(
+    modifier : Modifier,
     getAllTemperatures: suspend () -> List<TemperatureEntity>
 ) {
     var allTemps = remember { mutableStateOf(emptyList<TemperatureEntity>()) }
@@ -44,7 +45,7 @@ fun HeartScreen(
         Text(text = error.value.toString())
     } else {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize()
         ) {
             LazyColumn(
                 modifier = Modifier

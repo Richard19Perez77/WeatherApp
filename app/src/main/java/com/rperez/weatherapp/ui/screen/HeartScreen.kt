@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
@@ -30,7 +31,7 @@ fun HeartScreen(
     LaunchedEffect(Unit) {
         try {
             loading.value = true
-            allTemps.value = getAllTemperatures().reversed()
+            allTemps.value = getAllTemperatures().sortedBy { item -> item.date }.reversed()
             loading.value = false
             localWeatherList.addAll(allTemps.value.filter { it.local })
         } catch (_: Exception) {
@@ -92,12 +93,8 @@ fun TemperatureItem(temperature: TemperatureEntity) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.End
             ) {
-                Text(
-                    text = temperature.city,
-                    style = MaterialTheme.typography.titleLarge
-                )
                 Text(
                     text = temperature.date,
                     style = MaterialTheme.typography.bodyLarge
@@ -113,8 +110,9 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    text = temperature.desc,
-                    style = MaterialTheme.typography.bodyLarge
+                    text = temperature.city,
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
             Row(
@@ -127,10 +125,17 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    text = "Air Pressure: ${temperature.pressure} hPa",
-                    style = MaterialTheme.typography.bodyLarge
+                    text = "${temperature.pressure} hPa",
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                text = temperature.desc,
+                style = MaterialTheme.typography.titleMedium
+            )
             if (alertList.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(8.dp),
@@ -180,18 +185,16 @@ fun getAlerts(temperature: TemperatureEntity): List<String> {
         temp.add("Humidity > 70%: Heat-related illnesses, severe discomfort, and heightened allergy or asthma problems and possible joint pains.")
     }
     if (temperature.pressure < 980) {
-        temp.add("Low Air Pressure (less than 980) threshold can vary by city but is associated with migraines, joint pain, respiratory issues (shortness of breath and asthma), sinus discomfort, altitude sickness and mood disturbances")
+        temp.add("Low Air Pressure (less than 980 hPa) threshold can vary by city but is associated with migraines, joint pain, respiratory issues (shortness of breath and asthma), sinus discomfort, altitude sickness and mood disturbances")
     }
     if (temperature.pressure > 1050) {
-        temp.add("High air pressure (more than 1050) threshold can cause health concerns including, barometric pressure headaches, sinus pressure and congestion, joint pain relief, and blood pressure and circulatory concerns.")
+        temp.add("High air pressure (more than 1050 hPa) threshold can cause health concerns including, barometric pressure headaches, sinus pressure and congestion, joint pain relief, and blood pressure and circulatory concerns.")
     }
 
     return temp
 }
 
 var rareFacts = """
-Facts about weather and personal health:
-
 Cold Weather Can Boost Brain Function
 
 Exposure to cold weather can improve cognitive function, as the body works harder to maintain core temperature, leading to increased alertness and focus. Studies suggest that people tend to think more clearly in cooler environments compared to very hot conditions.

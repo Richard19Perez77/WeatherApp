@@ -15,7 +15,7 @@ object MockTemperatureEntities {
                 pressure = 1013,
             ),
             TemperatureEntity(
-                date = "2024-10-01",
+                date = "2024-10-02",
                 city = "HealthyCity",
                 desc = "Clear Skies",
                 temperature = 22.0,
@@ -24,7 +24,7 @@ object MockTemperatureEntities {
                 pressure = 1013,
             ),
             TemperatureEntity(
-                date = "2024-10-01",
+                date = "2023-11-03",
                 city = "ColdCity",
                 desc = "Very Cold",
                 temperature = -5.0,
@@ -33,7 +33,7 @@ object MockTemperatureEntities {
                 pressure = 1000
             ),
             TemperatureEntity(
-                date = "2024-10-02",
+                date = "2021-12-02",
                 city = "ModerateCity",
                 desc = "Chilly with low humidity",
                 temperature = 8.0,

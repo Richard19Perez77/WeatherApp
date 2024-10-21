@@ -4,10 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.navigation.compose.rememberNavController
 import com.rperez.weatherapp.navigation.WeatherAppNavHost
 import com.rperez.weatherapp.ui.theme.WeatherAppTheme
-import com.rperez.weatherapp.viewmodel.TemperatureViewModel
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -15,7 +13,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * Future implementations: help people be aware of problems in weather's effect on them.
  *
  * may need to alter the air pressure by city zip code for normal values or expected unhealthy values
- * what temperatures are most important in list, newest first
  * trend graphs at all or a simple line graph per city, based on previous day small line trend with markers for temps
  * most likely move the view model int the composables and nav controller
  * defensive programming for api client successive calls
@@ -25,7 +22,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : ComponentActivity() {
 
     private val weatherViewModel: WeatherViewModel by viewModel()
-    private val temperatureViewModel: TemperatureViewModel by viewModel()
 
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->

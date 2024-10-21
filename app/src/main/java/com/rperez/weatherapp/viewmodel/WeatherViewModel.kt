@@ -104,7 +104,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     fun getWeather(cityName: String) {
         if (cityName.isNotEmpty()) {
             viewModelScope.launch {
-                _weatherState.value = WeatherState.Loading
+                _weatherState.value = Loading
                 val result = repository.getWeatherByCityData(cityName)
                 result.onSuccess {
                     _weatherState.value = CitySuccess(result.getOrNull())

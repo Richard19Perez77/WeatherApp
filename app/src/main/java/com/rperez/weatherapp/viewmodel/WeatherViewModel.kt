@@ -21,6 +21,7 @@ import com.rperez.weatherapp.network.model.WeatherState.CitySuccess
 import com.rperez.weatherapp.network.model.WeatherState.Failure
 import com.rperez.weatherapp.network.model.WeatherState.Loading
 import com.rperez.weatherapp.network.model.WeatherState.LocalSuccess
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -101,9 +102,14 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         _cityName.value = cityName
     }
 
+    private var currentJob: Job? = null
+
     fun getWeather(cityName: String) {
         if (cityName.isNotEmpty()) {
-            viewModelScope.launch {
+
+            currentJob?.cancel()
+
+            currentJob = viewModelScope.launch {
                 _weatherState.value = Loading
                 val result = repository.getWeatherByCityData(cityName)
                 result.onSuccess {
@@ -123,7 +129,10 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
      */
     fun getLocalWeather(context: Context) {
         if (::coords.isInitialized) {
-            viewModelScope.launch {
+
+            currentJob?.cancel()
+
+            currentJob = viewModelScope.launch {
                 _weatherState.value = WeatherState.Loading
                 val result = repository.getWeatherGeoData(coords.first, coords.second)
                 result.onSuccess {
@@ -156,5 +165,10 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
 
     fun setRequestLocationPermissionLauncher(launcher: ActivityResultLauncher<String>) {
         this.launcher = launcher
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        currentJob?.cancel()
     }
 }

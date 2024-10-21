@@ -14,9 +14,6 @@
       <SelectionState runConfigName="Tests in 'com.rperez.weatherapp.layout'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testDefaultTokyoIsShown()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="InternetNotAvailableUITest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>

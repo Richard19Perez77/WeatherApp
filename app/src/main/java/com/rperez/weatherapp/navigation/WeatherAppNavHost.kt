@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -31,12 +32,14 @@ fun WeatherAppNavHost(
     temperatureViewModel: TemperatureViewModel,
 ) {
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     LaunchedEffect(Unit) {
-        temperatureViewModel.deleteAllTemperatures()
+        // temperatureViewModel.deleteAllTemperatures()
         temperatureViewModel.insertMockTemperatures()
 
         weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
-        weatherViewModel.setupWeatherObserver(temperatureViewModel)
+        weatherViewModel.setupWeatherObserver(temperatureViewModel, lifecycleOwner = lifecycleOwner)
         weatherViewModel.setCityName(savedCity)
         weatherViewModel.getWeather(savedCity)
     }

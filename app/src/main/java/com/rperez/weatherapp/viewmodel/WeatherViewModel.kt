@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,9 +18,11 @@ import com.rperez.weatherapp.repository.WeatherRepository
 import com.rperez.weatherapp.service.LocationService
 import com.rperez.weatherapp.viewmodel.WeatherState.CitySuccess
 import com.rperez.weatherapp.viewmodel.WeatherState.Failure
+import com.rperez.weatherapp.viewmodel.WeatherState.Loading
 import com.rperez.weatherapp.viewmodel.WeatherState.LocalSuccess
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 /**
@@ -37,9 +40,10 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
 
     lateinit var coords: Pair<Double, Double>
 
-    fun setupWeatherObserver(temperatureViewModel: TemperatureViewModel) {
-        weatherState.observeForever { observer ->
-            var data = "${LocalDate.now()}"
+    fun setupWeatherObserver(temperatureViewModel: TemperatureViewModel, lifecycleOwner : LifecycleOwner) {
+        weatherState.observe(lifecycleOwner) { observer ->
+            val data = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
             when (weatherState.value) {
                 is CitySuccess -> {
                     var item = (weatherState.value as CitySuccess)
@@ -81,12 +85,11 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                     }
                 }
 
-                is WeatherState.Failure -> {}
-                is WeatherState.Loading -> {}
+                is Failure -> {}
+                is Loading -> {}
                 null -> {}
             }
         }
-
     }
 
     fun getCityName(): State<String> {

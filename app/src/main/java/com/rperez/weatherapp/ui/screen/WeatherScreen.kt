@@ -25,7 +25,7 @@ import com.rperez.weatherapp.navigation.Screen
 import com.rperez.weatherapp.network.ConnectivityManager
 import com.rperez.weatherapp.ui.components.WeatherStateSuccess
 import com.rperez.weatherapp.ui.components.WeatherStateSuccessLandscape
-import com.rperez.weatherapp.viewmodel.WeatherState
+import com.rperez.weatherapp.network.model.WeatherState
 
 @Composable
 fun WeatherScreen(

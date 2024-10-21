@@ -13,13 +13,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import com.rperez.weatherapp.network.model.WeatherResponse
+import com.rperez.weatherapp.network.model.WeatherState
 import com.rperez.weatherapp.repository.WeatherException
 import com.rperez.weatherapp.repository.WeatherRepository
 import com.rperez.weatherapp.service.LocationService
-import com.rperez.weatherapp.viewmodel.WeatherState.CitySuccess
-import com.rperez.weatherapp.viewmodel.WeatherState.Failure
-import com.rperez.weatherapp.viewmodel.WeatherState.Loading
-import com.rperez.weatherapp.viewmodel.WeatherState.LocalSuccess
+import com.rperez.weatherapp.network.model.WeatherState.CitySuccess
+import com.rperez.weatherapp.network.model.WeatherState.Failure
+import com.rperez.weatherapp.network.model.WeatherState.Loading
+import com.rperez.weatherapp.network.model.WeatherState.LocalSuccess
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -156,14 +157,4 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     fun setRequestLocationPermissionLauncher(launcher: ActivityResultLauncher<String>) {
         this.launcher = launcher
     }
-}
-
-/**
- * State of calls to be reflected in UI
- */
-sealed class WeatherState {
-    data class CitySuccess(val data: WeatherResponse?) : WeatherState()
-    data class LocalSuccess(val data: WeatherResponse?) : WeatherState()
-    data class Failure(val data: WeatherException?) : WeatherState()
-    object Loading : WeatherState()
 }

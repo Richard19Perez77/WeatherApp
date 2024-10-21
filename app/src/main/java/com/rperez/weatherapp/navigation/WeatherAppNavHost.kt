@@ -14,6 +14,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.rperez.weatherapp.ui.screen.HeartScreen
 import com.rperez.weatherapp.ui.screen.TemperatureScreen
 import com.rperez.weatherapp.ui.screen.WeatherScreen
@@ -30,7 +31,7 @@ fun WeatherAppNavHost(
     temperatureViewModel: TemperatureViewModel = koinViewModel(),
     savedCity: String,
     requestLocationPermissionLauncher: ActivityResultLauncher<String>,
-    navController: NavHostController,
+    navController: NavHostController = rememberNavController(),
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current

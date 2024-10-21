@@ -17,7 +17,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
-import com.rperez.weatherapp.viewmodel.WeatherState
+import com.rperez.weatherapp.network.model.WeatherState
 import kotlin.math.min
 
 /**

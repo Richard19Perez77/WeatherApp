@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.rperez.weatherapp.ui.screen.WeatherIcon
-import com.rperez.weatherapp.viewmodel.WeatherState
+import com.rperez.weatherapp.network.model.WeatherState
 import java.util.Locale
 
 /**

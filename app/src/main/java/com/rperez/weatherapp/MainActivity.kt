@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                weatherViewModel.getLocalWeather(this)
+                weatherViewModel.getLocalWeather(context = this.applicationContext)
             }
         }
 

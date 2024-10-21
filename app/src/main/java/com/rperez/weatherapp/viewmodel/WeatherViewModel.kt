@@ -12,15 +12,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
-import com.rperez.weatherapp.network.model.WeatherResponse
 import com.rperez.weatherapp.network.model.WeatherState
-import com.rperez.weatherapp.repository.WeatherException
-import com.rperez.weatherapp.repository.WeatherRepository
-import com.rperez.weatherapp.service.LocationService
 import com.rperez.weatherapp.network.model.WeatherState.CitySuccess
 import com.rperez.weatherapp.network.model.WeatherState.Failure
 import com.rperez.weatherapp.network.model.WeatherState.Loading
 import com.rperez.weatherapp.network.model.WeatherState.LocalSuccess
+import com.rperez.weatherapp.repository.WeatherException
+import com.rperez.weatherapp.repository.WeatherRepository
+import com.rperez.weatherapp.service.LocationService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -42,7 +41,10 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
 
     lateinit var coords: Pair<Double, Double>
 
-    fun setupWeatherObserver(insertTemperature: (TemperatureEntity) -> Unit, lifecycleOwner : LifecycleOwner) {
+    fun setupWeatherObserver(
+        insertTemperature: (TemperatureEntity) -> Unit,
+        lifecycleOwner: LifecycleOwner
+    ) {
         weatherState.observe(lifecycleOwner) { observer ->
             val data = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
@@ -107,18 +109,24 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     fun getWeather(cityName: String) {
         if (cityName.isNotEmpty()) {
 
-            currentJob?.cancel()
+            currentJob.let {
+                it?.cancel()
+            }
 
-            currentJob = viewModelScope.launch {
-                _weatherState.value = Loading
-                val result = repository.getWeatherByCityData(cityName)
-                result.onSuccess {
-                    _weatherState.value = CitySuccess(result.getOrNull())
-                    _cityName.value = (_weatherState.value as CitySuccess).data?.name ?: ""
+            try {
+                currentJob = viewModelScope.launch {
+                    _weatherState.value = Loading
+                    val result = repository.getWeatherByCityData(cityName)
+                    result.onSuccess {
+                        _weatherState.value = CitySuccess(result.getOrNull())
+                        _cityName.value = (_weatherState.value as CitySuccess).data?.name ?: ""
+                    }
+                    result.onFailure {
+                        _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
+                    }
                 }
-                result.onFailure {
-                    _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
-                }
+            } finally {
+                currentJob = null
             }
         }
     }
@@ -130,24 +138,30 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     fun getLocalWeather(context: Context) {
         if (::coords.isInitialized) {
 
-            currentJob?.cancel()
+            currentJob.let {
+                it?.cancel()
+            }
 
-            currentJob = viewModelScope.launch {
-                _weatherState.value = WeatherState.Loading
-                val result = repository.getWeatherGeoData(coords.first, coords.second)
-                result.onSuccess {
-                    _weatherState.value = LocalSuccess(result.getOrNull())
-                    _cityName.value = (_weatherState.value as LocalSuccess).data?.name ?: ""
+            try {
+                currentJob = viewModelScope.launch {
+                    _weatherState.value = Loading
+                    val result = repository.getWeatherGeoData(coords.first, coords.second)
+                    result.onSuccess {
+                        _weatherState.value = LocalSuccess(result.getOrNull())
+                        _cityName.value = (_weatherState.value as LocalSuccess).data?.name ?: ""
+                    }
+                    result.onFailure {
+                        _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
+                    }
                 }
-                result.onFailure {
-                    _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
-                }
+            } finally {
+                currentJob = null
             }
         } else {
             LocationService(context, launcher).getLatLon(
                 onLocationReceived = { lat, lon ->
                     coords = Pair(lat, lon)
-                    getLocalWeather(context)
+                    getLocalWeather(context.applicationContext)
                 },
                 onPermissionRequired = {
                     AlertDialog.Builder(context)

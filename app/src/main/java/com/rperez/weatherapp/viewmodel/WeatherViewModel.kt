@@ -40,7 +40,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
 
     lateinit var coords: Pair<Double, Double>
 
-    fun setupWeatherObserver(temperatureViewModel: TemperatureViewModel, lifecycleOwner : LifecycleOwner) {
+    fun setupWeatherObserver(insertTemperature: (TemperatureEntity) -> Unit, lifecycleOwner : LifecycleOwner) {
         weatherState.observe(lifecycleOwner) { observer ->
             val data = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
@@ -60,7 +60,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                                 humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
                                 pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
                             )
-                            temperatureViewModel.insertTemperature(temperatureEntity)
+                            insertTemperature.invoke(temperatureEntity)
                         }
                     }
                 }
@@ -80,7 +80,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                                 humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
                                 pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
                             )
-                            temperatureViewModel.insertTemperature(temperatureEntity)
+                            insertTemperature.invoke(temperatureEntity)
                         }
                     }
                 }

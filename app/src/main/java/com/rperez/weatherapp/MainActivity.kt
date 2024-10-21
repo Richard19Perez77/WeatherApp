@@ -44,9 +44,7 @@ class MainActivity : ComponentActivity() {
                 WeatherAppNavHost(
                     savedCity = savedCity,
                     requestLocationPermissionLauncher = requestLocationPermissionLauncher,
-                    navController = rememberNavController(),
-                    weatherViewModel = weatherViewModel,
-                    temperatureViewModel = temperatureViewModel,
+                    navController = rememberNavController()
                 )
             }
         }

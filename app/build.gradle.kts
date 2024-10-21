@@ -63,6 +63,8 @@ dependencies {
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.io.insert.koin.koin.android)
     implementation(libs.koin.core)
+    implementation("io.insert-koin:koin-compose:4.0.0")
+    implementation("io.insert-koin:koin-androidx-compose:4.0.0")
     implementation(libs.coil.compose)
     implementation(libs.coil)
     implementation(libs.androidx.runtime)

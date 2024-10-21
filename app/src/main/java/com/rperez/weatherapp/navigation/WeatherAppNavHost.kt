@@ -19,17 +19,18 @@ import com.rperez.weatherapp.ui.screen.TemperatureScreen
 import com.rperez.weatherapp.ui.screen.WeatherScreen
 import com.rperez.weatherapp.viewmodel.TemperatureViewModel
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
+import org.koin.androidx.compose.koinViewModel
 
 /**
  *  Holds NavHost and sends screens data from the view model
  */
 @Composable
 fun WeatherAppNavHost(
+    weatherViewModel: WeatherViewModel = koinViewModel(),
+    temperatureViewModel: TemperatureViewModel = koinViewModel(),
     savedCity: String,
     requestLocationPermissionLauncher: ActivityResultLauncher<String>,
     navController: NavHostController,
-    weatherViewModel: WeatherViewModel,
-    temperatureViewModel: TemperatureViewModel,
 ) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -39,7 +40,7 @@ fun WeatherAppNavHost(
         temperatureViewModel.insertMockTemperatures()
 
         weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
-        weatherViewModel.setupWeatherObserver(temperatureViewModel, lifecycleOwner = lifecycleOwner)
+        weatherViewModel.setupWeatherObserver(temperatureViewModel::insertTemperature, lifecycleOwner = lifecycleOwner)
         weatherViewModel.setCityName(savedCity)
         weatherViewModel.getWeather(savedCity)
     }

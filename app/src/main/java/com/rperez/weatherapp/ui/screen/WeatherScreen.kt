@@ -85,8 +85,8 @@ fun WeatherButtons(
             )
             WeatherButton(
                 onClick = { getLocalWeather(context) },
-                tag = "search_local_button",
-                text = "Search Local Weather",
+                tag = "get_local_button",
+                text = "Get Your Local Weather",
                 description = "Search weather for local Weather by Geo-coords"
             )
         }

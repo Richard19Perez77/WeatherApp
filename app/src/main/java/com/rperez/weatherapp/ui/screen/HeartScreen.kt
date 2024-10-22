@@ -20,6 +20,9 @@ import androidx.compose.ui.unit.dp
 import com.rperez.weatherapp.R
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 
+/**
+ * Screen to show the entries saved with more detail, won't focus on telemetrics of weather but the weather's adverse health effects.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HeartScreen(

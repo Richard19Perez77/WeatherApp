@@ -2,6 +2,9 @@ package com.rperez.weatherapp.data.local.mock
 
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 
+/**
+ * As development and testing continues use mock enttities to test ui. Using mock here helps keep the device in a demo'able shape.
+ */
 object MockTemperatureEntities {
     fun getMockTemperatureEntities(): List<TemperatureEntity> {
         return listOf(

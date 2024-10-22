@@ -5,6 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
+/**
+ * Room DB to hold the daily values.
+ */
 @Database(entities = [TemperatureEntity::class], version = 1)
 abstract class TemperatureDatabase : RoomDatabase() {
     abstract fun temperatureDao(): TemperatureDao

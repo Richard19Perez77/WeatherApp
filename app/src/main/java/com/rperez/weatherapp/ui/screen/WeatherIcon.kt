@@ -13,6 +13,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 
+/**
+ * Simple icon for URL
+ */
 @Composable
 fun WeatherIcon(iconUrl: String?) {
     val painter = rememberAsyncImagePainter(

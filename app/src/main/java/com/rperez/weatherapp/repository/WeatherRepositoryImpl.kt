@@ -7,6 +7,9 @@ import com.rperez.weatherapp.network.model.WeatherResponse
 import retrofit2.Call
 import retrofit2.HttpException
 
+/**
+ * Throw in case of Failure, will need to add more testing for fail states.
+ */
 class WeatherException(message: String) : Exception(message)
 
 /**
@@ -19,6 +22,9 @@ class WeatherRepositoryImpl : WeatherRepository {
     private val weatherService: WeatherService =
         ApiClient.retrofit.create(WeatherService::class.java)
 
+    /**
+     * Call for data by city from text field.
+     */
     override suspend fun getWeatherByCityData(
         cityName: String
     ): Result<WeatherResponse> {
@@ -32,6 +38,9 @@ class WeatherRepositoryImpl : WeatherRepository {
         }
     }
 
+    /**
+     * Get weather by lat and long coords, will need permissions granted for this to work.
+     */
     override suspend fun getWeatherGeoData(
         lat: Double,
         lon: Double

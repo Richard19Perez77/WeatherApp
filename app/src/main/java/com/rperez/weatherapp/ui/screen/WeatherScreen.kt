@@ -29,6 +29,9 @@ import com.rperez.weatherapp.network.model.WeatherState
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
+/**
+ * Shows the UI for current weather, from coords or city entry. Will overwrite city with full name on successful call and show data on screen for the day.
+ */
 @Composable
 fun WeatherScreen(
     modifier: Modifier,

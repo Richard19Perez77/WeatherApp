@@ -4,6 +4,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.content.Context
 
+/**
+ * Connectivity manager won't be used constantly just on local weather calls.
+ */
 object ConnectivityManager {
 
     fun isInternetAvailable(context: Context): Boolean {

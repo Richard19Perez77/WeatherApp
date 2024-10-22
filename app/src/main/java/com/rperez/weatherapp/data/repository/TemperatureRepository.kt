@@ -3,6 +3,9 @@ package com.rperez.weatherapp.data.repository
 import com.rperez.weatherapp.data.local.db.TemperatureDao
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 
+/**
+ * Will be injected into app module for usage in the TemperatureViewModel.
+ */
 class TemperatureRepository(private val temperatureDao: TemperatureDao) {
 
     suspend fun insertTemperature(temperature: TemperatureEntity) {

@@ -21,8 +21,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  */
 class MainActivity : ComponentActivity() {
 
+    /**
+     * Use for shared pref's handling for city name field.
+     */
     private val weatherViewModel: WeatherViewModel by viewModel()
 
+    /**
+     * Allow for callback on accepting permissions for location. Will not allow user to permanently disable asking.
+     */
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {

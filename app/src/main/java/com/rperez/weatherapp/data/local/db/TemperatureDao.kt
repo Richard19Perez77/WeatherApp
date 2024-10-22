@@ -5,6 +5,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
+/**
+ * Allow DB transactions and replace new entries with same data.
+ */
 @Dao
 interface TemperatureDao {
 

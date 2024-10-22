@@ -16,7 +16,7 @@ import com.rperez.weatherapp.network.model.WeatherState
 import java.util.Locale
 
 /**
- * UI Composable for Successful update of city weather call
+ * UI Composable for Successful update of city weather call and in landscape view.
  */
 @Composable
 fun WeatherStateSuccessLandscape(

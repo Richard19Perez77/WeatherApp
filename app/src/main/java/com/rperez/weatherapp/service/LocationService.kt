@@ -10,6 +10,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
 
+/**
+ * Location service to get coords for local weather, will be getting coords or callback to activity and perform call after accepting permissions.
+ */
 class LocationService(private val context: Context, private val launcher: ActivityResultLauncher<String>) {
 
     fun getLatLon(onLocationReceived: (Double, Double) -> Unit, onPermissionRequired: () -> Unit) {

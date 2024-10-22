@@ -142,23 +142,7 @@ fun WeatherDataDisplay(
         verticalArrangement = Arrangement.Center
     ) {
         when (weatherData) {
-            is WeatherState.CitySuccess -> {
-                if (isLandscape) {
-                    WeatherStateSuccessLandscape(
-                        weatherData.data?.main?.temp,
-                        weatherData.data?.weather?.firstOrNull()?.description,
-                        weatherData.data?.weather?.firstOrNull()?.icon,
-                    )
-                } else {
-                    WeatherStateSuccess(
-                        weatherData.data?.main?.temp,
-                        weatherData.data?.weather?.firstOrNull()?.description,
-                        weatherData.data?.weather?.firstOrNull()?.icon,
-                    )
-                }
-            }
-
-            is WeatherState.LocalSuccess -> {
+            is WeatherState.Success -> {
                 if (isLandscape) {
                     WeatherStateSuccessLandscape(
                         weatherData.data?.main?.temp,

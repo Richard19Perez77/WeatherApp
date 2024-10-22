@@ -10,10 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import com.rperez.weatherapp.network.model.WeatherState
-import com.rperez.weatherapp.network.model.WeatherState.CitySuccess
 import com.rperez.weatherapp.network.model.WeatherState.Failure
 import com.rperez.weatherapp.network.model.WeatherState.Loading
-import com.rperez.weatherapp.network.model.WeatherState.LocalSuccess
+import com.rperez.weatherapp.network.model.WeatherState.Success
 import com.rperez.weatherapp.repository.WeatherException
 import com.rperez.weatherapp.repository.WeatherRepository
 import com.rperez.weatherapp.service.LocationService
@@ -53,46 +52,31 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
      */
     lateinit var coords: Pair<Double, Double>
 
+    /**
+     * Allow for observer to write to room for later usage.
+     */
     fun setupWeatherObserver(
         insertTemperature: (TemperatureEntity) -> Unit,
     ) {
         viewModelScope.launch {
-            weatherState.collectLatest { observer ->
+            weatherState.collectLatest { weather ->
                 val data = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-                when (observer) {
-                    is CitySuccess -> {
-                        observer.data?.main?.temp?.toDouble()?.let {
+                when (weather) {
+                    is Success -> {
+                        weather.data?.main?.temp?.toDouble()?.let {
                             val temperatureEntity = TemperatureEntity(
                                 date = data,
                                 temperature = it,
                                 local = false,
-                                city = observer.data.name,
-                                desc = observer.data.weather.firstOrNull()?.description
+                                city = weather.data.name,
+                                desc = weather.data.weather.firstOrNull()?.description
                                     ?.replaceFirstChar { it.uppercase(Locale.ROOT) } ?: "",
-                                humidity = observer.data.main.humidity,
-                                pressure = observer.data.main.pressure,
+                                humidity = weather.data.main.humidity,
+                                pressure = weather.data.main.pressure,
                             )
                             insertTemperature.invoke(temperatureEntity)
                         }
                     }
-
-                    is LocalSuccess -> {
-                        observer.data?.main?.temp?.toDouble()?.let {
-                            val temperatureEntity = TemperatureEntity(
-                                date = data,
-                                temperature = it,
-                                local = true,
-                                city = observer.data.name,
-                                desc = observer.data.weather.firstOrNull()?.description
-                                    ?.replaceFirstChar { it.uppercase(Locale.ROOT) } ?: "",
-                                humidity = observer.data.main.humidity,
-                                pressure = observer.data.main.pressure,
-                            )
-                            insertTemperature.invoke(temperatureEntity)
-                        }
-                    }
-
                     is Failure -> {}
                     is Loading -> {}
                 }
@@ -125,8 +109,8 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                     _weatherState.value = Loading
                     val result = repository.getWeatherByCityData(cityName)
                     result.onSuccess {
-                        _weatherState.value = CitySuccess(result.getOrNull())
-                        _cityName.value = (_weatherState.value as CitySuccess).data?.name ?: ""
+                        _weatherState.value = Success(result.getOrNull())
+                        _cityName.value = (_weatherState.value as Success).data?.name ?: ""
                     }
                     result.onFailure {
                         _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
@@ -154,8 +138,8 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                     _weatherState.value = Loading
                     val result = repository.getWeatherGeoData(coords.first, coords.second)
                     result.onSuccess {
-                        _weatherState.value = LocalSuccess(result.getOrNull())
-                        _cityName.value = (_weatherState.value as LocalSuccess).data?.name ?: ""
+                        _weatherState.value = Success(result.getOrNull())
+                        _cityName.value = (_weatherState.value as Success).data?.name ?: ""
                     }
                     result.onFailure {
                         _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)

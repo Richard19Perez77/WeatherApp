@@ -31,21 +31,18 @@ fun TemperatureScreen(
 ) {
     var weatherData = remember { mutableStateOf<WeatherState?>(weatherState.value) }
     var temp = ""
-    when (weatherData.value) {
-        is WeatherState.CitySuccess -> {
-            temp = (weatherData.value as WeatherState.CitySuccess).data?.main?.temp?.toString() ?: "N/A"
-        }
-        is WeatherState.LocalSuccess -> {
-            temp = (weatherData.value as WeatherState.LocalSuccess).data?.main?.temp?.toString() ?: "N/A"
+    temp = when (weatherData.value) {
+        is WeatherState.Success -> {
+            (weatherData.value as WeatherState.Success).data?.main?.temp?.toString() ?: "N/A"
         }
         is WeatherState.Failure -> {
-            temp = "N/A"
+            "N/A"
         }
         WeatherState.Loading -> {
-            temp = "N/A"
+            "N/A"
         }
         null -> {
-            temp = "N/A"
+            "N/A"
         }
     }
 

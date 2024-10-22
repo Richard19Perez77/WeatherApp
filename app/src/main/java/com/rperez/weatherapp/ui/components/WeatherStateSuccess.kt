@@ -8,46 +8,16 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.rperez.weatherapp.ui.screen.WeatherIcon
-import com.rperez.weatherapp.network.model.WeatherState
-import java.util.Locale
 
 /**
  * UI Composable for Successful update of city weather call
  */
 @Composable
-fun WeatherStateSuccess(weatherData: WeatherState?) {
-    var temp: Double? = null
-    var desc: String? = null
-    var icon: String? = null
-    when (weatherData) {
-        is WeatherState.CitySuccess -> {
-            temp = weatherData.data?.main?.temp?.toDouble()
-            desc = weatherData.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-                it.uppercase(Locale.ROOT)
-            }.toString()
-            icon = weatherData.data?.weather[0]?.icon
-        }
-
-        is WeatherState.LocalSuccess -> {
-            temp = weatherData.data?.main?.temp?.toDouble()
-            desc = weatherData.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-                it.uppercase(Locale.ROOT)
-            }.toString()
-            icon = weatherData.data?.weather[0]?.icon
-        }
-
-        is WeatherState.Failure -> {
-            null
-        }
-
-        is WeatherState.Loading -> {
-            null
-        }
-
-        null -> {
-            null
-        }
-    }
+fun WeatherStateSuccess(
+    temp: Double?,
+    desc: String?,
+    icon: String?,
+) {
     Text(
         modifier = Modifier
             .semantics {

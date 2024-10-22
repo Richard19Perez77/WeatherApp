@@ -8,9 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -19,13 +20,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import com.rperez.weatherapp.navigation.Screen
 import com.rperez.weatherapp.network.ConnectivityManager
 import com.rperez.weatherapp.ui.components.WeatherStateSuccess
 import com.rperez.weatherapp.ui.components.WeatherStateSuccessLandscape
 import com.rperez.weatherapp.network.model.WeatherState
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun WeatherScreen(
@@ -35,11 +37,17 @@ fun WeatherScreen(
     getWeather: (String) -> Unit,
     getLocalWeather: (Context) -> Unit,
     cityName: State<String>,
-    weatherState: LiveData<WeatherState>
+    weatherState: StateFlow<WeatherState>,
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val weatherData by weatherState.observeAsState()
+    var weatherData = remember { mutableStateOf<WeatherState?>(weatherState.value) }
+
+    LaunchedEffect(weatherState) {
+        weatherState.collectLatest { state ->
+            weatherData.value = state
+        }
+    }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -58,8 +66,7 @@ fun WeatherScreen(
         WeatherButtons(isLandscape, cityName.value, getWeather, getLocalWeather)
     }
 
-    WeatherDataDisplay(weatherData, isLandscape)
-
+    WeatherDataDisplay(weatherData.value, isLandscape)
     BottomNavigationButton(navController)
 }
 
@@ -120,7 +127,10 @@ fun WeatherButton(onClick: () -> Unit, tag: String, text: String, description: S
 }
 
 @Composable
-fun WeatherDataDisplay(weatherData: WeatherState?, isLandscape: Boolean) {
+fun WeatherDataDisplay(
+    weatherData: WeatherState?,
+    isLandscape: Boolean
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -131,17 +141,33 @@ fun WeatherDataDisplay(weatherData: WeatherState?, isLandscape: Boolean) {
         when (weatherData) {
             is WeatherState.CitySuccess -> {
                 if (isLandscape) {
-                    WeatherStateSuccessLandscape(weatherData)
+                    WeatherStateSuccessLandscape(
+                        weatherData.data?.main?.temp,
+                        weatherData.data?.weather?.firstOrNull()?.description,
+                        weatherData.data?.weather?.firstOrNull()?.icon,
+                    )
                 } else {
-                    WeatherStateSuccess(weatherData)
+                    WeatherStateSuccess(
+                        weatherData.data?.main?.temp,
+                        weatherData.data?.weather?.firstOrNull()?.description,
+                        weatherData.data?.weather?.firstOrNull()?.icon,
+                    )
                 }
             }
 
             is WeatherState.LocalSuccess -> {
                 if (isLandscape) {
-                    WeatherStateSuccessLandscape(weatherData)
+                    WeatherStateSuccessLandscape(
+                        weatherData.data?.main?.temp,
+                        weatherData.data?.weather?.firstOrNull()?.description,
+                        weatherData.data?.weather?.firstOrNull()?.icon,
+                    )
                 } else {
-                    WeatherStateSuccess(weatherData)
+                    WeatherStateSuccess(
+                        weatherData.data?.main?.temp,
+                        weatherData.data?.weather?.firstOrNull()?.description,
+                        weatherData.data?.weather?.firstOrNull()?.icon,
+                    )
                 }
             }
 

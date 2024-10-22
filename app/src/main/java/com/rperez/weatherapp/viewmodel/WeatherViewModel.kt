@@ -6,9 +6,6 @@ import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
@@ -21,6 +18,9 @@ import com.rperez.weatherapp.repository.WeatherException
 import com.rperez.weatherapp.repository.WeatherRepository
 import com.rperez.weatherapp.service.LocationService
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -36,62 +36,54 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     private val _cityName = mutableStateOf("")
     val cityName = _cityName
 
-    private val _weatherState = MutableLiveData<WeatherState>()
-    val weatherState: LiveData<WeatherState> = _weatherState
+    private val _weatherState = MutableStateFlow<WeatherState>(Loading)
+    val weatherState: StateFlow<WeatherState> = _weatherState
 
     lateinit var coords: Pair<Double, Double>
 
     fun setupWeatherObserver(
         insertTemperature: (TemperatureEntity) -> Unit,
-        lifecycleOwner: LifecycleOwner
     ) {
-        weatherState.observe(lifecycleOwner) { observer ->
-            val data = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        viewModelScope.launch {
+            weatherState.collectLatest { observer ->
+                val data = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
-            when (weatherState.value) {
-                is CitySuccess -> {
-                    var item = (weatherState.value as CitySuccess)
-                    item.data?.main?.temp?.toDouble().let {
-                        if (it != null) {
-                            var temperatureEntity = TemperatureEntity(
+                when (observer) {
+                    is CitySuccess -> {
+                        observer.data?.main?.temp?.toDouble()?.let {
+                            val temperatureEntity = TemperatureEntity(
                                 date = data,
                                 temperature = it,
                                 local = false,
-                                city = item.data?.name ?: "",
-                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-                                    it.uppercase(Locale.ROOT)
-                                }.toString(),
-                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
-                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
+                                city = observer.data.name,
+                                desc = observer.data.weather.firstOrNull()?.description
+                                    ?.replaceFirstChar { it.uppercase(Locale.ROOT) } ?: "",
+                                humidity = observer.data.main.humidity,
+                                pressure = observer.data.main.pressure,
                             )
                             insertTemperature.invoke(temperatureEntity)
                         }
                     }
-                }
 
-                is LocalSuccess -> {
-                    var item = (weatherState.value as LocalSuccess)
-                    item.data?.main?.temp?.toDouble().let {
-                        if (it != null) {
-                            var temperatureEntity = TemperatureEntity(
+                    is LocalSuccess -> {
+                        observer.data?.main?.temp?.toDouble()?.let {
+                            val temperatureEntity = TemperatureEntity(
                                 date = data,
                                 temperature = it,
                                 local = true,
-                                city = item.data?.name ?: "",
-                                desc = item.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-                                    it.uppercase(Locale.ROOT)
-                                }.toString(),
-                                humidity = item.data?.main?.humidity ?: Int.MIN_VALUE,
-                                pressure = item.data?.main?.pressure ?: Int.MIN_VALUE,
+                                city = observer.data.name,
+                                desc = observer.data.weather.firstOrNull()?.description
+                                    ?.replaceFirstChar { it.uppercase(Locale.ROOT) } ?: "",
+                                humidity = observer.data.main.humidity,
+                                pressure = observer.data.main.pressure,
                             )
                             insertTemperature.invoke(temperatureEntity)
                         }
                     }
-                }
 
-                is Failure -> {}
-                is Loading -> {}
-                null -> {}
+                    is Failure -> {}
+                    is Loading -> {}
+                }
             }
         }
     }

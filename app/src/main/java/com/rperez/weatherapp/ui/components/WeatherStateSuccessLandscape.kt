@@ -19,45 +19,16 @@ import java.util.Locale
  * UI Composable for Successful update of city weather call
  */
 @Composable
-fun WeatherStateSuccessLandscape(weatherData: WeatherState?) {
+fun WeatherStateSuccessLandscape(
+    temp: Double? = null,
+    desc: String? = null,
+    icon: String? = null,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        var temp: Double? = null
-        var desc: String? = null
-        var icon: String? = null
-        when (weatherData) {
-            is WeatherState.CitySuccess -> {
-                temp = weatherData.data?.main?.temp?.toDouble()
-                desc = weatherData.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-                    it.uppercase(Locale.ROOT)
-                }.toString()
-                icon = weatherData.data?.weather[0]?.icon
-            }
-
-            is WeatherState.LocalSuccess -> {
-                temp = weatherData.data?.main?.temp?.toDouble()
-                desc = weatherData.data?.weather?.firstOrNull()?.description?.replaceFirstChar {
-                    it.uppercase(Locale.ROOT)
-                }.toString()
-                icon = weatherData.data?.weather[0]?.icon
-            }
-
-            is WeatherState.Failure -> {
-                null
-            }
-
-            is WeatherState.Loading -> {
-                null
-            }
-
-            null -> {
-                null
-            }
-        }
-
         Text(
             modifier = Modifier
                 .testTag("temp_text")

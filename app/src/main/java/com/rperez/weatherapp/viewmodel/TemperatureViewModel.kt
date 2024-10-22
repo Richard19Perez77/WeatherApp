@@ -7,6 +7,9 @@ import com.rperez.weatherapp.data.local.mock.MockTemperatureEntities
 import com.rperez.weatherapp.data.repository.TemperatureRepository
 import kotlinx.coroutines.launch
 
+/**
+ * View model for temperature using the temperature repository.
+ */
 class TemperatureViewModel(private val repository: TemperatureRepository) : ViewModel() {
 
     fun insertTemperature(temperature: TemperatureEntity) {

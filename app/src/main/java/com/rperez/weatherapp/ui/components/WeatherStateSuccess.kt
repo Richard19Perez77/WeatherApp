@@ -8,14 +8,16 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.rperez.weatherapp.ui.screen.WeatherIcon
-import com.rperez.weatherapp.viewmodel.WeatherUiState
-import java.util.Locale
 
 /**
  * UI Composable for Successful update of city weather call
  */
 @Composable
-fun WeatherStateSuccess(temp: Double, desc: String?, iconUrl: String?) {
+fun WeatherStateSuccess(
+    temp: Double?,
+    desc: String?,
+    icon: String?,
+) {
     Text(
         modifier = Modifier
             .semantics {
@@ -34,5 +36,8 @@ fun WeatherStateSuccess(temp: Double, desc: String?, iconUrl: String?) {
         text = desc ?: "",
         style = MaterialTheme.typography.headlineLarge
     )
+
+    val iconUrl =
+        "https://openweathermap.org/img/wn/$icon@2x.png"
     WeatherIcon(iconUrl = iconUrl)
 }

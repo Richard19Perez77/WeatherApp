@@ -8,8 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -23,27 +25,37 @@ import com.rperez.weatherapp.navigation.Screen
 import com.rperez.weatherapp.network.ConnectivityManager
 import com.rperez.weatherapp.ui.components.WeatherStateSuccess
 import com.rperez.weatherapp.ui.components.WeatherStateSuccessLandscape
-import com.rperez.weatherapp.viewmodel.WeatherUiState
-import com.rperez.weatherapp.viewmodel.WeatherViewModel
-import org.koin.androidx.compose.koinViewModel
+import com.rperez.weatherapp.network.model.WeatherState
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun WeatherScreen(
     modifier: Modifier,
     navController: NavController,
+    setCityName: (String) -> Unit,
+    getWeather: (String) -> Unit,
+    getLocalWeather: (Context) -> Unit,
+    cityName: State<String>,
+    weatherState: StateFlow<WeatherState>,
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    var weatherViewModel: WeatherViewModel = koinViewModel()
-    val uiState = weatherViewModel.uiState.collectAsState()
+    var weatherData = remember { mutableStateOf<WeatherState?>(weatherState.value) }
+
+    LaunchedEffect(weatherState) {
+        weatherState.collectLatest { state ->
+            weatherData.value = state
+        }
+    }
 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextField(
-            value = weatherViewModel.getCityName().value,
-            onValueChange = weatherViewModel::setCityName,
+            value = cityName.value,
+            onValueChange = setCityName,
             label = { Text(modifier = Modifier.testTag("search_label"), text = "Enter City Name") },
             modifier = Modifier
                 .testTag("search_text")
@@ -51,52 +63,10 @@ fun WeatherScreen(
                 .padding(8.dp)
                 .semantics { contentDescription = "City name input field" }
         )
-        WeatherButtons(isLandscape, weatherViewModel.getCityName().value, weatherViewModel::getWeather, weatherViewModel::getLocalWeather)
+        WeatherButtons(isLandscape, cityName.value, getWeather, getLocalWeather)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        when (uiState.value) {
-            is WeatherUiState.NoData -> {
-                Text("No data available")
-            }
-
-            is WeatherUiState.Success -> {
-                val weatherData = (uiState.value as WeatherUiState.Success)
-                var temp = weatherData.temperature.temperature
-                var desc = weatherData.temperature.desc
-                val iconUrl =
-                    "https://openweathermap.org/img/wn/${weatherData.temperature.icon}@2x.png"
-                if (isLandscape) {
-                    WeatherStateSuccessLandscape(temp, desc, iconUrl)
-                } else {
-                    WeatherStateSuccess(temp, desc, iconUrl)
-                }
-            }
-
-            is WeatherUiState.Error -> {
-                var hasInternet = ConnectivityManager.isInternetAvailable(LocalContext.current)
-                val weatherData = (uiState.value as WeatherUiState.Error)
-                if (hasInternet) {
-                    CustomMessage(
-                        "Failure: ${weatherData.errorMessage}",
-                        "Failed to load weather data."
-                    )
-                } else {
-                    CustomMessage(
-                        "No Internet: ${weatherData.errorMessage}",
-                        "Failed from no internet."
-                    )
-                }
-            }
-        }
-    }
-
+    WeatherDataDisplay(weatherData.value, isLandscape)
     BottomNavigationButton(navController)
 }
 
@@ -153,6 +123,77 @@ fun WeatherButton(onClick: () -> Unit, tag: String, text: String, description: S
             .semantics { contentDescription = description }
     ) {
         Text(modifier = Modifier.testTag("${tag}_text"), text = text)
+    }
+}
+
+@Composable
+fun WeatherDataDisplay(
+    weatherData: WeatherState?,
+    isLandscape: Boolean
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        when (weatherData) {
+            is WeatherState.CitySuccess -> {
+                if (isLandscape) {
+                    WeatherStateSuccessLandscape(
+                        weatherData.data?.main?.temp,
+                        weatherData.data?.weather?.firstOrNull()?.description,
+                        weatherData.data?.weather?.firstOrNull()?.icon,
+                    )
+                } else {
+                    WeatherStateSuccess(
+                        weatherData.data?.main?.temp,
+                        weatherData.data?.weather?.firstOrNull()?.description,
+                        weatherData.data?.weather?.firstOrNull()?.icon,
+                    )
+                }
+            }
+
+            is WeatherState.LocalSuccess -> {
+                if (isLandscape) {
+                    WeatherStateSuccessLandscape(
+                        weatherData.data?.main?.temp,
+                        weatherData.data?.weather?.firstOrNull()?.description,
+                        weatherData.data?.weather?.firstOrNull()?.icon,
+                    )
+                } else {
+                    WeatherStateSuccess(
+                        weatherData.data?.main?.temp,
+                        weatherData.data?.weather?.firstOrNull()?.description,
+                        weatherData.data?.weather?.firstOrNull()?.icon,
+                    )
+                }
+            }
+
+            is WeatherState.Failure -> {
+                var hasInternet = ConnectivityManager.isInternetAvailable(LocalContext.current)
+                if (hasInternet) {
+                    CustomMessage(
+                        "Failure: ${weatherData.data?.message}",
+                        "Failed to load weather data."
+                    )
+                } else {
+                    CustomMessage(
+                        "No Internet: ${weatherData.data?.message}",
+                        "Failed from no internet."
+                    )
+                }
+            }
+
+            is WeatherState.Loading -> {
+                CustomMessage("Loading...", "Loading weather data")
+            }
+
+            null -> {
+                CustomMessage("Press Search Weather", "No weather data available")
+            }
+        }
     }
 }
 

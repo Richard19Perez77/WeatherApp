@@ -13,6 +13,7 @@ object MockTemperatureEntities {
                 local = false,
                 humidity = 40,
                 pressure = 1013,
+                icon = "",
             ),
             TemperatureEntity(
                 date = "2024-10-02",
@@ -22,6 +23,7 @@ object MockTemperatureEntities {
                 local = false,
                 humidity = 40,
                 pressure = 1013,
+                icon = "",
             ),
             TemperatureEntity(
                 date = "2023-11-03",
@@ -30,7 +32,8 @@ object MockTemperatureEntities {
                 temperature = -5.0,
                 local = false,
                 humidity = 20,
-                pressure = 1000
+                pressure = 1000,
+                icon = "",
             ),
             TemperatureEntity(
                 date = "2021-12-02",
@@ -39,7 +42,8 @@ object MockTemperatureEntities {
                 temperature = 8.0,
                 local = true,
                 humidity = 25,
-                pressure = 1005
+                pressure = 1005,
+                icon = "",
             ),
             TemperatureEntity(
                 date = "2024-10-03",
@@ -48,7 +52,8 @@ object MockTemperatureEntities {
                 temperature = 42.0,
                 local = false,
                 humidity = 75,
-                pressure = 1015
+                pressure = 1015,
+                icon = "",
             ),
             TemperatureEntity(
                 date = "2024-10-04",
@@ -57,7 +62,8 @@ object MockTemperatureEntities {
                 temperature = 25.0,
                 local = false,
                 humidity = 50,
-                pressure = 1010
+                pressure = 1010,
+                icon = "",
             ),
             TemperatureEntity(
                 date = "2024-10-05",
@@ -67,6 +73,7 @@ object MockTemperatureEntities {
                 local = false,
                 humidity = 80,
                 pressure = 900,
+                icon = "",
             ),
             TemperatureEntity(
                 date = "2024-10-05",
@@ -76,6 +83,7 @@ object MockTemperatureEntities {
                 local = false,
                 humidity = 80,
                 pressure = 1066,
+                icon = "",
             ),
         )
     }

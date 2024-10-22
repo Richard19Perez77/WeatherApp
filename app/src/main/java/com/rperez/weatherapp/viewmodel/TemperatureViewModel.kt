@@ -22,12 +22,12 @@ class TemperatureViewModel(private val repository: TemperatureRepository) : View
             }
         }
     }
+
     fun deleteAllTemperatures() {
         viewModelScope.launch {
             repository.deleteAllTemperatures()
         }
     }
 
-    suspend fun getAllTemperatures() = repository.
-    getAllTemperatures()
+    suspend fun getAllTemperatures() = repository.getAllTemperatures()
 }

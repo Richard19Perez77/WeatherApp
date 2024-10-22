@@ -14,7 +14,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 
 @Composable
-fun WeatherIcon(iconUrl: String) {
+fun WeatherIcon(iconUrl: String?) {
     val painter = rememberAsyncImagePainter(
         ImageRequest.Builder(LocalContext.current)
             .data(iconUrl)

@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -16,32 +16,22 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
-import com.rperez.weatherapp.network.model.WeatherState
+import com.rperez.weatherapp.viewmodel.WeatherUiState
+import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.min
 
 /**
  * Temperature Screen is only the temperature in large font
  */
 @Composable
-fun TemperatureScreen(modifier: Modifier, weatherState: LiveData<WeatherState>) {
-    var tempState = weatherState.observeAsState()
-    var temp = ""
-    when (tempState.value) {
-        is WeatherState.CitySuccess -> {
-            temp = (tempState.value as WeatherState.CitySuccess).data?.main?.temp?.toString() ?: "N/A"
+fun TemperatureScreen(modifier: Modifier, weatherState: StateFlow<WeatherUiState>) {
+    var weather = weatherState.collectAsState()
+    var temp = when (weather.value){
+        is WeatherUiState.Error, is WeatherUiState.NoData -> {
+            "N/A"
         }
-        is WeatherState.LocalSuccess -> {
-            temp = (tempState.value as WeatherState.LocalSuccess).data?.main?.temp?.toString() ?: "N/A"
-        }
-        is WeatherState.Failure -> {
-            temp = "N/A"
-        }
-        WeatherState.Loading -> {
-            temp = "N/A"
-        }
-        null -> {
-            temp = "N/A"
+        is WeatherUiState.Success -> {
+            (weather.value as WeatherUiState.Success).temperature.temperature
         }
     }
 

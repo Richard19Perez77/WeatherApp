@@ -29,7 +29,6 @@ fun HeartScreen(
     var allTemps = remember { mutableStateOf(emptyList<TemperatureEntity>()) }
     var loading = remember { mutableStateOf(true) }
     var error = remember { mutableStateOf<String?>(null) }
-    var localWeatherList = mutableListOf<TemperatureEntity>()
 
     var context = LocalContext.current
     var rareFacts = context.getString(R.string.rare_facts)
@@ -39,7 +38,6 @@ fun HeartScreen(
             loading.value = true
             allTemps.value = getAllTemperatures().sortedBy { item -> item.date }.reversed()
             loading.value = false
-            localWeatherList.addAll(allTemps.value.filter { it.local })
         } catch (_: Exception) {
             error.value = context.getString(R.string.error_loading_temperatures)
             loading.value = false
@@ -157,7 +155,6 @@ fun TemperatureItem(temperature: TemperatureEntity) {
 
 fun getAlerts(context: Context, temperature: TemperatureEntity): List<String> {
     var temp = mutableListOf<String>()
-    //var context = LocalContext.current
     if (temperature.temperature < 10.0) {
         temp.add(context.getString(R.string.hypthermia_1))
         temp.add(context.getString(R.string.respiratory_1))

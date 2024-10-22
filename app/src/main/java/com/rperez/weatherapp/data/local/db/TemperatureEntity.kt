@@ -16,5 +16,6 @@ data class TemperatureEntity(
     val temperature: Double,
     val local: Boolean,
     val humidity: Int,
-    val pressure: Int
+    val pressure: Int,
+    val icon : String,
 )

@@ -65,7 +65,6 @@ fun WeatherAppNavHost(
                         getWeather = weatherViewModel::getWeather,
                         getLocalWeather = weatherViewModel::getLocalWeather,
                         cityName = weatherViewModel.cityName,
-                        weatherState = weatherViewModel.weatherState
                     )
                 }
             )
@@ -80,7 +79,7 @@ fun WeatherAppNavHost(
                     var modifier = Modifier.padding(padding)
                     TemperatureScreen(
                         modifier = modifier,
-                        weatherState = weatherViewModel.weatherState
+                        weatherState = weatherViewModel.uiState
                     )
                 }
             )

@@ -9,11 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import com.rperez.weatherapp.R
 import com.rperez.weatherapp.ui.screen.WeatherIcon
-import com.rperez.weatherapp.network.model.WeatherState
-import java.util.Locale
 
 /**
  * UI Composable for Successful update of city weather call and in landscape view.
@@ -29,18 +29,22 @@ fun WeatherStateSuccessLandscape(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        var semanticString = stringResource(
+            R.string.current_temperature_in_degrees_celsius_is_c,
+            temp ?: ""
+        )
         Text(
             modifier = Modifier
                 .testTag("temp_text")
                 .semantics {
-                    contentDescription = "Current temperature in degrees Celsius is $temp°C"
+                    contentDescription = semanticString
                 },
-            text = "Temperature: $temp°C",
+            text = stringResource(R.string.temperature_c, temp ?: ""),
             style = MaterialTheme.typography.headlineMedium
         )
 
         val iconUrl =
-            "https://openweathermap.org/img/wn/$icon@2x.png"
+            stringResource(R.string.https_openweathermap_org_img_wn_2x_png, icon ?: "")
         WeatherIcon(iconUrl = iconUrl)
 
         Text(

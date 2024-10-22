@@ -17,10 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.rperez.weatherapp.R
 import com.rperez.weatherapp.navigation.Screen
 import com.rperez.weatherapp.network.ConnectivityManager
 import com.rperez.weatherapp.ui.components.WeatherStateSuccess
@@ -90,28 +92,28 @@ fun WeatherButtons(
             WeatherButton(
                 onClick = { getWeather(cityName) },
                 tag = "search_button",
-                text = "Search City Weather",
-                description = "Search weather for the entered city"
+                text = stringResource(R.string.search_city_weather),
+                description = stringResource(R.string.search_weather_for_the_entered_city)
             )
             WeatherButton(
                 onClick = { getLocalWeather(context) },
                 tag = "get_local_button",
-                text = "Get Your Local Weather",
-                description = "Search weather for local Weather by Geo-coords"
+                text = stringResource(R.string.get_your_local_weather),
+                description = stringResource(R.string.search_weather_for_local_weather_by_geo_coords)
             )
         }
     } else {
         WeatherButton(
             onClick = { getWeather(cityName) },
             tag = "search_button",
-            text = "Search City Weather",
-            description = "Search weather for the entered city"
+            text = stringResource(R.string.search_city_weather),
+            description = stringResource(R.string.search_weather_for_the_entered_city)
         )
         WeatherButton(
             onClick = { getLocalWeather(context) },
-            tag = "search_local_button",
-            text = "Search Local Weather",
-            description = "Search weather for local Weather by Geo-coords"
+            tag = "get_local_button",
+            text = stringResource(R.string.get_your_local_weather),
+            description = stringResource(R.string.search_weather_for_local_weather_by_geo_coords)
         )
     }
 }
@@ -162,23 +164,29 @@ fun WeatherDataDisplay(
                 var hasInternet = ConnectivityManager.isInternetAvailable(LocalContext.current)
                 if (hasInternet) {
                     CustomMessage(
-                        "Failure: ${weatherData.data?.message}",
-                        "Failed to load weather data."
+                        stringResource(R.string.failure_message, weatherData.data?.message ?: ""),
+                        stringResource(R.string.failed_to_loac)
                     )
                 } else {
                     CustomMessage(
-                        "No Internet: ${weatherData.data?.message}",
-                        "Failed from no internet."
+                        stringResource(R.string.no_internet_message, weatherData.data?.message ?: ""),
+                        stringResource(R.string.failed_from_no_internet)
                     )
                 }
             }
 
             is WeatherState.Loading -> {
-                CustomMessage("Loading...", "Loading weather data")
+                CustomMessage(
+                    stringResource(R.string.loading),
+                    stringResource(R.string.loading_weather_data)
+                )
             }
 
             null -> {
-                CustomMessage("Press Search Weather", "No weather data available")
+                CustomMessage(
+                    stringResource(R.string.press_search_weather),
+                    stringResource(R.string.no_weather_data_available)
+                )
             }
         }
     }
@@ -204,14 +212,20 @@ fun BottomNavigationButton(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
+        var semanticString = stringResource(R.string.navigate_to_temperature_zoom_screen)
         Button(
             onClick = { navController.navigate(Screen.Temp.route) },
             modifier = Modifier
                 .padding(8.dp)
                 .testTag("zoom_button")
-                .semantics { contentDescription = "Navigate to temperature zoom screen" }
+                .semantics {
+                    contentDescription = semanticString
+                }
         ) {
-            Text(modifier = Modifier.testTag("zoom_text"), text = "Temperature Zoom")
+            Text(
+                modifier = Modifier.testTag("zoom_text"),
+                text = stringResource(R.string.temperature_zoom)
+            )
         }
     }
 }

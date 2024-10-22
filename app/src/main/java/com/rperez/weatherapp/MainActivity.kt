@@ -38,8 +38,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
-        val savedCity = sharedPreferences.getString("CITY_NAME", "Tokyo") ?: "Tokyo"
+        val sharedPreferences = getSharedPreferences(getString(R.string.weatherappprefs), MODE_PRIVATE)
+        val savedCity = sharedPreferences.getString(getString(R.string.city_name), getString(R.string.tokyo)) ?: getString(R.string.tokyo)
 
         setContent {
             WeatherAppTheme {
@@ -53,9 +53,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        val sharedPreferences = getSharedPreferences("WeatherAppPrefs", MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences(getString(R.string.weatherappprefs), MODE_PRIVATE)
         with(sharedPreferences.edit()) {
-            putString("CITY_NAME", weatherViewModel.getCityName().value)
+            putString(getString(R.string.city_name), weatherViewModel.getCityName().value)
             apply()
         }
     }

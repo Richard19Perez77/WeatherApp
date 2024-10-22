@@ -8,6 +8,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rperez.weatherapp.R
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import com.rperez.weatherapp.network.model.WeatherState
 import com.rperez.weatherapp.network.model.WeatherState.Failure
@@ -156,12 +157,12 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                 },
                 onPermissionRequired = {
                     AlertDialog.Builder(context)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the location permission to fetch weather data for your current location.")
-                        .setPositiveButton("Grant") { _, _ ->
+                        .setTitle(context.getString(R.string.location_permission_needed))
+                        .setMessage(context.getString(R.string.this_app_needs_the_location_permission_to_fetch_weather_data_for_your_current_location))
+                        .setPositiveButton(context.getString(R.string.grant)) { _, _ ->
                             launcher.launch(ACCESS_FINE_LOCATION)
                         }
-                        .setNegativeButton("Cancel", null)
+                        .setNegativeButton(context.getString(R.string.cancel), null)
                         .show()
                 }
             )

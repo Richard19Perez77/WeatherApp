@@ -23,7 +23,7 @@ import com.rperez.weatherapp.data.local.db.TemperatureEntity
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HeartScreen(
-    modifier : Modifier,
+    modifier: Modifier,
     getAllTemperatures: suspend () -> List<TemperatureEntity>
 ) {
     var allTemps = remember { mutableStateOf(emptyList<TemperatureEntity>()) }
@@ -99,16 +99,6 @@ fun TemperatureItem(temperature: TemperatureEntity) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Text(
-                    text = temperature.date,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
@@ -117,17 +107,22 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    text = "${temperature.humidity}% Humidity",
-                    style = MaterialTheme.typography.titleLarge
+                    text = temperature.date,
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
                     text = "${temperature.temperature} °C",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = "${temperature.humidity}% Humidity",
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(

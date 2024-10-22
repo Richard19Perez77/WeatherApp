@@ -31,14 +31,26 @@ import java.util.Locale
  */
 class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() {
 
+    /**
+     * Launcher is used for callback to re call the get weather by coord, after user accepts permissions.
+     */
     lateinit var launcher: ActivityResultLauncher<String>
 
+    /**
+     * City name is going to be from shared pref's
+     */
     private val _cityName = mutableStateOf("")
     val cityName = _cityName
 
+    /**
+     * Will contain variables for the UI on get weather calls.
+     */
     private val _weatherState = MutableStateFlow<WeatherState>(Loading)
     val weatherState: StateFlow<WeatherState> = _weatherState
 
+    /**
+     * Local instance of coords to be updated frequently.
+     */
     lateinit var coords: Pair<Double, Double>
 
     fun setupWeatherObserver(
@@ -98,6 +110,9 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
 
     private var currentJob: Job? = null
 
+    /**
+     * Get weather by city name. Service will return a formatted name that will be used back into the field.
+     */
     fun getWeather(cityName: String) {
         if (cityName.isNotEmpty()) {
 
@@ -173,6 +188,9 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         this.launcher = launcher
     }
 
+    /**
+     * Cancel job on lifecycle ending composable.
+     */
     override fun onCleared() {
         super.onCleared()
         currentJob?.cancel()

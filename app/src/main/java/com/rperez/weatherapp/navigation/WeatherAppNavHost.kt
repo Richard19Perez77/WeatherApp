@@ -37,9 +37,7 @@ fun WeatherAppNavHost(
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(Unit) {
-        // temperatureViewModel.deleteAllTemperatures()
         temperatureViewModel.insertMockTemperatures()
-
         weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
         weatherViewModel.setupWeatherObserver(temperatureViewModel::insertTemperature, lifecycleOwner = lifecycleOwner)
         weatherViewModel.setCityName(savedCity)

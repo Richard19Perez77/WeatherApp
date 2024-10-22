@@ -17,15 +17,17 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rperez.weatherapp.viewmodel.WeatherUiState
-import kotlinx.coroutines.flow.StateFlow
+import com.rperez.weatherapp.viewmodel.WeatherViewModel
+import org.koin.androidx.compose.koinViewModel
 import kotlin.math.min
 
 /**
  * Temperature Screen is only the temperature in large font
  */
 @Composable
-fun TemperatureScreen(modifier: Modifier, weatherState: StateFlow<WeatherUiState>) {
-    var weather = weatherState.collectAsState()
+fun TemperatureScreen(modifier: Modifier) {
+    var weatherViewModel: WeatherViewModel = koinViewModel()
+    var weather = weatherViewModel.uiState.collectAsState()
     var temp = when (weather.value){
         is WeatherUiState.Error, is WeatherUiState.NoData -> {
             "N/A"

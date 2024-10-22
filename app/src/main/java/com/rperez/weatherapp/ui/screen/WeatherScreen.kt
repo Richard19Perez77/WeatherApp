@@ -31,10 +31,6 @@ import org.koin.androidx.compose.koinViewModel
 fun WeatherScreen(
     modifier: Modifier,
     navController: NavController,
-    setCityName: (String) -> Unit,
-    getWeather: (String) -> Unit,
-    getLocalWeather: (Context) -> Unit,
-    cityName: State<String>,
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -46,8 +42,8 @@ fun WeatherScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextField(
-            value = cityName.value,
-            onValueChange = setCityName,
+            value = weatherViewModel.getCityName().value,
+            onValueChange = weatherViewModel::setCityName,
             label = { Text(modifier = Modifier.testTag("search_label"), text = "Enter City Name") },
             modifier = Modifier
                 .testTag("search_text")
@@ -55,7 +51,7 @@ fun WeatherScreen(
                 .padding(8.dp)
                 .semantics { contentDescription = "City name input field" }
         )
-        WeatherButtons(isLandscape, cityName.value, getWeather, getLocalWeather)
+        WeatherButtons(isLandscape, weatherViewModel.getCityName().value, weatherViewModel::getWeather, weatherViewModel::getLocalWeather)
     }
 
     Column(

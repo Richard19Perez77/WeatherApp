@@ -1,4 +1,4 @@
-package com.rperez.weatherapp.ui.screen
+package com.rperez.weatherapp.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
@@ -30,12 +30,12 @@ fun WeatherIcon(iconUrl: String?) {
     Image(
         painter = painter,
         contentDescription = null,
-        modifier = Modifier
+        modifier = Modifier.Companion
             .semantics {
                 contentDescription = semanticString
             }
             .size(128.dp)
             .testTag("icon_image"),
-        contentScale = ContentScale.FillBounds
+        contentScale = ContentScale.Companion.FillBounds
     )
 }

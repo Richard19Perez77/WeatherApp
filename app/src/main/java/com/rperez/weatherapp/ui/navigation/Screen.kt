@@ -1,4 +1,4 @@
-package com.rperez.weatherapp.navigation
+package com.rperez.weatherapp.ui.navigation
 
 /**
  * Screens for UI for user to navigate

@@ -1,4 +1,4 @@
-package com.rperez.weatherapp.ui.screen
+package com.rperez.weatherapp.ui.navigation
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box

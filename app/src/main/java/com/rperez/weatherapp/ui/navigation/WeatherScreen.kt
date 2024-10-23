@@ -1,4 +1,4 @@
-package com.rperez.weatherapp.ui.screen
+package com.rperez.weatherapp.ui.navigation
 
 import android.content.Context
 import android.content.res.Configuration
@@ -23,7 +23,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.rperez.weatherapp.R
-import com.rperez.weatherapp.navigation.Screen
 import com.rperez.weatherapp.network.ConnectivityManager
 import com.rperez.weatherapp.network.model.WeatherUI
 import com.rperez.weatherapp.ui.components.WeatherStateSuccess

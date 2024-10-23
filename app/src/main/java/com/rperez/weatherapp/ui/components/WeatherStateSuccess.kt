@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import com.rperez.weatherapp.ui.screen.WeatherIcon
+import com.rperez.weatherapp.ui.components.WeatherIcon
 
 /**
  * UI Composable for Successful update of city weather call

@@ -1,4 +1,4 @@
-package com.rperez.weatherapp.navigation
+package com.rperez.weatherapp.ui.navigation
 
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.layout.padding
@@ -9,17 +9,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.rperez.weatherapp.ui.screen.HeartScreen
-import com.rperez.weatherapp.ui.screen.TemperatureScreen
-import com.rperez.weatherapp.ui.screen.WeatherScreen
 import com.rperez.weatherapp.viewmodel.TemperatureViewModel
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -29,12 +23,13 @@ import org.koin.androidx.compose.koinViewModel
  */
 @Composable
 fun WeatherAppNavHost(
-    weatherViewModel: WeatherViewModel = koinViewModel(),
-    temperatureViewModel: TemperatureViewModel = koinViewModel(),
     savedCity: String,
     requestLocationPermissionLauncher: ActivityResultLauncher<String>,
-    navController: NavHostController = rememberNavController(),
 ) {
+    val navController: NavHostController = rememberNavController()
+    val weatherViewModel: WeatherViewModel = koinViewModel()
+    val temperatureViewModel: TemperatureViewModel = koinViewModel()
+
     /**
      * Start of work for demo, using mock data and observers as well as initial setup for weather from city of last use.
      */

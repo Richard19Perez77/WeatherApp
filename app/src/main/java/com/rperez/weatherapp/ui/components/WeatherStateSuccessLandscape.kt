@@ -40,7 +40,7 @@ fun WeatherStateSuccessLandscape(
                     contentDescription = semanticString
                 },
             text = stringResource(R.string.temperature_c, temp ?: ""),
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineLarge
         )
 
         val iconUrl =
@@ -54,7 +54,7 @@ fun WeatherStateSuccessLandscape(
                 }
                 .testTag("description_text"),
             text = desc ?: "",
-            style = MaterialTheme.typography.headlineLarge
+            style = MaterialTheme.typography.headlineMedium
         )
     }
 }

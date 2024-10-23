@@ -25,7 +25,7 @@ fun WeatherStateSuccess(
             }
             .testTag("temp_text"),
         text = "Temperature: $temp°C",
-        style = MaterialTheme.typography.headlineMedium
+        style = MaterialTheme.typography.headlineLarge
     )
     Text(
         modifier = Modifier
@@ -34,7 +34,7 @@ fun WeatherStateSuccess(
             }
             .testTag("description_text"),
         text = desc ?: "",
-        style = MaterialTheme.typography.headlineLarge
+        style = MaterialTheme.typography.headlineMedium
     )
 
     val iconUrl =

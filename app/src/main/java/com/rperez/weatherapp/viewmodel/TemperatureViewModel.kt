@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import com.rperez.weatherapp.data.local.mock.MockTemperatureEntities
 import com.rperez.weatherapp.data.repository.TemperatureRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 /**
@@ -32,5 +34,10 @@ class TemperatureViewModel(private val repository: TemperatureRepository) : View
         }
     }
 
-    suspend fun getAllTemperatures() = repository.getAllTemperatures()
+    fun getAllTemperatures(): Flow<List<TemperatureEntity>> {
+        return flow {
+            val temperatures = repository.getAllTemperatures()
+            emit(temperatures)
+        }
+    }
 }

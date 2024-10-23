@@ -1,6 +1,7 @@
 package com.rperez.weatherapp.ui.navigation
 
 import android.content.Context
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -19,6 +21,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rperez.weatherapp.R
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Screen to show the entries saved with more detail, won't focus on telemetrics of weather but the weather's adverse health effects.
@@ -27,7 +31,7 @@ import com.rperez.weatherapp.data.local.db.TemperatureEntity
 @Composable
 fun HeartScreen(
     modifier: Modifier,
-    getAllTemperatures: suspend () -> List<TemperatureEntity>
+    getAllTemperatures: () -> Flow<List<TemperatureEntity>>
 ) {
     var allTemps = remember { mutableStateOf(emptyList<TemperatureEntity>()) }
     var loading = remember { mutableStateOf(true) }
@@ -39,8 +43,10 @@ fun HeartScreen(
     LaunchedEffect(Unit) {
         try {
             loading.value = true
-            allTemps.value = getAllTemperatures().sortedBy { item -> item.date }.reversed()
-            loading.value = false
+            getAllTemperatures.invoke().collect {
+                allTemps.value = it
+                loading.value = false
+            }
         } catch (_: Exception) {
             error.value = context.getString(R.string.error_loading_temperatures)
             loading.value = false
@@ -48,9 +54,21 @@ fun HeartScreen(
     }
 
     if (loading.value) {
-        CircularProgressIndicator()
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            CircularProgressIndicator()
+        }
     } else if (error.value != null) {
-        Text(text = error.value.toString())
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(text = error.value.toString())
+        }
     } else {
         Column(
             modifier = modifier.fillMaxSize()

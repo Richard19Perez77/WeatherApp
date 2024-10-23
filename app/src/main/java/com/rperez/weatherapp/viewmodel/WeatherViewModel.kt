@@ -113,16 +113,6 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                                     icon = res.weather.firstOrNull()?.icon ?: "",
                                     errorMessage = "",
                                 )
-//                                newState.copy(
-//                                    isLoading = false,
-//                                    temperature = res.main.temp,
-//                                    humidity = res.main.humidity,
-//                                    airPressure = res.main.pressure,
-//                                    name = res.name,
-//                                    description = res.weather.firstOrNull()?.description ?: "",
-//                                    icon = res.weather.firstOrNull()?.icon ?: "",
-//                                    errorMessage = "",
-//                                )
                             }
                         }
                     }
@@ -174,17 +164,6 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                                     icon = res.weather.firstOrNull()?.icon ?: "",
                                     errorMessage = "",
                                 )
-
-//                                newState.copy(
-//                                    isLoading = false,
-//                                    temperature = res.main.temp,
-//                                    humidity = res.main.humidity,
-//                                    airPressure = res.main.pressure,
-//                                    name = res.name,
-//                                    description = res.weather.firstOrNull()?.description ?: "",
-//                                    icon = res.weather.firstOrNull()?.icon ?: "",
-//                                    errorMessage = "",
-//                                )
                             }
                         }
                     }

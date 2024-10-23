@@ -14,9 +14,9 @@ import com.rperez.weatherapp.ui.screen.WeatherIcon
  */
 @Composable
 fun WeatherStateSuccess(
-    temp: Double?,
-    desc: String?,
-    icon: String?,
+    temp: Double,
+    desc: String,
+    icon: String,
 ) {
     Text(
         modifier = Modifier
@@ -30,10 +30,10 @@ fun WeatherStateSuccess(
     Text(
         modifier = Modifier
             .semantics {
-                contentDescription = desc ?: ""
+                contentDescription = desc
             }
             .testTag("description_text"),
-        text = desc ?: "",
+        text = desc,
         style = MaterialTheme.typography.headlineMedium
     )
 

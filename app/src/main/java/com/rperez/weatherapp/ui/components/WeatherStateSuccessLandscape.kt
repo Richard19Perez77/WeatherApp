@@ -20,9 +20,9 @@ import com.rperez.weatherapp.ui.screen.WeatherIcon
  */
 @Composable
 fun WeatherStateSuccessLandscape(
-    temp: Double? = null,
-    desc: String? = null,
-    icon: String? = null,
+    temp: Double,
+    desc: String,
+    icon: String,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -31,7 +31,7 @@ fun WeatherStateSuccessLandscape(
     ) {
         var semanticString = stringResource(
             R.string.current_temperature_in_degrees_celsius_is_c,
-            temp ?: ""
+            temp
         )
         Text(
             modifier = Modifier
@@ -39,21 +39,21 @@ fun WeatherStateSuccessLandscape(
                 .semantics {
                     contentDescription = semanticString
                 },
-            text = stringResource(R.string.temperature_c, temp ?: ""),
+            text = stringResource(R.string.temperature_c, temp),
             style = MaterialTheme.typography.headlineLarge
         )
 
         val iconUrl =
-            stringResource(R.string.https_openweathermap_org_img_wn_2x_png, icon ?: "")
+            stringResource(R.string.https_openweathermap_org_img_wn_2x_png, icon)
         WeatherIcon(iconUrl = iconUrl)
 
         Text(
             modifier = Modifier
                 .semantics {
-                    contentDescription = desc ?: ""
+                    contentDescription = desc
                 }
                 .testTag("description_text"),
-            text = desc ?: "",
+            text = desc,
             style = MaterialTheme.typography.headlineMedium
         )
     }

@@ -17,6 +17,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -56,9 +57,9 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         insertTemperature: (TemperatureEntity) -> Unit,
     ) {
         viewModelScope.launch {
-            uiState.collect {
-                // check for no errors and valid temperature
-                if (it.errorMessage.isEmpty() && it.temperature != Double.MIN_VALUE) {
+            uiState.collectLatest {
+                // check for no errors and done loading
+                if (it.errorMessage.isEmpty() && it.isLoading == false) {
                     val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                     val temperatureEntity = TemperatureEntity(
                         date = date,

@@ -39,8 +39,7 @@ fun WeatherAppNavHost(
      * Start of work for demo, using mock data and observers as well as initial setup for weather from city of last use.
      */
     LaunchedEffect(Unit) {
-        // temperatureViewModel.deleteAllTemperatures()
-        // temperatureViewModel.insertMockTemperatures()
+        temperatureViewModel.insertMockTemperatures()
         weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
         weatherViewModel.setupWeatherObserver(temperatureViewModel::insertTemperature)
         weatherViewModel.setCityName(savedCity)

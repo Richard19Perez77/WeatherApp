@@ -10,7 +10,7 @@ object MockTemperatureEntities {
         return listOf(
             TemperatureEntity(
                 date = "2024-10-01",
-                city = "HealthyCity",
+                city = "Healthy City",
                 desc = "Clear Skies",
                 temperature = 22.0,
                 humidity = 40,
@@ -18,7 +18,7 @@ object MockTemperatureEntities {
             ),
             TemperatureEntity(
                 date = "2024-10-02",
-                city = "HealthyCity",
+                city = "Healthy City",
                 desc = "Clear Skies",
                 temperature = 22.0,
                 humidity = 40,
@@ -26,7 +26,7 @@ object MockTemperatureEntities {
             ),
             TemperatureEntity(
                 date = "2023-11-03",
-                city = "ColdCity",
+                city = "Cold City",
                 desc = "Very Cold",
                 temperature = -5.0,
                 humidity = 20,
@@ -34,7 +34,7 @@ object MockTemperatureEntities {
             ),
             TemperatureEntity(
                 date = "2021-12-02",
-                city = "ModerateCity",
+                city = "Moderate City",
                 desc = "Chilly with low humidity",
                 temperature = 8.0,
                 humidity = 25,
@@ -42,7 +42,7 @@ object MockTemperatureEntities {
             ),
             TemperatureEntity(
                 date = "2024-10-03",
-                city = "HotCity",
+                city = "Hot City",
                 desc = "Very hot and humid",
                 temperature = 42.0,
                 humidity = 75,
@@ -50,7 +50,7 @@ object MockTemperatureEntities {
             ),
             TemperatureEntity(
                 date = "2024-10-04",
-                city = "WarmCity",
+                city = "Warm City",
                 desc = "Warm and moderate",
                 temperature = 25.0,
                 humidity = 50,
@@ -58,7 +58,7 @@ object MockTemperatureEntities {
             ),
             TemperatureEntity(
                 date = "2024-10-05",
-                city = "HumidCity",
+                city = "Humid City",
                 desc = "Moderate temperature with high humidity",
                 temperature = 23.0,
                 humidity = 80,
@@ -66,7 +66,7 @@ object MockTemperatureEntities {
             ),
             TemperatureEntity(
                 date = "2024-10-05",
-                city = "HighPressureCity",
+                city = "High Pressure City",
                 desc = "Moderate temperature with high humidity",
                 temperature = 23.0,
                 humidity = 80,

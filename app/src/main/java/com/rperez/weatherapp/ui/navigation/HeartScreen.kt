@@ -1,7 +1,6 @@
 package com.rperez.weatherapp.ui.navigation
 
 import android.content.Context
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,18 +9,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rperez.weatherapp.R
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -33,46 +30,35 @@ fun HeartScreen(
     modifier: Modifier,
     getAllTemperatures: () -> Flow<List<TemperatureEntity>>
 ) {
-    var allTemps = remember { mutableStateOf(emptyList<TemperatureEntity>()) }
-    var loading = remember { mutableStateOf(true) }
-    var error = remember { mutableStateOf<String?>(null) }
+    val allTemps1 = getAllTemperatures().collectAsStateWithLifecycle(emptyList())
 
-    var context = LocalContext.current
-    var rareFacts = context.getString(R.string.rare_facts)
+    var rareFacts = stringResource(R.string.rare_facts)
 
-    LaunchedEffect(Unit) {
-        try {
-            loading.value = true
-            getAllTemperatures.invoke().collect {
-                allTemps.value = it
-                loading.value = false
+    Column(
+        modifier = modifier.fillMaxSize()
+    ) {
+        if (allTemps1.value.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Card(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxSize(),
+                    elevation = CardDefaults.cardElevation(4.dp)
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .verticalScroll(rememberScrollState()),
+                        text = rareFacts
+                    )
+                }
             }
-        } catch (_: Exception) {
-            error.value = context.getString(R.string.error_loading_temperatures)
-            loading.value = false
-        }
-    }
-
-    if (loading.value) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            CircularProgressIndicator()
-        }
-    } else if (error.value != null) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(text = error.value.toString())
-        }
-    } else {
-        Column(
-            modifier = modifier.fillMaxSize()
-        ) {
+        } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -81,10 +67,11 @@ fun HeartScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                items(allTemps.value) { temperature ->
+                items(allTemps1.value) { temperature ->
                     TemperatureItem(temperature)
                 }
             }
+
             Card(
                 modifier = Modifier
                     .padding(8.dp)

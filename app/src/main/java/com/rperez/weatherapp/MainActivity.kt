@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
 
         weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
         weatherViewModel.setupWeatherObserver(temperatureViewModel::insertTemperature)
-        temperatureViewModel.insertMockTemperatures()
+        // temperatureViewModel.insertMockTemperatures()
         weatherViewModel.setCityName(savedCity)
         weatherViewModel.getWeather(savedCity)
 

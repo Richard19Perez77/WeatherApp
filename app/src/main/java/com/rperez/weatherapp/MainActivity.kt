@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import com.rperez.weatherapp.ui.navigation.WeatherAppNavHost
 import com.rperez.weatherapp.ui.theme.WeatherAppTheme
+import com.rperez.weatherapp.viewmodel.TemperatureViewModel
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -25,6 +26,7 @@ class MainActivity : ComponentActivity() {
      * Use for shared pref's handling for city name field.
      */
     private val weatherViewModel: WeatherViewModel by viewModel()
+    private val temperatureViewModel: TemperatureViewModel by viewModel()
 
     /**
      * Allow for callback on accepting permissions for location. Will not allow user to permanently disable asking.
@@ -41,12 +43,15 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = getSharedPreferences(getString(R.string.weatherappprefs), MODE_PRIVATE)
         val savedCity = sharedPreferences.getString(getString(R.string.city_name), getString(R.string.tokyo)) ?: getString(R.string.tokyo)
 
+        weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
+        weatherViewModel.setupWeatherObserver(temperatureViewModel::insertTemperature)
+        temperatureViewModel.insertMockTemperatures()
+        weatherViewModel.setCityName(savedCity)
+        weatherViewModel.getWeather(savedCity)
+
         setContent {
             WeatherAppTheme {
-                WeatherAppNavHost(
-                    savedCity = savedCity,
-                    requestLocationPermissionLauncher = requestLocationPermissionLauncher,
-                )
+                WeatherAppNavHost()
             }
         }
     }

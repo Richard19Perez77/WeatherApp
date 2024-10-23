@@ -94,7 +94,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
             try {
                 currentJob = viewModelScope.launch {
                     _uiState.update { currState ->
-                        WeatherUI(isLoading = true)
+                        WeatherUI()
                     }
                     val result = repository.getWeatherByCityData(cityName)
                     result.onSuccess {
@@ -153,9 +153,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
             try {
                 currentJob = viewModelScope.launch {
                     _uiState.update { currState ->
-                        WeatherUI(
-                            isLoading = true,
-                        )
+                        WeatherUI()
                     }
 
                     val result = repository.getWeatherGeoData(coords.first, coords.second)

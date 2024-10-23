@@ -9,7 +9,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,7 +35,6 @@ fun WeatherAppNavHost(
     requestLocationPermissionLauncher: ActivityResultLauncher<String>,
     navController: NavHostController = rememberNavController(),
 ) {
-
     /**
      * Start of work for demo, using mock data and observers as well as initial setup for weather from city of last use.
      */

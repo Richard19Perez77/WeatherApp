@@ -4,7 +4,9 @@ import androidx.compose.ui.graphics.Color
 import kotlin.random.Random
 
 object RandomColor {
+
     private val random = Random
+
     fun getRandomColor(): Color {
         val red = random.nextInt(256)
         val green = random.nextInt(256)

@@ -1,44 +1,48 @@
 package com.rperez.weatherapp.failing
 
-import androidx.test.core.app.ApplicationProvider
-import org.junit.Test
-import org.junit.Assert.*
-import com.rperez.weatherapp.di.WeatherApp
 import com.rperez.weatherapp.di.appModule
 import com.rperez.weatherapp.repository.WeatherRepository
 import org.junit.After
 import org.junit.Before
-import org.junit.runner.RunWith
+import org.junit.Test
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.context.GlobalContext.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.get
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import org.koin.test.verify.verify
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
-@RunWith(RobolectricTestRunner::class)
-@Config(application = WeatherApp::class, sdk = [28], manifest = Config.NONE)
 class WeatherAppModuleUnitTest : KoinTest {
 
     @Before
     fun setup() {
+        // Start Koin with your module
         startKoin {
-            modules(appModule) // assuming appModule is your Koin module
+            modules(appModule)
         }
     }
 
+    @OptIn(KoinExperimentalAPI::class)
     @Test
-    fun testKoinInitialization() {
-        // Get the application context using ApplicationProvider
-        val weatherApp = ApplicationProvider.getApplicationContext<WeatherApp>()
-        assertNotNull(weatherApp)
-        // Verify appModule registration
+    fun `Koin is initialized and module is verified`() {
+        // Verify Koin started
+        val isKoinStarted = GlobalContext.getOrNull() != null
+        assertTrue(isKoinStarted)
+
+        // Verify WeatherRepository is available
         val weatherRepository = get<WeatherRepository>()
         assertNotNull(weatherRepository)
+
+        // Verify that the app module is correctly set up
+        appModule.verify()
     }
 
     @After
     fun tearDown() {
+        // Stop Koin after the test
         stopKoin()
     }
 }

@@ -24,19 +24,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun WeatherAppNavHost() {
     val navController: NavHostController = rememberNavController()
+
     val weatherViewModel: WeatherViewModel = koinViewModel()
     val temperatureViewModel: TemperatureViewModel = koinViewModel()
-
-/*
-    */
-/**
-     * Start of work for demo, using mock data and observers as well as initial setup for weather from city of last use.
-     *//*
-
-    LaunchedEffect(Unit) {
-        weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
-    }
-*/
 
     NavHost(
         navController = navController,

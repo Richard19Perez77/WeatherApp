@@ -10,21 +10,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rperez.weatherapp.R
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
-import com.rperez.weatherapp.network.model.WeatherState
-import com.rperez.weatherapp.network.model.WeatherState.Failure
-import com.rperez.weatherapp.network.model.WeatherState.Loading
-import com.rperez.weatherapp.network.model.WeatherState.Success
-import com.rperez.weatherapp.repository.WeatherException
+import com.rperez.weatherapp.network.model.WeatherUI
 import com.rperez.weatherapp.repository.WeatherRepository
 import com.rperez.weatherapp.service.LocationService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 /**
  * View model to hold the Weather State as calls change it.
@@ -45,8 +42,8 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     /**
      * Will contain variables for the UI on get weather calls.
      */
-    private val _weatherState = MutableStateFlow<WeatherState>(Loading)
-    val weatherState: StateFlow<WeatherState> = _weatherState
+    private val _uiState = MutableStateFlow<WeatherUI>(WeatherUI())
+    val uiState: StateFlow<WeatherUI> = _uiState.asStateFlow()
 
     /**
      * Local instance of coords to be updated frequently.
@@ -60,26 +57,19 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         insertTemperature: (TemperatureEntity) -> Unit,
     ) {
         viewModelScope.launch {
-            weatherState.collectLatest { weather ->
-                val data = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                when (weather) {
-                    is Success -> {
-                        weather.data?.main?.temp?.toDouble()?.let {
-                            val temperatureEntity = TemperatureEntity(
-                                date = data,
-                                temperature = it,
-                                local = false,
-                                city = weather.data.name,
-                                desc = weather.data.weather.firstOrNull()?.description
-                                    ?.replaceFirstChar { it.uppercase(Locale.ROOT) } ?: "",
-                                humidity = weather.data.main.humidity,
-                                pressure = weather.data.main.pressure,
-                            )
-                            insertTemperature.invoke(temperatureEntity)
-                        }
-                    }
-                    is Failure -> {}
-                    is Loading -> {}
+            uiState.collect {
+                if (it.errorMessage.isEmpty() && it.temperature != Double.MIN_VALUE) {
+                    val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    val temperatureEntity = TemperatureEntity(
+                        date = date,
+                        temperature = it.temperature,
+                        local = false,
+                        city = it.name,
+                        desc = it.description,
+                        humidity = it.humidity,
+                        pressure = it.airPressure,
+                    )
+                    insertTemperature.invoke(temperatureEntity)
                 }
             }
         }
@@ -100,21 +90,44 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
      */
     fun getWeather(cityName: String) {
         if (cityName.isNotEmpty()) {
-
-            currentJob.let {
-                it?.cancel()
-            }
+            currentJob.let { it?.cancel() }
 
             try {
                 currentJob = viewModelScope.launch {
-                    _weatherState.value = Loading
+                    _uiState.update { currState ->
+                        currState.copy(
+                            isLoading = true,
+                        )
+                    }
                     val result = repository.getWeatherByCityData(cityName)
                     result.onSuccess {
-                        _weatherState.value = Success(result.getOrNull())
-                        _cityName.value = (_weatherState.value as Success).data?.name ?: ""
+                        var res = result.getOrNull()
+                        if (res != null) {
+                            setCityName(res.name)
+                            _uiState.update { newState ->
+                                newState.copy(
+                                    isLoading = false,
+                                    temperature = res.main.temp,
+                                    humidity = res.main.humidity,
+                                    airPressure = res.main.pressure,
+                                    name = res.name,
+                                    description = res.weather.firstOrNull()?.description ?: "",
+                                    icon = res.weather.firstOrNull()?.icon ?: "",
+                                    errorMessage = "",
+                                )
+                            }
+                        }
                     }
                     result.onFailure {
-                        _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
+                        var res = result.exceptionOrNull()
+                        if (res != null) {
+                            _uiState.update { newState ->
+                                newState.copy(
+                                    isLoading = false,
+                                    errorMessage = res.message.toString()
+                                )
+                            }
+                        }
                     }
                 }
             } finally {
@@ -129,21 +142,45 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
      */
     fun getLocalWeather(context: Context) {
         if (::coords.isInitialized) {
-
-            currentJob.let {
-                it?.cancel()
-            }
-
+            currentJob.let { it?.cancel() }
             try {
                 currentJob = viewModelScope.launch {
-                    _weatherState.value = Loading
+                    _uiState.update { currState ->
+                        currState.copy(
+                            isLoading = true,
+                        )
+                    }
+
                     val result = repository.getWeatherGeoData(coords.first, coords.second)
+
                     result.onSuccess {
-                        _weatherState.value = Success(result.getOrNull())
-                        _cityName.value = (_weatherState.value as Success).data?.name ?: ""
+                        var res = result.getOrNull()
+                        if (res != null) {
+                            setCityName(res.name)
+                            _uiState.update { newState ->
+                                newState.copy(
+                                    isLoading = false,
+                                    temperature = res.main.temp,
+                                    humidity = res.main.humidity,
+                                    airPressure = res.main.pressure,
+                                    name = res.name,
+                                    description = res.weather.firstOrNull()?.description ?: "",
+                                    icon = res.weather.firstOrNull()?.icon ?: "",
+                                    errorMessage = "",
+                                )
+                            }
+                        }
                     }
                     result.onFailure {
-                        _weatherState.value = Failure(result.exceptionOrNull() as WeatherException?)
+                        var res = result.exceptionOrNull()
+                        if (res != null) {
+                            _uiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    errorMessage = res.message.toString()
+                                )
+                            }
+                        }
                     }
                 }
             } finally {

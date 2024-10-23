@@ -25,9 +25,9 @@ import androidx.navigation.NavController
 import com.rperez.weatherapp.R
 import com.rperez.weatherapp.navigation.Screen
 import com.rperez.weatherapp.network.ConnectivityManager
+import com.rperez.weatherapp.network.model.WeatherUI
 import com.rperez.weatherapp.ui.components.WeatherStateSuccess
 import com.rperez.weatherapp.ui.components.WeatherStateSuccessLandscape
-import com.rperez.weatherapp.network.model.WeatherState
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
@@ -42,14 +42,14 @@ fun WeatherScreen(
     getWeather: (String) -> Unit,
     getLocalWeather: (Context) -> Unit,
     cityName: State<String>,
-    weatherState: StateFlow<WeatherState>,
+    weatherUIState: StateFlow<WeatherUI>,
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    var weatherData = remember { mutableStateOf<WeatherState?>(weatherState.value) }
+    var weatherData = remember { mutableStateOf<WeatherUI>(weatherUIState.value) }
 
-    LaunchedEffect(weatherState) {
-        weatherState.collectLatest { state ->
+    LaunchedEffect(weatherUIState) {
+        weatherUIState.collectLatest { state ->
             weatherData.value = state
         }
     }
@@ -133,7 +133,7 @@ fun WeatherButton(onClick: () -> Unit, tag: String, text: String, description: S
 
 @Composable
 fun WeatherDataDisplay(
-    weatherData: WeatherState?,
+    weatherData: WeatherUI,
     isLandscape: Boolean
 ) {
     Column(
@@ -143,50 +143,40 @@ fun WeatherDataDisplay(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        when (weatherData) {
-            is WeatherState.Success -> {
-                if (isLandscape) {
-                    WeatherStateSuccessLandscape(
-                        weatherData.data?.main?.temp,
-                        weatherData.data?.weather?.firstOrNull()?.description,
-                        weatherData.data?.weather?.firstOrNull()?.icon,
-                    )
-                } else {
-                    WeatherStateSuccess(
-                        weatherData.data?.main?.temp,
-                        weatherData.data?.weather?.firstOrNull()?.description,
-                        weatherData.data?.weather?.firstOrNull()?.icon,
-                    )
-                }
-            }
 
-            is WeatherState.Failure -> {
+        if (weatherData.isLoading) {
+            CustomMessage(
+                stringResource(R.string.loading),
+                stringResource(R.string.loading_weather_data)
+            )
+        } else {
+            if (weatherData.errorMessage.isNotEmpty()) {
                 var hasInternet = ConnectivityManager.isInternetAvailable(LocalContext.current)
                 if (hasInternet) {
                     CustomMessage(
-                        stringResource(R.string.failure_message, weatherData.data?.message ?: ""),
+                        stringResource(R.string.failure_message, weatherData.errorMessage),
                         stringResource(R.string.failed_to_loac)
                     )
                 } else {
                     CustomMessage(
-                        stringResource(R.string.no_internet_message, weatherData.data?.message ?: ""),
+                        stringResource(R.string.no_internet_message, weatherData.errorMessage),
                         stringResource(R.string.failed_from_no_internet)
                     )
                 }
-            }
-
-            is WeatherState.Loading -> {
-                CustomMessage(
-                    stringResource(R.string.loading),
-                    stringResource(R.string.loading_weather_data)
-                )
-            }
-
-            null -> {
-                CustomMessage(
-                    stringResource(R.string.press_search_weather),
-                    stringResource(R.string.no_weather_data_available)
-                )
+            } else {
+                if (isLandscape) {
+                    WeatherStateSuccessLandscape(
+                        weatherData.temperature,
+                        weatherData.description,
+                        weatherData.icon,
+                    )
+                } else {
+                    WeatherStateSuccess(
+                        weatherData.temperature,
+                        weatherData.description,
+                        weatherData.icon,
+                    )
+                }
             }
         }
     }

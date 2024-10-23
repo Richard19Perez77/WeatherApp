@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -19,8 +20,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rperez.weatherapp.R
-import com.rperez.weatherapp.network.model.WeatherState
+import com.rperez.weatherapp.network.model.WeatherUI
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.min
 
 /**
@@ -29,23 +31,21 @@ import kotlin.math.min
 @Composable
 fun TemperatureScreen(
     modifier: Modifier,
-    weatherState: StateFlow<WeatherState>,
+    weatherUIState: StateFlow<WeatherUI>
 ) {
-    var weatherData = remember { mutableStateOf<WeatherState?>(weatherState.value) }
-    var temp = ""
-    temp = when (weatherData.value) {
-        is WeatherState.Success -> {
-            (weatherData.value as WeatherState.Success).data?.main?.temp?.toString() ?: stringResource(R.string.na)
+    var weatherData = remember { mutableStateOf<WeatherUI>(weatherUIState.value) }
+
+    LaunchedEffect(weatherUIState) {
+        weatherUIState.collectLatest { state ->
+            weatherData.value = state
         }
-        is WeatherState.Failure -> {
-            stringResource(R.string.na)
-        }
-        WeatherState.Loading -> {
-            stringResource(R.string.na)
-        }
-        null -> {
-            stringResource(R.string.na)
-        }
+    }
+
+    var temp = weatherData.value.temperature
+    var tempString = if (temp == Double.MIN_VALUE){
+        stringResource(R.string.na)
+    } else {
+        stringResource(R.string.temp_c, temp)
     }
 
     val configuration = LocalConfiguration.current
@@ -70,7 +70,7 @@ fun TemperatureScreen(
                     contentDescription = semanticString
                 }
                 .focusable(),
-            text = stringResource(R.string.temp_c, temp),
+            text = tempString,
             style = MaterialTheme.typography.headlineLarge.copy(fontSize = fontSize.sp)
         )
     }

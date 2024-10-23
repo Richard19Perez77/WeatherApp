@@ -1,12 +1,15 @@
 package com.rperez.weatherapp.network.model
 
-import com.rperez.weatherapp.repository.WeatherException
-
 /**
- * State of calls to be reflected in UI
+ * Data class to represent UI state variables
  */
-sealed class WeatherState {
-    data class Success(val data: WeatherResponse?) : WeatherState()
-    data class Failure(val data: WeatherException?) : WeatherState()
-    object Loading : WeatherState()
-}
+data class WeatherUI(
+    val isLoading: Boolean = false,
+    val temperature: Double = Double.MIN_VALUE,
+    val humidity: Int = Int.MIN_VALUE,
+    val airPressure: Int = Int.MIN_VALUE,
+    val name: String = "",
+    val description: String = "",
+    val icon: String = "",
+    val errorMessage: String = ""
+)

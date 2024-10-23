@@ -3,6 +3,7 @@ package com.rperez.weatherapp.viewmodel
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -58,11 +59,10 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     ) {
         viewModelScope.launch {
             uiState.collectLatest {
-                // check for no errors and done loading
+                // check for no errors and done loading to make item
                 if (it.errorMessage.isEmpty() && it.isLoading == false) {
-                    val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                     val temperatureEntity = TemperatureEntity(
-                        date = date,
+                        date = LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")),
                         temperature = it.temperature,
                         city = it.name,
                         desc = it.description,
@@ -134,7 +134,6 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         }
     }
 
-
     /**
      * Use Location to get local weather, not by city
      */
@@ -195,8 +194,12 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                         .setPositiveButton(context.getString(R.string.grant)) { _, _ ->
                             launcher.launch(ACCESS_FINE_LOCATION)
                         }
-                        .setNegativeButton(context.getString(R.string.cancel), null)
-                        .show()
+                        .setNegativeButton(
+                            context.getString(R.string.cancel),
+                            DialogInterface.OnClickListener { _, _ ->
+                                getWeather("Paris")
+                            }
+                        ).show()
                 }
             )
         }

@@ -19,4 +19,5 @@ data class TemperatureEntity(
     val temperature: Double,
     val humidity: Int,
     val pressure: Int,
+    val timeStamp: Long = System.currentTimeMillis()
 )

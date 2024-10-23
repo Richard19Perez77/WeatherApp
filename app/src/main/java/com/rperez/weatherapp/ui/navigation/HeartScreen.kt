@@ -1,6 +1,7 @@
 package com.rperez.weatherapp.ui.navigation
 
 import android.content.Context
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,6 +21,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rperez.weatherapp.R
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import kotlinx.coroutines.flow.Flow
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Screen to show the entries saved with more detail, won't focus on telemetrics of weather but the weather's adverse health effects.
@@ -30,14 +34,16 @@ fun HeartScreen(
     modifier: Modifier,
     getAllTemperatures: () -> Flow<List<TemperatureEntity>>
 ) {
-    val allTemps1 = getAllTemperatures().collectAsStateWithLifecycle(emptyList())
+    val allTemps1 =
+        getAllTemperatures().collectAsStateWithLifecycle(emptyList()).value.sortedBy { it -> it.timeStamp }
+            .reversed()
 
     var rareFacts = stringResource(R.string.rare_facts)
 
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        if (allTemps1.value.isEmpty()) {
+        if (allTemps1.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -67,7 +73,7 @@ fun HeartScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                items(allTemps1.value) { temperature ->
+                items(allTemps1) { temperature ->
                     TemperatureItem(temperature)
                 }
             }
@@ -107,11 +113,15 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = temperature.city,
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.headlineMedium
-                )
+                Box(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = temperature.city,
+                        color = MaterialTheme.colorScheme.primary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                }
                 Text(
                     text = temperature.date,
                     color = MaterialTheme.colorScheme.primary,
@@ -150,6 +160,19 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.bodyLarge,
                     overflow = TextOverflow.Visible,
+                )
+            }
+            val date = Date(temperature.timeStamp)
+            val pattern = "EEEE, MMMM d, yyyy h:mm a"
+            val format = SimpleDateFormat(pattern, Locale.getDefault())
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = format.format(date),
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }

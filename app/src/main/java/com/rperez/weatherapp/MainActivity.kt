@@ -35,6 +35,8 @@ class MainActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 weatherViewModel.getLocalWeather(context = this.applicationContext)
+            } else {
+                weatherViewModel.getWeather("Tokyo")
             }
         }
 
@@ -45,9 +47,8 @@ class MainActivity : ComponentActivity() {
 
         weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
         weatherViewModel.setupWeatherObserver(temperatureViewModel::insertTemperature)
-        // temperatureViewModel.insertMockTemperatures()
         weatherViewModel.setCityName(savedCity)
-        weatherViewModel.getWeather(savedCity)
+        weatherViewModel.getLocalWeather(this)
 
         setContent {
             WeatherAppTheme {

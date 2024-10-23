@@ -57,6 +57,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     ) {
         viewModelScope.launch {
             uiState.collect {
+                // check for no errors and valid temperature
                 if (it.errorMessage.isEmpty() && it.temperature != Double.MIN_VALUE) {
                     val date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                     val temperatureEntity = TemperatureEntity(
@@ -93,9 +94,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
             try {
                 currentJob = viewModelScope.launch {
                     _uiState.update { currState ->
-                        currState.copy(
-                            isLoading = true,
-                        )
+                        WeatherUI(isLoading = true)
                     }
                     val result = repository.getWeatherByCityData(cityName)
                     result.onSuccess {
@@ -103,7 +102,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                         if (res != null) {
                             setCityName(res.name)
                             _uiState.update { newState ->
-                                newState.copy(
+                                WeatherUI(
                                     isLoading = false,
                                     temperature = res.main.temp,
                                     humidity = res.main.humidity,
@@ -113,6 +112,16 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                                     icon = res.weather.firstOrNull()?.icon ?: "",
                                     errorMessage = "",
                                 )
+//                                newState.copy(
+//                                    isLoading = false,
+//                                    temperature = res.main.temp,
+//                                    humidity = res.main.humidity,
+//                                    airPressure = res.main.pressure,
+//                                    name = res.name,
+//                                    description = res.weather.firstOrNull()?.description ?: "",
+//                                    icon = res.weather.firstOrNull()?.icon ?: "",
+//                                    errorMessage = "",
+//                                )
                             }
                         }
                     }
@@ -120,7 +129,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                         var res = result.exceptionOrNull()
                         if (res != null) {
                             _uiState.update { newState ->
-                                newState.copy(
+                                WeatherUI(
                                     isLoading = false,
                                     errorMessage = res.message.toString()
                                 )
@@ -144,7 +153,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
             try {
                 currentJob = viewModelScope.launch {
                     _uiState.update { currState ->
-                        currState.copy(
+                        WeatherUI(
                             isLoading = true,
                         )
                     }
@@ -156,7 +165,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                         if (res != null) {
                             setCityName(res.name)
                             _uiState.update { newState ->
-                                newState.copy(
+                                WeatherUI(
                                     isLoading = false,
                                     temperature = res.main.temp,
                                     humidity = res.main.humidity,
@@ -166,6 +175,17 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                                     icon = res.weather.firstOrNull()?.icon ?: "",
                                     errorMessage = "",
                                 )
+
+//                                newState.copy(
+//                                    isLoading = false,
+//                                    temperature = res.main.temp,
+//                                    humidity = res.main.humidity,
+//                                    airPressure = res.main.pressure,
+//                                    name = res.name,
+//                                    description = res.weather.firstOrNull()?.description ?: "",
+//                                    icon = res.weather.firstOrNull()?.icon ?: "",
+//                                    errorMessage = "",
+//                                )
                             }
                         }
                     }
@@ -173,9 +193,9 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                         var res = result.exceptionOrNull()
                         if (res != null) {
                             _uiState.update {
-                                it.copy(
+                                WeatherUI(
                                     isLoading = false,
-                                    errorMessage = res.message.toString()
+                                    errorMessage = res.message.toString(),
                                 )
                             }
                         }

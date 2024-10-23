@@ -46,13 +46,7 @@ fun WeatherScreen(
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-    var weatherData = remember { mutableStateOf<WeatherUI>(weatherUIState.value) }
 
-    LaunchedEffect(weatherUIState) {
-        weatherUIState.collectLatest { state ->
-            weatherData.value = state
-        }
-    }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -71,7 +65,7 @@ fun WeatherScreen(
         WeatherButtons(isLandscape, cityName.value, getWeather, getLocalWeather)
     }
 
-    WeatherDataDisplay(weatherData.value, isLandscape)
+    WeatherDataDisplay(weatherUIState, isLandscape)
     BottomNavigationButton(navController)
 }
 
@@ -133,9 +127,17 @@ fun WeatherButton(onClick: () -> Unit, tag: String, text: String, description: S
 
 @Composable
 fun WeatherDataDisplay(
-    weatherData: WeatherUI,
+    weatherUIState: StateFlow<WeatherUI>,
     isLandscape: Boolean
 ) {
+    var weatherData = remember { mutableStateOf<WeatherUI>(weatherUIState.value) }
+
+    LaunchedEffect(weatherUIState) {
+        weatherUIState.collectLatest { state ->
+            weatherData.value = state
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -144,37 +146,37 @@ fun WeatherDataDisplay(
         verticalArrangement = Arrangement.Center
     ) {
 
-        if (weatherData.isLoading) {
+        if (weatherData.value.isLoading) {
             CustomMessage(
                 stringResource(R.string.loading),
                 stringResource(R.string.loading_weather_data)
             )
         } else {
-            if (weatherData.errorMessage.isNotEmpty()) {
+            if (weatherData.value.errorMessage.isNotEmpty()) {
                 var hasInternet = ConnectivityManager.isInternetAvailable(LocalContext.current)
                 if (hasInternet) {
                     CustomMessage(
-                        stringResource(R.string.failure_message, weatherData.errorMessage),
-                        stringResource(R.string.failed_to_loac)
+                        stringResource(R.string.failure_message, weatherData.value.errorMessage),
+                        stringResource(R.string.failed_to_load)
                     )
                 } else {
                     CustomMessage(
-                        stringResource(R.string.no_internet_message, weatherData.errorMessage),
+                        stringResource(R.string.no_internet_message, weatherData.value.errorMessage),
                         stringResource(R.string.failed_from_no_internet)
                     )
                 }
             } else {
                 if (isLandscape) {
                     WeatherStateSuccessLandscape(
-                        weatherData.temperature,
-                        weatherData.description,
-                        weatherData.icon,
+                        weatherData.value.temperature,
+                        weatherData.value.description,
+                        weatherData.value.icon,
                     )
                 } else {
                     WeatherStateSuccess(
-                        weatherData.temperature,
-                        weatherData.description,
-                        weatherData.icon,
+                        weatherData.value.temperature,
+                        weatherData.value.description,
+                        weatherData.value.icon,
                     )
                 }
             }

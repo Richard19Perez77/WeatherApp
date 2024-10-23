@@ -105,12 +105,12 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                 Text(
                     text = temperature.city,
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.headlineMedium
                 )
                 Text(
                     text = temperature.date,
                     color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
             Row(
@@ -120,15 +120,15 @@ fun TemperatureItem(temperature: TemperatureEntity) {
             ) {
                 Text(
                     text = "${temperature.temperature} °C",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Text(
                     text = "${temperature.humidity}% Humidity",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Text(
                     text = "${temperature.pressure} hPa",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
             Text(
@@ -136,7 +136,7 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 text = temperature.desc,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.bodyLarge
             )
             if (alertList.isNotEmpty()) {
                 Text(

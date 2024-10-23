@@ -52,7 +52,7 @@ class OpeningLayoutTestTest {
 
     @Test
     fun testSearchCityButtonTextIsDisplayed() {
-        composeTestRule.onNodeWithTag("search_city_button_text", useUnmergedTree = true)
+        composeTestRule.onNodeWithTag("search_button")
             .assertIsDisplayed()
             .assert(hasText("Search City Weather"))
     }

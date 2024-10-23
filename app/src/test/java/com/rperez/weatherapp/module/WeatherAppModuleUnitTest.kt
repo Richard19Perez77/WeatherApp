@@ -1,4 +1,4 @@
-package com.rperez.weatherapp.failing
+package com.rperez.weatherapp.module
 
 import com.rperez.weatherapp.di.appModule
 import com.rperez.weatherapp.repository.WeatherRepository

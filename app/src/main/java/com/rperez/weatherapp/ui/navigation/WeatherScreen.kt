@@ -176,7 +176,7 @@ fun WeatherDataDisplay(
                     )
                     CustomMessage(
                         weatherData.value.name,
-                        stringResource(R.string.failed_to_load)
+                        stringResource(R.string.failed_city, weatherData.value.name)
                     )
                 } else {
                     CustomMessage(

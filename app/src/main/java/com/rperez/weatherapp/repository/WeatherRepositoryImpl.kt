@@ -44,7 +44,10 @@ class WeatherRepositoryImpl : WeatherRepository {
         } catch (e: HttpException) {
             var code: Int = e.code()
             when (code) {
-                404 -> { Result.failure(WeatherException("No data for city")) }
+                404 -> {
+                    Result.failure(WeatherException("No data for city"))
+                }
+
                 else -> Result.failure(WeatherException("Service Error"))
             }
         } catch (e: Exception) {
@@ -72,7 +75,10 @@ class WeatherRepositoryImpl : WeatherRepository {
         } catch (e: HttpException) {
             var code: Int = e.code()
             when (code) {
-                404 -> { Result.failure(WeatherException("No data for your location")) }
+                404 -> {
+                    Result.failure(WeatherException("No data for your location"))
+                }
+
                 else -> Result.failure(WeatherException("Service Error"))
             }
         } catch (e: Exception) {

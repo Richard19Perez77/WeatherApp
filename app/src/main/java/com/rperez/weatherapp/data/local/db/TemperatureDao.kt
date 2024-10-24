@@ -26,7 +26,7 @@ interface TemperatureDao {
      *
      * @return A list of all temperature entities stored in the database.
      */
-    @Query("SELECT * FROM temperature")
+    @Query(value = "SELECT * FROM temperature")
     fun getAllTemperatures(): List<TemperatureEntity>
 
 

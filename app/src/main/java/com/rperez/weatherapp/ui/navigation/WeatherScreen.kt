@@ -171,12 +171,16 @@ fun WeatherDataDisplay(
                 var hasInternet = ConnectivityManager.isInternetAvailable(LocalContext.current)
                 if (hasInternet) {
                     CustomMessage(
-                        stringResource(R.string.failure_message, weatherData.value.errorMessage),
+                        stringResource(R.string.failure_message),
+                        stringResource(R.string.failed_to_load)
+                    )
+                    CustomMessage(
+                        weatherData.value.name,
                         stringResource(R.string.failed_to_load)
                     )
                 } else {
                     CustomMessage(
-                        stringResource(R.string.no_internet_message, weatherData.value.errorMessage),
+                        stringResource(R.string.no_internet_message),
                         stringResource(R.string.failed_from_no_internet)
                     )
                 }
@@ -208,6 +212,7 @@ fun WeatherDataDisplay(
 fun CustomMessage(message: String, contentDescription: String) {
     Text(
         modifier = Modifier
+            .padding(16.dp, 0.dp, 16.dp, 0.dp)
             .semantics { this.contentDescription = contentDescription }
             .testTag("custom_text"),
         text = message,

@@ -19,11 +19,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rperez.weatherapp.R
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -51,8 +49,7 @@ fun HeartScreen(
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO){
-            allTemps.value = getAllTemperatures.invoke()
-            allTemps.value.sortedBy { it -> it.timeStamp }.reversed()
+            allTemps.value = getAllTemperatures.invoke().sortedBy { it -> it.timeStamp }.reversed()
         }
     }
 

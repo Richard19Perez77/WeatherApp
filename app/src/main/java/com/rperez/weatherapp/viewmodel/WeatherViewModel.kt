@@ -69,7 +69,8 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                     // Insert temperature data into the local database if no errors and loading is complete.
                     if (it.errorMessage.isEmpty() && it.isLoading == false) {
                         val temperatureEntity = TemperatureEntity(
-                            date = LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")),
+                            date = LocalDate.now()
+                                .format(DateTimeFormatter.ofPattern("MMM d, yyyy")),
                             temperature = it.temperature,
                             city = it.name,
                             desc = it.description,
@@ -139,7 +140,8 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                             _uiState.update { newState ->
                                 WeatherUI(
                                     isLoading = false,
-                                    errorMessage = res.message.toString()
+                                    errorMessage = res.message.toString(),
+                                    name = cityName,
                                 )
                             }
                         }

@@ -45,7 +45,7 @@ class OrientationTestTest {
     @Test
     fun testCityNamePersistsOnOrientationChange() {
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Loading...").fetchSemanticsNodes().isEmpty()
+            composeTestRule.onAllNodesWithText("Loading…").fetchSemanticsNodes().isEmpty()
         }
 
         var cityString = ""
@@ -74,13 +74,13 @@ class OrientationTestTest {
         composeTestRule.onNodeWithTag("search_button").performClick()
 
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Loading...").fetchSemanticsNodes().isEmpty()
+            composeTestRule.onAllNodesWithText("Loading…").fetchSemanticsNodes().isEmpty()
         }
 
         composeTestRule.activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Loading...").fetchSemanticsNodes().isEmpty()
+            composeTestRule.onAllNodesWithText("Loading…").fetchSemanticsNodes().isEmpty()
         }
 
         var newCityString = ""

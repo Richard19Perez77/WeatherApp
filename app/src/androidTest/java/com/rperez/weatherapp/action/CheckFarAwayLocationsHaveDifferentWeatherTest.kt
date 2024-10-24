@@ -41,7 +41,7 @@ class CheckFarAwayLocationsHaveDifferentWeatherTest {
     @Test
     fun testChangeSearch() {
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Loading...").fetchSemanticsNodes().isEmpty()
+            composeTestRule.onAllNodesWithText("Loading…").fetchSemanticsNodes().isEmpty()
         }
 
         var descriptionString = ""
@@ -67,7 +67,7 @@ class CheckFarAwayLocationsHaveDifferentWeatherTest {
         composeTestRule.onNodeWithTag("search_button").performClick()
 
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Loading...").fetchSemanticsNodes().isEmpty()
+            composeTestRule.onAllNodesWithText("Loading…").fetchSemanticsNodes().isEmpty()
         }
 
         var tempStringCurr = ""

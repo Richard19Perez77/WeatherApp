@@ -68,7 +68,7 @@ class EditingLayoutTestTest {
     @Test
     fun testTempZoomButtonClickedGoesToNewScreenShowingOnlyTempFromCall() {
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Loading...").fetchSemanticsNodes().isEmpty()
+            composeTestRule.onAllNodesWithText("Loading…").fetchSemanticsNodes().isEmpty()
         }
 
         // store temp

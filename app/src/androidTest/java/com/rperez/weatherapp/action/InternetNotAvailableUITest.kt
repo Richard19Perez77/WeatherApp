@@ -28,13 +28,13 @@ class InternetNotAvailableUITest {
     @Test
     fun testInternetOffUIUpdated() {
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Loading...").fetchSemanticsNodes().isEmpty()
+            composeTestRule.onAllNodesWithText("Loading…").fetchSemanticsNodes().isEmpty()
         }
 
         composeTestRule.onNodeWithTag("search_button").performClick()
 
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Loading...").fetchSemanticsNodes().isEmpty()
+            composeTestRule.onAllNodesWithText("Loading…").fetchSemanticsNodes().isEmpty()
         }
 
         var customText = ""

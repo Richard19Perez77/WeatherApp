@@ -68,7 +68,7 @@ class OpeningLayoutTestTest {
     fun testDefaultTokyoTempAppears() {
         // wait for loading to end
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Loading...").fetchSemanticsNodes().isEmpty()
+            composeTestRule.onAllNodesWithText("Loading…").fetchSemanticsNodes().isEmpty()
         }
 
         var tempString = ""
@@ -88,7 +88,7 @@ class OpeningLayoutTestTest {
     fun testDefaultTokyoDescAppears() {
         // wait for loading to end
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Loading...").fetchSemanticsNodes().isEmpty()
+            composeTestRule.onAllNodesWithText("Loading…").fetchSemanticsNodes().isEmpty()
         }
 
         var descriptionString = ""
@@ -109,7 +109,7 @@ class OpeningLayoutTestTest {
     fun testDefaultWeatherIconPopulates() {
         // wait for loading to end
         composeTestRule.waitUntil(timeoutMillis = 5000) {
-            composeTestRule.onAllNodesWithText("Loading...").fetchSemanticsNodes().isEmpty()
+            composeTestRule.onAllNodesWithText("Loading…").fetchSemanticsNodes().isEmpty()
         }
 
         composeTestRule.onNodeWithTag("icon_image")

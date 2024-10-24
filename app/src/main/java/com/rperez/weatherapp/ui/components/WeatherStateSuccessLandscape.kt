@@ -13,10 +13,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.rperez.weatherapp.R
-import com.rperez.weatherapp.ui.components.WeatherIcon
 
 /**
- * UI Composable for Successful update of city weather call and in landscape view.
+ * Composable function to display the successful state of a city weather update
+ * in landscape orientation.
+ *
+ * This function arranges the temperature, weather icon, and description
+ * horizontally, suitable for landscape layouts. It supports accessibility
+ * by providing content descriptions for screen readers.
+ *
+ * @param temp The current temperature in degrees Celsius.
+ * @param desc A textual description of the current weather conditions.
+ * @param icon The icon code used to fetch the appropriate weather icon from
+ *             the OpenWeatherMap API.
  */
 @Composable
 fun WeatherStateSuccessLandscape(
@@ -43,6 +52,7 @@ fun WeatherStateSuccessLandscape(
             style = MaterialTheme.typography.headlineLarge
         )
 
+        // Construct the URL for the weather icon using the icon code
         val iconUrl =
             stringResource(R.string.https_openweathermap_org_img_wn_2x_png, icon)
         WeatherIcon(iconUrl = iconUrl)

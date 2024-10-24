@@ -6,17 +6,34 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 /**
- * Allow DB transactions and replace new entries with same data.
+ * Data Access Object (DAO) for managing temperature data in the local database.
+ * This interface defines methods for inserting, retrieving, and deleting temperature entries.
  */
 @Dao
 interface TemperatureDao {
 
+    /**
+     * Inserts a new temperature entry into the database.
+     * If an entry with the same primary key already exists, it will be replaced.
+     *
+     * @param temperature The temperature entity to be inserted.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTemperature(temperature: TemperatureEntity)
 
+    /**
+     * Retrieves all temperature entries from the database.
+     *
+     * @return A list of all temperature entities stored in the database.
+     */
     @Query("SELECT * FROM temperature")
     suspend fun getAllTemperatures(): List<TemperatureEntity>
 
+
+    /**
+     * Deletes all temperature entries from the database.
+     * This method clears the entire temperature table.
+     */
     @Query("DELETE FROM temperature")
     suspend fun deleteAllTemperatures()
 }

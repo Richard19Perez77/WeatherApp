@@ -25,41 +25,45 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 /**
- * View model to hold the Weather State as calls change it.
+ * ViewModel that manages the weather data state and handles fetching weather information
+ * either by city name or by user's current location.
  */
 class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() {
 
     /**
-     * Launcher is used for callback to re call the get weather by coord, after user accepts permissions.
+     * Launcher to request location permission. Callback will trigger fetching weather by coordinates
+     * once permission is granted.
      */
     lateinit var launcher: ActivityResultLauncher<String>
 
     /**
-     * City name is going to be from shared pref's
+     * Holds the name of the city, typically fetched from shared preferences.
      */
     private val _cityName = mutableStateOf("")
     val cityName = _cityName
 
     /**
-     * Will contain variables for the UI on get weather calls.
+     * StateFlow to store the current UI state (weather data, loading, error states).
      */
     private val _uiState = MutableStateFlow<WeatherUI>(WeatherUI())
     val uiState: StateFlow<WeatherUI> = _uiState.asStateFlow()
 
     /**
-     * Local instance of coords to be updated frequently.
+     * Stores the user's current coordinates (latitude, longitude).
      */
     lateinit var coords: Pair<Double, Double>
 
     /**
-     * Allow for observer to write to room for later usage.
+     * Observes changes in weather data and stores it into the local database (Room)
+     * once data is successfully loaded.
      */
     fun setupWeatherObserver(
         insertTemperature: (TemperatureEntity) -> Unit,
     ) {
         viewModelScope.launch {
             uiState.collectLatest {
-                // check for no errors and done loading to make item
+
+                // Insert temperature data into the local database if no errors and loading is complete.
                 if (it.errorMessage.isEmpty() && it.isLoading == false) {
                     val temperatureEntity = TemperatureEntity(
                         date = LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")),
@@ -75,10 +79,16 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         }
     }
 
+    /**
+     * Returns the current city name as a State.
+     */
     fun getCityName(): State<String> {
         return cityName
     }
 
+    /**
+     * Sets the city name.
+     */
     fun setCityName(cityName: String) {
         _cityName.value = cityName
     }
@@ -86,16 +96,19 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     private var currentJob: Job? = null
 
     /**
-     * Get weather by city name. Service will return a formatted name that will be used back into the field.
+     * Fetches weather information based on the given city name. Resets the UI state and updates it
+     * upon success or failure.
      */
     fun getWeather(cityName: String) {
         if (cityName.isNotEmpty()) {
+
+            // Cancel any ongoing job to avoid conflicts
             currentJob.let { it?.cancel() }
 
             try {
                 currentJob = viewModelScope.launch {
                     _uiState.update { currState ->
-                        WeatherUI()
+                        WeatherUI() // Reset UI state to initial loading state
                     }
                     val result = repository.getWeatherByCityData(cityName)
                     result.onSuccess {
@@ -135,15 +148,18 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     }
 
     /**
-     * Use Location to get local weather, not by city
+     * Fetches local weather using the user's current GPS coordinates. If not available,
+     * requests location permission and fetches weather data once permission is granted.
      */
     fun getLocalWeather(context: Context) {
         if (::coords.isInitialized) {
-            currentJob.let { it?.cancel() }
+
+            currentJob.let { it?.cancel() }// Cancel any ongoing job to avoid conflicts
+
             try {
                 currentJob = viewModelScope.launch {
                     _uiState.update { currState ->
-                        WeatherUI()
+                        WeatherUI() // Reset UI state to initial loading state
                     }
 
                     val result = repository.getWeatherGeoData(coords.first, coords.second)
@@ -182,10 +198,12 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                 currentJob = null
             }
         } else {
+
+            // Request location updates and permissions if coordinates are not initialized
             LocationService(context, launcher).getLatLon(
                 onLocationReceived = { lat, lon ->
                     coords = Pair(lat, lon)
-                    getLocalWeather(context.applicationContext)
+                    getLocalWeather(context.applicationContext) // Retry fetching weather with updated coordinates
                 },
                 onPermissionRequired = {
                     AlertDialog.Builder(context)
@@ -197,6 +215,8 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                         .setNegativeButton(
                             context.getString(R.string.cancel),
                             DialogInterface.OnClickListener { _, _ ->
+
+                                // Fallback to fetching weather for a default city (e.g., Paris) if permission is denied
                                 getWeather("Paris")
                             }
                         ).show()
@@ -205,12 +225,15 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         }
     }
 
+    /**
+     * Sets the ActivityResultLauncher used for requesting location permissions.
+     */
     fun setRequestLocationPermissionLauncher(launcher: ActivityResultLauncher<String>) {
         this.launcher = launcher
     }
 
     /**
-     * Cancel job on lifecycle ending composable.
+     * Cancel any ongoing job when the ViewModel is cleared.
      */
     override fun onCleared() {
         super.onCleared()

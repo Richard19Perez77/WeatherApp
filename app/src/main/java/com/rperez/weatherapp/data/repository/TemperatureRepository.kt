@@ -4,18 +4,32 @@ import com.rperez.weatherapp.data.local.db.TemperatureDao
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 
 /**
- * Will be injected into app module for usage in the TemperatureViewModel.
+ * Repository for managing temperature data operations.
+ * This class acts as a single source of truth for temperature-related data
+ * and abstracts the data source (in this case, the database via TemperatureDao).
+ * It will be injected into the app module and used by the TemperatureViewModel.
  */
 class TemperatureRepository(private val temperatureDao: TemperatureDao) {
 
+    /**
+     * Inserts a temperature record into the database.
+     * @param temperature The temperature entity to be inserted.
+     */
     suspend fun insertTemperature(temperature: TemperatureEntity) {
         temperatureDao.insertTemperature(temperature)
     }
 
+    /**
+     * Retrieves all temperature records from the database.
+     * @return A list of TemperatureEntity objects representing all stored temperatures.
+     */
     suspend fun getAllTemperatures(): List<TemperatureEntity> {
         return temperatureDao.getAllTemperatures()
     }
 
+    /**
+     * Deletes all temperature records from the database.
+     */
     suspend fun deleteAllTemperatures() {
         temperatureDao.deleteAllTemperatures()
     }

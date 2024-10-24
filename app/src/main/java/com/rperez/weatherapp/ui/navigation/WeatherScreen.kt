@@ -31,7 +31,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 /**
- * Shows the UI for current weather, from coords or city entry. Will overwrite city with full name on successful call and show data on screen for the day.
+ * Composable function that displays the current weather information.
+ * It allows users to enter a city name or get weather data based on their location.
+ * The UI updates with weather data for the current day once a successful API call is made.
  */
 @Composable
 fun WeatherScreen(
@@ -67,6 +69,10 @@ fun WeatherScreen(
     BottomNavigationButton(navController)
 }
 
+/**
+ * Composable function that renders buttons for fetching weather data.
+ * It adapts the layout based on the screen orientation (landscape or portrait).
+ */
 @Composable
 fun WeatherButtons(
     isLandscape: Boolean,
@@ -110,6 +116,10 @@ fun WeatherButtons(
     }
 }
 
+/**
+ * A reusable composable button for fetching weather data.
+ * It includes semantic tags for accessibility and testing.
+ */
 @Composable
 fun WeatherButton(onClick: () -> Unit, tag: String, text: String, description: String) {
     Button(
@@ -123,6 +133,10 @@ fun WeatherButton(onClick: () -> Unit, tag: String, text: String, description: S
     }
 }
 
+/**
+ * Composable function that displays weather data based on the current UI state.
+ * It handles loading states, errors, and displays the appropriate weather information.
+ */
 @Composable
 fun WeatherDataDisplay(
     weatherUIState: StateFlow<WeatherUI>,
@@ -130,6 +144,7 @@ fun WeatherDataDisplay(
 ) {
     var weatherData = remember { mutableStateOf<WeatherUI>(weatherUIState.value) }
 
+    // Collect the latest weather UI state from the StateFlow
     LaunchedEffect(weatherUIState) {
         weatherUIState.collectLatest { state ->
             weatherData.value = state
@@ -144,12 +159,14 @@ fun WeatherDataDisplay(
         verticalArrangement = Arrangement.Center
     ) {
 
+        // Display loading message if data is being fetched
         if (weatherData.value.isLoading) {
             CustomMessage(
                 stringResource(R.string.loading),
                 stringResource(R.string.loading_weather_data)
             )
         } else {
+            // Display error messages based on the state of the weather data
             if (weatherData.value.errorMessage.isNotEmpty()) {
                 var hasInternet = ConnectivityManager.isInternetAvailable(LocalContext.current)
                 if (hasInternet) {
@@ -164,6 +181,7 @@ fun WeatherDataDisplay(
                     )
                 }
             } else {
+                // Display the weather information based on screen orientation
                 if (isLandscape) {
                     WeatherStateSuccessLandscape(
                         weatherData.value.temperature,
@@ -182,6 +200,10 @@ fun WeatherDataDisplay(
     }
 }
 
+/**
+ * Composable function that displays a custom message.
+ * It includes accessibility semantics for better screen reader support.
+ */
 @Composable
 fun CustomMessage(message: String, contentDescription: String) {
     Text(
@@ -193,6 +215,10 @@ fun CustomMessage(message: String, contentDescription: String) {
     )
 }
 
+/**
+ * Composable function for rendering a button that navigates to a different screen.
+ * It includes a semantic description for accessibility.
+ */
 @Composable
 fun BottomNavigationButton(navController: NavController) {
     Column(

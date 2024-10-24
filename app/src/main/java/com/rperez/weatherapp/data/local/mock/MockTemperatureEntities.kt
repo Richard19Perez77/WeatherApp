@@ -3,9 +3,21 @@ package com.rperez.weatherapp.data.local.mock
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 
 /**
- * As development and testing continues use mock enttities to test ui. Using mock here helps keep the device in a demo'able shape.
+ * Provides mock temperature data for development and testing purposes.
+ * This object is useful for UI testing, allowing developers to work with predefined weather data
+ * without needing to rely on live data sources or external APIs.
+ * Mock data ensures that the app remains in a demo-able state and helps with testing various
+ * weather conditions and data flows during development.
  */
 object MockTemperatureEntities {
+
+    /**
+     * Returns a list of predefined mock temperature entries.
+     * The mock data includes various weather conditions for different cities,
+     * covering a range of temperature and humidity levels for effective testing.
+     *
+     * @return A list of TemperatureEntity objects representing mock weather data.
+     */
     fun getMockTemperatureEntities(): List<TemperatureEntity> {
         return listOf(
             TemperatureEntity(

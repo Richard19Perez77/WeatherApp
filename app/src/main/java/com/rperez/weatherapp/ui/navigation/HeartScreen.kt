@@ -1,7 +1,6 @@
 package com.rperez.weatherapp.ui.navigation
 
 import android.content.Context
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,7 +25,12 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * Screen to show the entries saved with more detail, won't focus on telemetrics of weather but the weather's adverse health effects.
+ * Composable function representing the HeartScreen.
+ * This screen displays saved temperature entries along with their adverse health effects.
+ * If there are no saved entries, it shows a message with rare facts.
+ *
+ * @param modifier Modifier to be applied to the layout.
+ * @param getAllTemperatures Function to retrieve all temperature entries as a Flow of a list.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,16 +38,21 @@ fun HeartScreen(
     modifier: Modifier,
     getAllTemperatures: () -> Flow<List<TemperatureEntity>>
 ) {
-    val allTemps1 =
+    // Collect temperature entries and sort them by timestamp in descending order.
+    val allTemps =
         getAllTemperatures().collectAsStateWithLifecycle(emptyList()).value.sortedBy { it -> it.timeStamp }
             .reversed()
 
+    // Get the string resource for rare facts.
     var rareFacts = stringResource(R.string.rare_facts)
 
+    // Layout for the HeartScreen.
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        if (allTemps1.isEmpty()) {
+        // Check if there are no temperature entries to display.
+        if (allTemps.isEmpty()) {
+            // Display health tips if there are no entries.
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -65,6 +74,8 @@ fun HeartScreen(
                 }
             }
         } else {
+
+            // Display a list of temperature entries in a LazyColumn.
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -73,11 +84,14 @@ fun HeartScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                items(allTemps1) { temperature ->
+
+                // Create a TemperatureItem for each temperature entry.
+                items(allTemps) { temperature ->
                     TemperatureItem(temperature)
                 }
             }
 
+            // Display a card with rare facts at the bottom of the screen.
             Card(
                 modifier = Modifier
                     .padding(8.dp)
@@ -96,8 +110,15 @@ fun HeartScreen(
     }
 }
 
+/**
+ * Composable function to display individual temperature details.
+ *
+ * @param temperature The temperature entity containing the details to display.
+ */
 @Composable
 fun TemperatureItem(temperature: TemperatureEntity) {
+
+    // Retrieve alerts based on the temperature entity.
     var alertList = getAlerts(LocalContext.current, temperature)
     Card(
         modifier = Modifier
@@ -108,6 +129,7 @@ fun TemperatureItem(temperature: TemperatureEntity) {
             modifier = Modifier
                 .padding(12.dp)
         ) {
+            // Display city name and date in a row.
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -128,6 +150,7 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
+            // Display temperature, humidity, and pressure in another row.
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -146,6 +169,7 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                     style = MaterialTheme.typography.titleMedium
                 )
             }
+            // Display additional description about the temperature.
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -153,6 +177,7 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                 text = temperature.desc,
                 style = MaterialTheme.typography.bodyLarge
             )
+            // Display alerts if any exist.
             if (alertList.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(8.dp),
@@ -162,6 +187,7 @@ fun TemperatureItem(temperature: TemperatureEntity) {
                     overflow = TextOverflow.Visible,
                 )
             }
+            // Format and display the timestamp of the temperature entry.
             val date = Date(temperature.timeStamp)
             val pattern = "EEEE, MMMM d, yyyy h:mm a"
             val format = SimpleDateFormat(pattern, Locale.getDefault())
@@ -179,8 +205,17 @@ fun TemperatureItem(temperature: TemperatureEntity) {
     }
 }
 
+/**
+ * Function to get health alerts based on temperature and humidity levels.
+ *
+ * @param context The context to retrieve string resources.
+ * @param temperature The temperature entity containing data to assess health risks.
+ * @return A list of alerts corresponding to the health risks based on the temperature.
+ */
 fun getAlerts(context: Context, temperature: TemperatureEntity): List<String> {
     var temp = mutableListOf<String>()
+
+    // Add alerts based on temperature thresholds.
     if (temperature.temperature < 10.0) {
         temp.add(context.getString(R.string.hypthermia_1))
         temp.add(context.getString(R.string.respiratory_1))
@@ -202,6 +237,7 @@ fun getAlerts(context: Context, temperature: TemperatureEntity): List<String> {
     if (temperature.temperature > 15.0) {
         temp.add(context.getString(R.string.allergies_1))
     }
+    // Add alerts based on humidity thresholds.
     if (temperature.humidity < 30) {
         temp.add(context.getString(R.string.humidity_1))
     }
@@ -214,6 +250,7 @@ fun getAlerts(context: Context, temperature: TemperatureEntity): List<String> {
     if (temperature.humidity > 70) {
         temp.add(context.getString(R.string.humidity_4))
     }
+    // Add alerts based on pressure thresholds.
     if (temperature.pressure < 980) {
         temp.add(context.getString(R.string.low_air_pressure_1))
     }

@@ -11,25 +11,35 @@ import com.rperez.weatherapp.viewmodel.WeatherViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
- * Future implementations: help people be aware of problems in weather's effect on them.
+ * Main entry point of the WeatherApp. Handles the UI setup and initiates
+ * weather-related operations, such as fetching local weather and managing
+ * user preferences for the default city.
  *
- * may need to alter the air pressure by city zip code for normal values or expected unhealthy values
- * trend graphs at all or a simple line graph per city, based on previous day small line trend with markers for temps
- * most likely move the view model int the composables and nav controller
- * defensive programming for api client successive calls
- * detect small trends of temperature from default city to loca (city uses default city coords, local is variable by a small amount, user won't know city coords)
- *
+ * Future Implementations:
+ * - Adjust air pressure by city/zip code for normal or unhealthy values.
+ * - Implement trend graphs per city (e.g., line graphs of temperature).
+ * - Consider moving the ViewModel logic into the composables for better state handling.
+ * - Improve API client calls with defensive programming techniques.
+ * - Detect small temperature trends between default and local city settings.
  */
 class MainActivity : ComponentActivity() {
 
     /**
-     * Use for shared pref's handling for city name field.
+     * ViewModel for handling weather data.
+     * Responsible for interacting with weather APIs and updating the UI.
      */
     private val weatherViewModel: WeatherViewModel by viewModel()
+
+    /**
+     * ViewModel for handling temperature data, responsible for storing temperatures
+     * in the local database and observing weather changes.
+     */
     private val temperatureViewModel: TemperatureViewModel by viewModel()
 
     /**
-     * Allow for callback on accepting permissions for location. Will not allow user to permanently disable asking.
+     * Registers a callback for location permissions.
+     * If granted, fetches the local weather.
+     * If denied, defaults to Tokyo weather as fallback (Tokyo is used as a global default).
      */
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -40,10 +50,18 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+    /**
+     * Called when the activity is starting.
+     * Sets up the ViewModels, location permission callback, and initiates the first weather fetch.
+     * The city name is restored from shared preferences and weather data is fetched accordingly.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val sharedPreferences = getSharedPreferences(getString(R.string.weatherappprefs), MODE_PRIVATE)
-        val savedCity = sharedPreferences.getString(getString(R.string.city_name), getString(R.string.tokyo)) ?: getString(R.string.tokyo)
+        val sharedPreferences =
+            getSharedPreferences(getString(R.string.weatherappprefs), MODE_PRIVATE)
+        val savedCity =
+            sharedPreferences.getString(getString(R.string.city_name), getString(R.string.tokyo))
+                ?: getString(R.string.tokyo)
 
         weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
         weatherViewModel.setupWeatherObserver(temperatureViewModel::insertTemperature)
@@ -57,9 +75,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Called when the activity is paused.
+     * Saves the current city name in shared preferences to persist user preferences across sessions.
+     */
     override fun onPause() {
         super.onPause()
-        val sharedPreferences = getSharedPreferences(getString(R.string.weatherappprefs), MODE_PRIVATE)
+        val sharedPreferences =
+            getSharedPreferences(getString(R.string.weatherappprefs), MODE_PRIVATE)
         with(sharedPreferences.edit()) {
             putString(getString(R.string.city_name), weatherViewModel.getCityName().value)
             apply()

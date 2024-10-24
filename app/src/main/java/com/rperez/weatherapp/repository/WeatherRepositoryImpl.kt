@@ -4,16 +4,20 @@ import com.rperez.weatherapp.BuildConfig
 import com.rperez.weatherapp.network.ApiClient
 import com.rperez.weatherapp.network.WeatherService
 import com.rperez.weatherapp.network.model.WeatherResponse
-import retrofit2.Call
 import retrofit2.HttpException
 
 /**
- * Throw in case of Failure, will need to add more testing for fail states.
+ * Custom exception to indicate failures in weather data retrieval.
+ *
+ * This exception should be thrown when an error occurs during the API calls,
+ * allowing for better handling of error states.
  */
 class WeatherException(message: String) : Exception(message)
 
 /**
- * Performs work to get weather data, holds API Key and may throw a WeatherException
+ * Implementation of the WeatherRepository interface that handles data retrieval
+ * from the weather service API. Holds the API key required for requests and
+ * can throw WeatherException in case of failures.
  */
 class WeatherRepositoryImpl : WeatherRepository {
 
@@ -23,7 +27,13 @@ class WeatherRepositoryImpl : WeatherRepository {
         ApiClient.retrofit.create(WeatherService::class.java)
 
     /**
-     * Call for data by city from text field.
+     * Retrieves weather data for a specified city.
+     *
+     * Makes a network call to the weather service using the provided city name.
+     *
+     * @param cityName The name of the city for which to retrieve weather data.
+     * @return A Result containing either the WeatherResponse object on success
+     *         or a WeatherException on failure.
      */
     override suspend fun getWeatherByCityData(
         cityName: String
@@ -39,7 +49,14 @@ class WeatherRepositoryImpl : WeatherRepository {
     }
 
     /**
-     * Get weather by lat and long coords, will need permissions granted for this to work.
+     * Retrieves weather data based on geographical coordinates (latitude and longitude).
+     *
+     * This method requires appropriate permissions to access location data.
+     *
+     * @param lat The latitude of the desired location.
+     * @param lon The longitude of the desired location.
+     * @return A Result containing either the WeatherResponse object on success
+     *         or a WeatherException on failure.
      */
     override suspend fun getWeatherGeoData(
         lat: Double,

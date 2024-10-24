@@ -16,7 +16,14 @@ import coil.request.ImageRequest
 import com.rperez.weatherapp.R
 
 /**
- * Simple icon for URL
+ * Composable function to display a weather icon based on a provided URL.
+ *
+ * This function uses Coil to asynchronously load an image from the given URL
+ * and displays it within an Image component. It includes accessibility
+ * semantics for better screen reader support.
+ *
+ * @param iconUrl The URL of the weather icon to be displayed. If null,
+ *                the image will not be loaded.
  */
 @Composable
 fun WeatherIcon(iconUrl: String?) {
@@ -26,6 +33,7 @@ fun WeatherIcon(iconUrl: String?) {
             .build()
     )
 
+    // Retrieve the semantic description for accessibility
     var semanticString = stringResource(R.string.weather_icon_semantic)
     Image(
         painter = painter,

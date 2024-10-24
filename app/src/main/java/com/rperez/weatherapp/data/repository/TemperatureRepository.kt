@@ -15,7 +15,7 @@ class TemperatureRepository(private val temperatureDao: TemperatureDao) {
      * Inserts a temperature record into the database.
      * @param temperature The temperature entity to be inserted.
      */
-    suspend fun insertTemperature(temperature: TemperatureEntity) {
+    fun insertTemperature(temperature: TemperatureEntity) {
         temperatureDao.insertTemperature(temperature)
     }
 
@@ -23,14 +23,14 @@ class TemperatureRepository(private val temperatureDao: TemperatureDao) {
      * Retrieves all temperature records from the database.
      * @return A list of TemperatureEntity objects representing all stored temperatures.
      */
-    suspend fun getAllTemperatures(): List<TemperatureEntity> {
+    fun getAllTemperatures(): List<TemperatureEntity> {
         return temperatureDao.getAllTemperatures()
     }
 
     /**
      * Deletes all temperature records from the database.
      */
-    suspend fun deleteAllTemperatures() {
+    fun deleteAllTemperatures() {
         temperatureDao.deleteAllTemperatures()
     }
 }

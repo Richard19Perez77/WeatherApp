@@ -9,6 +9,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -19,7 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rperez.weatherapp.R
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -36,22 +41,27 @@ import java.util.Locale
 @Composable
 fun HeartScreen(
     modifier: Modifier,
-    getAllTemperatures: () -> Flow<List<TemperatureEntity>>
+    getAllTemperatures: () -> List<TemperatureEntity>
 ) {
     // Collect temperature entries and sort them by timestamp in descending order.
-    val allTemps =
-        getAllTemperatures().collectAsStateWithLifecycle(emptyList()).value.sortedBy { it -> it.timeStamp }
-            .reversed()
+    var allTemps = remember { mutableStateOf<List<TemperatureEntity>>(emptyList())}
 
     // Get the string resource for rare facts.
     var rareFacts = stringResource(R.string.rare_facts)
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO){
+            allTemps.value = getAllTemperatures.invoke()
+            allTemps.value.sortedBy { it -> it.timeStamp }.reversed()
+        }
+    }
 
     // Layout for the HeartScreen.
     Column(
         modifier = modifier.fillMaxSize()
     ) {
         // Check if there are no temperature entries to display.
-        if (allTemps.isEmpty()) {
+        if (allTemps.value.isEmpty()) {
             // Display health tips if there are no entries.
             Column(
                 modifier = Modifier
@@ -86,7 +96,7 @@ fun HeartScreen(
             ) {
 
                 // Create a TemperatureItem for each temperature entry.
-                items(allTemps) { temperature ->
+                items(allTemps.value) { temperature ->
                     TemperatureItem(temperature)
                 }
             }

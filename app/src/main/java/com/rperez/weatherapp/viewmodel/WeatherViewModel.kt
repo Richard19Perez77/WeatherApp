@@ -14,6 +14,7 @@ import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import com.rperez.weatherapp.network.model.WeatherUI
 import com.rperez.weatherapp.repository.WeatherRepository
 import com.rperez.weatherapp.service.LocationService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -61,19 +63,21 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         insertTemperature: (TemperatureEntity) -> Unit,
     ) {
         viewModelScope.launch {
-            uiState.collectLatest {
+            withContext(Dispatchers.IO) {
+                uiState.collectLatest {
 
-                // Insert temperature data into the local database if no errors and loading is complete.
-                if (it.errorMessage.isEmpty() && it.isLoading == false) {
-                    val temperatureEntity = TemperatureEntity(
-                        date = LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")),
-                        temperature = it.temperature,
-                        city = it.name,
-                        desc = it.description,
-                        humidity = it.humidity,
-                        pressure = it.airPressure,
-                    )
-                    insertTemperature.invoke(temperatureEntity)
+                    // Insert temperature data into the local database if no errors and loading is complete.
+                    if (it.errorMessage.isEmpty() && it.isLoading == false) {
+                        val temperatureEntity = TemperatureEntity(
+                            date = LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")),
+                            temperature = it.temperature,
+                            city = it.name,
+                            desc = it.description,
+                            humidity = it.humidity,
+                            pressure = it.airPressure,
+                        )
+                        insertTemperature.invoke(temperatureEntity)
+                    }
                 }
             }
         }

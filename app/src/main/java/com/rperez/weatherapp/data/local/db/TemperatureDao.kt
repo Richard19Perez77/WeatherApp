@@ -19,7 +19,7 @@ interface TemperatureDao {
      * @param temperature The temperature entity to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTemperature(temperature: TemperatureEntity)
+    fun insertTemperature(temperature: TemperatureEntity)
 
     /**
      * Retrieves all temperature entries from the database.
@@ -27,13 +27,13 @@ interface TemperatureDao {
      * @return A list of all temperature entities stored in the database.
      */
     @Query("SELECT * FROM temperature")
-    suspend fun getAllTemperatures(): List<TemperatureEntity>
+    fun getAllTemperatures(): List<TemperatureEntity>
 
 
     /**
      * Deletes all temperature entries from the database.
      * This method clears the entire temperature table.
      */
-    @Query("DELETE FROM temperature")
-    suspend fun deleteAllTemperatures()
+    @Query(value = "DELETE FROM temperature")
+    fun deleteAllTemperatures()
 }

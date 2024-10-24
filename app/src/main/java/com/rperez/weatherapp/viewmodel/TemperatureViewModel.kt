@@ -21,9 +21,7 @@ class TemperatureViewModel(private val repository: TemperatureRepository) : View
      * @param temperature The temperature data to be inserted.
      */
     fun insertTemperature(temperature: TemperatureEntity) {
-        viewModelScope.launch {
-            repository.insertTemperature(temperature)
-        }
+        repository.insertTemperature(temperature)
     }
 
     /**
@@ -31,10 +29,8 @@ class TemperatureViewModel(private val repository: TemperatureRepository) : View
      * Useful for testing or demonstration purposes.
      */
     fun insertMockTemperatures() {
-        viewModelScope.launch {
-            for (item in MockTemperatureEntities.getMockTemperatureEntities()) {
-                repository.insertTemperature(item)
-            }
+        for (item in MockTemperatureEntities.getMockTemperatureEntities()) {
+            repository.insertTemperature(item)
         }
     }
 
@@ -42,9 +38,7 @@ class TemperatureViewModel(private val repository: TemperatureRepository) : View
      * Deletes all temperature records from the database.
      */
     fun deleteAllTemperatures() {
-        viewModelScope.launch {
-            repository.deleteAllTemperatures()
-        }
+        repository.deleteAllTemperatures()
     }
 
     /**
@@ -52,10 +46,7 @@ class TemperatureViewModel(private val repository: TemperatureRepository) : View
      * This allows for observing temperature data changes in real time.
      * @return A Flow emitting a list of all temperature entries.
      */
-    fun getAllTemperatures(): Flow<List<TemperatureEntity>> {
-        return flow {
-            val temperatures = repository.getAllTemperatures()
-            emit(temperatures)
-        }
+    fun getAllTemperatures(): List<TemperatureEntity> {
+        return repository.getAllTemperatures()
     }
 }

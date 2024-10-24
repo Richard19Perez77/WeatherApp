@@ -171,7 +171,7 @@ fun WeatherDataDisplay(
                 var hasInternet = ConnectivityManager.isInternetAvailable(LocalContext.current)
                 if (hasInternet) {
                     CustomMessage(
-                        stringResource(R.string.failure_message),
+                        weatherData.value.errorMessage,
                         stringResource(R.string.failed_to_load)
                     )
                     CustomMessage(

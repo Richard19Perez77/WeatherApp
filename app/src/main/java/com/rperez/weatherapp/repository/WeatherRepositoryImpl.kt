@@ -42,9 +42,13 @@ class WeatherRepositoryImpl : WeatherRepository {
             val response = weatherService.getWeather(cityName, apiKey)
             Result.success(response)
         } catch (e: HttpException) {
-            Result.failure(WeatherException("HTTP Error: ${e.message}"))
+            var code: Int = e.code()
+            when (code) {
+                404 -> { Result.failure(WeatherException("No data for city")) }
+                else -> Result.failure(WeatherException("Service Error"))
+            }
         } catch (e: Exception) {
-            Result.failure(WeatherException("Network Error: ${e.message}"))
+            Result.failure(WeatherException("Service Down."))
         }
     }
 
@@ -66,9 +70,13 @@ class WeatherRepositoryImpl : WeatherRepository {
             val response = weatherService.getGeoCoordWeather(lat, lon, apiKey)
             Result.success(response)
         } catch (e: HttpException) {
-            Result.failure(WeatherException("HTTP Error: ${e.message}"))
+            var code: Int = e.code()
+            when (code) {
+                404 -> { Result.failure(WeatherException("No data for your location")) }
+                else -> Result.failure(WeatherException("Service Error"))
+            }
         } catch (e: Exception) {
-            Result.failure(WeatherException("Network Error: ${e.message}"))
+            Result.failure(WeatherException("${e.message}"))
         }
     }
 }

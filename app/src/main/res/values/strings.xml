@@ -24,7 +24,6 @@
     <string name="temp_c_semantics">Temperature in degrees Celsius is %1$s</string>
     <string name="temp_c">%1$s°C</string>
     <string name="weather_icon_semantic">Weather icon representing weather</string>
-    <string name="failure_message">Failed to get data for:</string>
     <string name="failed_to_load">Failed to load weather data.</string>
     <string name="no_internet_message">No Internet Connection</string>
     <string name="failed_from_no_internet">Failed from no internet connection.</string>

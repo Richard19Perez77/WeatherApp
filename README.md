@@ -21,3 +21,6 @@ The weather app, I have in progress will show temperature and weather conditions
 1. Clone the repo:
    ```bash
    git clone https://github.com/Richard19Perez77/WeatherApp.git
+
+## Open Weather
+- https://openweathermap.org/

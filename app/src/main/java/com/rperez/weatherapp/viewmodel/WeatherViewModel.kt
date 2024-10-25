@@ -47,7 +47,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     /**
      * StateFlow to store the current UI state (weather data, loading, error states).
      */
-    private val _uiState = MutableStateFlow<WeatherUI>(WeatherUI())
+    val _uiState = MutableStateFlow<WeatherUI>(WeatherUI())
     val uiState: StateFlow<WeatherUI> = _uiState.asStateFlow()
 
     /**
@@ -64,7 +64,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     ) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                uiState.collectLatest {
+                uiState.collect {
 
                     // Insert temperature data into the local database if no errors and loading is complete.
                     if (it.errorMessage.isEmpty() && it.isLoading == false) {
@@ -116,34 +116,29 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                         WeatherUI() // Reset UI state to initial loading state
                     }
                     val result = repository.getWeatherByCityData(cityName)
-                    result.onSuccess {
-                        var res = result.getOrNull()
-                        if (res != null) {
-                            setCityName(res.name)
-                            _uiState.update { newState ->
-                                WeatherUI(
-                                    isLoading = false,
-                                    temperature = res.main.temp,
-                                    humidity = res.main.humidity,
-                                    airPressure = res.main.pressure,
-                                    name = res.name,
-                                    description = res.weather.firstOrNull()?.description ?: "",
-                                    icon = res.weather.firstOrNull()?.icon ?: "",
-                                    errorMessage = "",
-                                )
-                            }
+                    result.onSuccess { res ->
+                        setCityName(res.name)
+                        // todo prevent state trigger if all values are equal, make state and compare then set in update{}
+                        _uiState.update {
+                            WeatherUI(
+                                isLoading = false,
+                                temperature = res.main.temp,
+                                humidity = res.main.humidity,
+                                airPressure = res.main.pressure,
+                                name = res.name,
+                                description = res.weather.firstOrNull()?.description ?: "",
+                                icon = res.weather.firstOrNull()?.icon ?: "",
+                                errorMessage = "",
+                            )
                         }
                     }
-                    result.onFailure {
-                        var res = result.exceptionOrNull()
-                        if (res != null) {
-                            _uiState.update { newState ->
-                                WeatherUI(
-                                    isLoading = false,
-                                    errorMessage = res.message.toString(),
-                                    name = cityName,
-                                )
-                            }
+                    result.onFailure { exception ->
+                        _uiState.update { newState ->
+                            WeatherUI(
+                                isLoading = false,
+                                errorMessage = exception.message.toString(),
+                                name = cityName,
+                            )
                         }
                     }
                 }

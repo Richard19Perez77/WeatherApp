@@ -1,6 +1,6 @@
 # Weather App
 
-The weather app, I have in progress will show temperature and weather conditions for local or typed in city by name. You can zoom in for only temperture for quick view of &deg;C temperature. 
+The weather app, I have in progress will show temperature and weather conditions for local or typed in city by name. You can zoom in for only temperture for quick view of &deg;C temperature. The health screen is a colleciton of health concerns that will show when the telemetrics warrant them for warnings and health tips in general.
 
 ## Screenshot
 

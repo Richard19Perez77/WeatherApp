@@ -1,5 +1,4 @@
-# Project Title
-Weather App
+# Weather App
 
 The weather app, I have in progress will show temperature and weather conditions for local or typed in city by name. You can zoom in for only temperture for quick view of &deg;C temperature. 
 

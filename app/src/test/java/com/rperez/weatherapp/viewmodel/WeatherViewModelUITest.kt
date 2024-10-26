@@ -20,8 +20,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.*
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.LocalDate import java.time.format.DateTimeFormatter
 
 @ExperimentalCoroutinesApi
 class WeatherViewModelUITest {

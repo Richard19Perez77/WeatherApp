@@ -127,6 +127,7 @@ class WeatherViewModelTest {
     @Test
     fun `getWeather - failure updates UI state with error`() = runTest {
         val errorMessage = "City not found"
+        weatherViewModel.setCityName(cityName)
         `when`(weatherRepository.getWeatherByCityData(cityName))
             .thenReturn(Result.failure(Exception(errorMessage)))
 

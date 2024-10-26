@@ -58,6 +58,7 @@ class WeatherViewModelUITest {
     fun `getWeather - updates UI state on success`() = runTest {
         // Given
         val cityName = "Tokyo"
+        weatherViewModel.setCityName(cityName)
         val weatherResponse = WeatherResponse(
             main = Main(temp = 20.0, humidity = 50, pressure = 1010),
             weather = listOf(Weather(description = "Clear Sky", icon = "01d")),
@@ -89,6 +90,7 @@ class WeatherViewModelUITest {
         val cityName = "UnknownCity"
         val errorMessage = "Network Error"
         whenever(mockRepository.getWeatherByCityData(cityName)).thenReturn(Result.failure(Exception(errorMessage)))
+        weatherViewModel.setCityName(cityName)
 
         // When
         weatherViewModel.getWeather()
@@ -128,6 +130,7 @@ class WeatherViewModelUITest {
         whenever(mockRepository.getWeatherByCityData("Tokyo")).thenReturn(Result.success(weatherResponse))
 
         // Act
+        weatherViewModel.setCityName("Tokyo")
         weatherViewModel.getWeather()
         testDispatcher.scheduler.advanceUntilIdle()
 

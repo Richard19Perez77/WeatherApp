@@ -47,7 +47,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     /**
      * StateFlow to store the current UI state (weather data, loading, error states).
      */
-    val _uiState = MutableStateFlow<WeatherUI>(WeatherUI())
+    private val _uiState = MutableStateFlow<WeatherUI>(WeatherUI())
     val uiState: StateFlow<WeatherUI> = _uiState.asStateFlow()
 
     /**

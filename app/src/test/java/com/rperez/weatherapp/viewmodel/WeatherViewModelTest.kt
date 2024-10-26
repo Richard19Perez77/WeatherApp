@@ -9,6 +9,7 @@ import com.rperez.weatherapp.network.model.WeatherUI
 import com.rperez.weatherapp.repository.WeatherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Before
@@ -65,7 +66,12 @@ class WeatherViewModelTest {
         )
 
         weatherViewModel.setupWeatherObserver(temperatureViewModel::insertTemperature)
-        weatherViewModel._uiState.emit(
+
+        // Use reflection to access the private _uiState property and emit a new state
+        val uiStateField = WeatherViewModel::class.java.getDeclaredField("_uiState")
+        uiStateField.isAccessible = true
+        val uiState = uiStateField.get(weatherViewModel) as MutableStateFlow<WeatherUI>
+        uiState.emit(
             WeatherUI(
                 isLoading = false,
                 temperature = 20.0,

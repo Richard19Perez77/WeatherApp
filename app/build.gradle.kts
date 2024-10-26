@@ -91,6 +91,7 @@ dependencies {
     testImplementation(libs.robolectric)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
     androidTestImplementation(libs.androidx.uiautomator)
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(platform(libs.androidx.compose.bom))

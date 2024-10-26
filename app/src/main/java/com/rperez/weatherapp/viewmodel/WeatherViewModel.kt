@@ -19,7 +19,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,19 +29,17 @@ import java.time.format.DateTimeFormatter
  * ViewModel that manages the weather data state and handles fetching weather information
  * either by city name or by user's current location.
  */
-class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() {
+class WeatherViewModel(
+    private val repository: WeatherRepository,
+) : ViewModel() {
+
+    lateinit var locationService: LocationService
 
     /**
      * Launcher to request location permission. Callback will trigger fetching weather by coordinates
      * once permission is granted.
      */
     lateinit var launcher: ActivityResultLauncher<String>
-
-    /**
-     * Holds the name of the city, typically fetched from shared preferences.
-     */
-    private val _cityName = mutableStateOf("")
-    val cityName = _cityName
 
     /**
      * StateFlow to store the current UI state (weather data, loading, error states).
@@ -87,15 +84,19 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
     /**
      * Returns the current city name as a State.
      */
-    fun getCityName(): State<String> {
-        return cityName
+    fun getCityName(): String {
+        return uiState.value.name
     }
 
     /**
      * Sets the city name.
      */
     fun setCityName(cityName: String) {
-        _cityName.value = cityName
+        _uiState.update { currState ->
+            WeatherUI(
+                name = cityName
+            )
+        }
     }
 
     private var currentJob: Job? = null
@@ -104,8 +105,9 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
      * Fetches weather information based on the given city name. Resets the UI state and updates it
      * upon success or failure.
      */
-    fun getWeather(cityName: String) {
-        if (cityName.isNotEmpty()) {
+    fun getWeather() {
+
+        if (getCityName().isNotEmpty()) {
 
             // Cancel any ongoing job to avoid conflicts
             currentJob.let { it?.cancel() }
@@ -113,11 +115,12 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
             try {
                 currentJob = viewModelScope.launch {
                     _uiState.update { currState ->
-                        WeatherUI() // Reset UI state to initial loading state
+                        WeatherUI(
+                            name = currState.name
+                        )
                     }
-                    val result = repository.getWeatherByCityData(cityName)
+                    val result = repository.getWeatherByCityData(getCityName())
                     result.onSuccess { res ->
-                        setCityName(res.name)
                         // todo prevent state trigger if all values are equal, make state and compare then set in update{}
                         _uiState.update {
                             WeatherUI(
@@ -133,11 +136,11 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                         }
                     }
                     result.onFailure { exception ->
-                        _uiState.update { newState ->
+                        _uiState.update { currState ->
                             WeatherUI(
                                 isLoading = false,
                                 errorMessage = exception.message.toString(),
-                                name = cityName,
+                                name = currState.name,
                             )
                         }
                     }
@@ -168,7 +171,6 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                     result.onSuccess {
                         var res = result.getOrNull()
                         if (res != null) {
-                            setCityName(res.name)
                             _uiState.update { newState ->
                                 WeatherUI(
                                     isLoading = false,
@@ -201,7 +203,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
         } else {
 
             // Request location updates and permissions if coordinates are not initialized
-            LocationService(context, launcher).getLatLon(
+            locationService.getLatLon(
                 onLocationReceived = { lat, lon ->
                     coords = Pair(lat, lon)
                     getLocalWeather(context.applicationContext) // Retry fetching weather with updated coordinates
@@ -218,7 +220,7 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
                             DialogInterface.OnClickListener { _, _ ->
 
                                 // Fallback to fetching weather for a default city (e.g., Paris) if permission is denied
-                                getWeather("Paris")
+                                getWeather()
                             }
                         ).show()
                 }
@@ -231,6 +233,10 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
      */
     fun setRequestLocationPermissionLauncher(launcher: ActivityResultLauncher<String>) {
         this.launcher = launcher
+    }
+
+    fun setupLocationService(locationService: LocationService) {
+        this.locationService = locationService
     }
 
     /**

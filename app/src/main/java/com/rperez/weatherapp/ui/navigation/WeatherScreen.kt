@@ -10,6 +10,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.rperez.weatherapp.R
 import com.rperez.weatherapp.network.ConnectivityManager
@@ -40,20 +42,20 @@ fun WeatherScreen(
     modifier: Modifier,
     navController: NavController,
     setCityName: (String) -> Unit,
-    getWeather: (String) -> Unit,
+    getWeather: () -> Unit,
     getLocalWeather: (Context) -> Unit,
-    cityName: State<String>,
     weatherUIState: StateFlow<WeatherUI>,
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val weatherUI = weatherUIState.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextField(
-            value = cityName.value,
+            value = weatherUI.value.name,
             onValueChange = setCityName,
             label = { Text(modifier = Modifier.testTag("search_label"), text = "Enter City Name") },
             modifier = Modifier
@@ -62,7 +64,7 @@ fun WeatherScreen(
                 .padding(8.dp)
                 .semantics { contentDescription = "City name input field" }
         )
-        WeatherButtons(isLandscape, cityName.value, getWeather, getLocalWeather)
+        WeatherButtons(isLandscape, getWeather, getLocalWeather)
     }
 
     WeatherDataDisplay(weatherUIState, isLandscape)
@@ -76,8 +78,7 @@ fun WeatherScreen(
 @Composable
 fun WeatherButtons(
     isLandscape: Boolean,
-    cityName: String,
-    getWeather: (String) -> Unit,
+    getWeather: () -> Unit,
     getLocalWeather: (Context) -> Unit,
 ) {
     var context = LocalContext.current
@@ -88,7 +89,7 @@ fun WeatherButtons(
             verticalAlignment = Alignment.CenterVertically
         ) {
             WeatherButton(
-                onClick = { getWeather(cityName) },
+                onClick = { getWeather() },
                 tag = "search_button",
                 text = stringResource(R.string.search_city_weather),
                 description = stringResource(R.string.search_weather_for_the_entered_city)
@@ -102,7 +103,7 @@ fun WeatherButtons(
         }
     } else {
         WeatherButton(
-            onClick = { getWeather(cityName) },
+            onClick = { getWeather() },
             tag = "search_button",
             text = stringResource(R.string.search_city_weather),
             description = stringResource(R.string.search_weather_for_the_entered_city)

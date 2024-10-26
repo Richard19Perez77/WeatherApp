@@ -7,6 +7,7 @@ import com.rperez.weatherapp.network.model.Weather
 import com.rperez.weatherapp.network.model.WeatherResponse
 import com.rperez.weatherapp.network.model.WeatherUI
 import com.rperez.weatherapp.repository.WeatherRepository
+import com.rperez.weatherapp.service.LocationService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,8 @@ class WeatherViewModelTest {
     private lateinit var weatherRepository: WeatherRepository
     @Mock
     private lateinit var temperatureViewModel: TemperatureViewModel
+    @Mock
+    private lateinit var locationService: LocationService
 
     private lateinit var weatherViewModel: WeatherViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -105,10 +108,12 @@ class WeatherViewModelTest {
 
     @Test
     fun `getWeather - successful fetch updates UI state`() = runTest {
+        weatherViewModel.setCityName("Tokyo")
+
         `when`(weatherRepository.getWeatherByCityData(cityName))
             .thenReturn(Result.success(weatherResponse))
 
-        weatherViewModel.getWeather(cityName)
+        weatherViewModel.getWeather()
         testDispatcher.scheduler.advanceUntilIdle()
 
         weatherViewModel.uiState.test {
@@ -125,7 +130,7 @@ class WeatherViewModelTest {
         `when`(weatherRepository.getWeatherByCityData(cityName))
             .thenReturn(Result.failure(Exception(errorMessage)))
 
-        weatherViewModel.getWeather(cityName)
+        weatherViewModel.getWeather()
         testDispatcher.scheduler.advanceUntilIdle()
 
         weatherViewModel.uiState.test {
@@ -139,6 +144,6 @@ class WeatherViewModelTest {
     fun `setCityName updates cityName state`() {
         val newCityName = "Tokyo"
         weatherViewModel.setCityName(newCityName)
-        assertEquals(newCityName, weatherViewModel.getCityName().value)
+        assertEquals(newCityName, weatherViewModel.getCityName())
     }
 }

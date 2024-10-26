@@ -52,7 +52,6 @@ fun WeatherAppNavHost() {
                         setCityName = weatherViewModel::setCityName,
                         getWeather = weatherViewModel::getWeather,
                         getLocalWeather = weatherViewModel::getLocalWeather,
-                        cityName = weatherViewModel.cityName,
                         weatherUIState = weatherViewModel.uiState,
                     )
                 }

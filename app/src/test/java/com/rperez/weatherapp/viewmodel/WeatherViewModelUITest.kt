@@ -7,6 +7,7 @@ import com.rperez.weatherapp.network.model.Main
 import com.rperez.weatherapp.network.model.Weather
 import com.rperez.weatherapp.network.model.WeatherResponse
 import com.rperez.weatherapp.repository.WeatherRepository
+import com.rperez.weatherapp.service.LocationService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -30,6 +31,7 @@ class WeatherViewModelUITest {
     private lateinit var mockRepository: WeatherRepository
     private lateinit var mockContext: Context
     private lateinit var mockLauncher: ActivityResultLauncher<String>
+    private lateinit var locationService: LocationService
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
@@ -65,7 +67,7 @@ class WeatherViewModelUITest {
         whenever(mockRepository.getWeatherByCityData(cityName)).thenReturn(Result.success(weatherResponse))
 
         // When
-        weatherViewModel.getWeather(cityName)
+        weatherViewModel.getWeather()
 
         // Assert loading state before advancing dispatcher
         assertTrue("Expected loading state to be true", weatherViewModel.uiState.value.isLoading)
@@ -89,7 +91,7 @@ class WeatherViewModelUITest {
         whenever(mockRepository.getWeatherByCityData(cityName)).thenReturn(Result.failure(Exception(errorMessage)))
 
         // When
-        weatherViewModel.getWeather(cityName)
+        weatherViewModel.getWeather()
 
         // Check initial loading state
         assertTrue("Expected loading state to be true initially", weatherViewModel.uiState.value.isLoading)
@@ -126,7 +128,7 @@ class WeatherViewModelUITest {
         whenever(mockRepository.getWeatherByCityData("Tokyo")).thenReturn(Result.success(weatherResponse))
 
         // Act
-        weatherViewModel.getWeather("Tokyo")
+        weatherViewModel.getWeather()
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Verify insertTemperature was called with the expected entity

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import com.rperez.weatherapp.service.LocationService
 import com.rperez.weatherapp.ui.navigation.WeatherAppNavHost
 import com.rperez.weatherapp.ui.theme.WeatherAppTheme
 import com.rperez.weatherapp.viewmodel.TemperatureViewModel
@@ -46,7 +47,7 @@ class MainActivity : ComponentActivity() {
             if (isGranted) {
                 weatherViewModel.getLocalWeather(context = this.applicationContext)
             } else {
-                weatherViewModel.getWeather("Tokyo")
+                weatherViewModel.getWeather()
             }
         }
 
@@ -64,6 +65,7 @@ class MainActivity : ComponentActivity() {
                 ?: getString(R.string.tokyo)
 
         weatherViewModel.setRequestLocationPermissionLauncher(requestLocationPermissionLauncher)
+        weatherViewModel.setupLocationService(LocationService(this, requestLocationPermissionLauncher))
         weatherViewModel.setupWeatherObserver(temperatureViewModel::insertTemperature)
         weatherViewModel.setCityName(savedCity)
         weatherViewModel.getLocalWeather(this)
@@ -84,7 +86,7 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences =
             getSharedPreferences(getString(R.string.weatherappprefs), MODE_PRIVATE)
         with(sharedPreferences.edit()) {
-            putString(getString(R.string.city_name), weatherViewModel.getCityName().value)
+            putString(getString(R.string.city_name), weatherViewModel.getCityName())
             apply()
         }
     }

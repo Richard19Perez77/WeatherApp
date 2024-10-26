@@ -27,7 +27,7 @@ import org.mockito.kotlin.whenever
 import kotlin.test.assertFalse
 
 @ExperimentalCoroutinesApi
-class CoordsTest {
+class CoordsTest1 {
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
@@ -72,13 +72,24 @@ class CoordsTest {
     }
 
     @Test
-    fun `test coords initialized after receiving location`() = runTest {
-        // Simulate receiving location
+    fun `test getLocalWeather uses initialized coords`() = runTest {
+        weatherViewModel.setRequestLocationPermissionLauncher(launcher)
+
         val lat = 35.0
         val lon = 139.0
+
+        // Initialize coords
         weatherViewModel.coords = Pair(lat, lon)
 
-        assert(weatherViewModel.coords.first == lat)
-        assert(weatherViewModel.coords.second == lon)
+        // Mock the repository's response
+        whenever(repository.getWeatherGeoData(lat, lon)).thenReturn(Result.success(weatherResponse))
+
+        weatherViewModel.getLocalWeather(context)
+
+        // assert call starts loading coords from get local weather and completes
+        assert(weatherViewModel.uiState.value.isLoading)
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertFalse(weatherViewModel.uiState.value.isLoading)
+        testDispatcher.scheduler.advanceUntilIdle()
     }
 }

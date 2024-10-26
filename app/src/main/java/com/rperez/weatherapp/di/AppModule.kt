@@ -1,12 +1,17 @@
 package com.rperez.weatherapp.di
 
+import android.app.Application
+import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import com.rperez.weatherapp.data.local.db.TemperatureDao
 import com.rperez.weatherapp.data.local.db.TemperatureDatabase
 import com.rperez.weatherapp.data.repository.TemperatureRepository
 import com.rperez.weatherapp.repository.WeatherRepository
 import com.rperez.weatherapp.repository.WeatherRepositoryImpl
+import com.rperez.weatherapp.service.LocationService
 import com.rperez.weatherapp.viewmodel.TemperatureViewModel
 import com.rperez.weatherapp.viewmodel.WeatherViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 

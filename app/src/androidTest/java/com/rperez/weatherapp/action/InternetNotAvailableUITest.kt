@@ -47,6 +47,6 @@ class InternetNotAvailableUITest {
                 customText = text ?: ""
             }
 
-        assertTrue(customText.contains("No Internet:"))
+        assertTrue(customText.contains("No Internet Connection"))
     }
 }

@@ -51,7 +51,7 @@ class WeatherRepositoryImpl : WeatherRepository {
                 else -> Result.failure(WeatherException("Service Error"))
             }
         } catch (e: Exception) {
-            Result.failure(WeatherException("Service Down."))
+            Result.failure(WeatherException("Unknown Error."))
         }
     }
 
@@ -81,8 +81,8 @@ class WeatherRepositoryImpl : WeatherRepository {
 
                 else -> Result.failure(WeatherException("Service Error"))
             }
-        } catch (e: Exception) {
-            Result.failure(WeatherException("${e.message}"))
+        } catch (_: Exception) {
+            Result.failure(WeatherException("Unknown Error"))
         }
     }
 }

@@ -177,7 +177,8 @@ fun WeatherDataDisplay(
                     )
                     CustomMessage(
                         weatherData.value.name,
-                        stringResource(R.string.failed_city, weatherData.value.name)
+                        stringResource(R.string.failed_city, weatherData.value.name),
+                        tag = "custom_city_tag"
                     )
                 } else {
                     CustomMessage(
@@ -210,12 +211,12 @@ fun WeatherDataDisplay(
  * It includes accessibility semantics for better screen reader support.
  */
 @Composable
-fun CustomMessage(message: String, contentDescription: String) {
+fun CustomMessage(message: String, contentDescription: String, tag : String = "custom_text") {
     Text(
         modifier = Modifier
             .padding(16.dp, 0.dp, 16.dp, 0.dp)
             .semantics { this.contentDescription = contentDescription }
-            .testTag("custom_text"),
+            .testTag(tag),
         text = message,
         style = MaterialTheme.typography.headlineMedium
     )

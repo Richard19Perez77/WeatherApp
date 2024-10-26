@@ -218,9 +218,7 @@ class WeatherViewModel(
                         .setNegativeButton(
                             context.getString(R.string.cancel),
                             DialogInterface.OnClickListener { _, _ ->
-
-                                // Fallback to fetching weather for a default city (e.g., Paris) if permission is denied
-                                getWeather()
+                                getWeather() // Fallback default city if permission is denied
                             }
                         ).show()
                 }

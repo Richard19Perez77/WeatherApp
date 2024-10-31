@@ -31,31 +31,41 @@ android {
         load(FileInputStream(rootProject.file("local.properties")))
     }
 
-    val apiKey = localProperties.getProperty("API_KEY")
+    // Use local properties to get the API key
+    val apiKey = localProperties.getProperty("API_KEY") ?: "default_value"
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_KEY", apiKey)
+            buildConfigField("String", "API_KEY", "\"$apiKey\"")
         }
         debug {
-            buildConfigField("String", "API_KEY", apiKey)
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            buildConfigField("String", "API_KEY", "\"$apiKey\"")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
     }

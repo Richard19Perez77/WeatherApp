@@ -1,3 +1,9 @@
+import org.gradle.kotlin.dsl.android
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.test
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -23,6 +29,12 @@ android {
         buildConfig = true
     }
 
+    val localProperties = Properties().apply {
+        load(FileInputStream(rootProject.file("local.properties")))
+    }
+
+    val apiKey = localProperties.getProperty("API_KEY")
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -30,10 +42,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_KEY", "\"ef223f0f1b77ed7bce92fd0f1bfbb450\"")
+            buildConfigField("String", "API_KEY", apiKey)
         }
         debug {
-            buildConfigField("String", "API_KEY", "\"ef223f0f1b77ed7bce92fd0f1bfbb450\"")
+            buildConfigField("String", "API_KEY", apiKey)
         }
     }
     compileOptions {
@@ -63,8 +75,8 @@ dependencies {
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.io.insert.koin.koin.android)
     implementation(libs.koin.core)
-    implementation("io.insert-koin:koin-compose:4.0.0")
-    implementation("io.insert-koin:koin-androidx-compose:4.0.0")
+    implementation(libs.koin.compose)
+    implementation(libs.koin.androidx.compose)
     implementation(libs.coil.compose)
     implementation(libs.coil)
     implementation(libs.androidx.runtime)
@@ -81,13 +93,17 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit)
     testImplementation(libs.koin.test)
     testImplementation(libs.koin.test.junit4)
     testImplementation(libs.androidx.runner)
     testImplementation(libs.androidx.core)
+    testImplementation(libs.androidx.core.testing)
     testImplementation(libs.robolectric)
     testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
     androidTestImplementation(libs.androidx.uiautomator)
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(platform(libs.androidx.compose.bom))

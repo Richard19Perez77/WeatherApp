@@ -1,5 +1,6 @@
 package com.rperez.weatherapp.viewmodel
 
+import android.content.Context
 import app.cash.turbine.test
 import com.rperez.weatherapp.data.local.db.TemperatureEntity
 import com.rperez.weatherapp.network.model.Main
@@ -28,6 +29,8 @@ import kotlin.test.assertTrue
 @ExperimentalCoroutinesApi
 class WeatherViewModelTest {
 
+    @Mock
+    private lateinit var context: Context
     @Mock
     private lateinit var weatherRepository: WeatherRepository
     @Mock
@@ -110,10 +113,10 @@ class WeatherViewModelTest {
     fun `getWeather - successful fetch updates UI state`() = runTest {
         weatherViewModel.setCityName("Tokyo")
 
-        `when`(weatherRepository.getWeatherByCityData(cityName))
+        `when`(weatherRepository.getWeatherByCityData(context, {""}, cityName))
             .thenReturn(Result.success(weatherResponse))
 
-        weatherViewModel.getWeather()
+        weatherViewModel.getWeather(context)
         testDispatcher.scheduler.advanceUntilIdle()
 
         weatherViewModel.uiState.test {
@@ -128,10 +131,10 @@ class WeatherViewModelTest {
     fun `getWeather - failure updates UI state with error`() = runTest {
         val errorMessage = "City not found"
         weatherViewModel.setCityName(cityName)
-        `when`(weatherRepository.getWeatherByCityData(cityName))
+        `when`(weatherRepository.getWeatherByCityData(context, {""}, cityName))
             .thenReturn(Result.failure(Exception(errorMessage)))
 
-        weatherViewModel.getWeather()
+        weatherViewModel.getWeather(context)
         testDispatcher.scheduler.advanceUntilIdle()
 
         weatherViewModel.uiState.test {

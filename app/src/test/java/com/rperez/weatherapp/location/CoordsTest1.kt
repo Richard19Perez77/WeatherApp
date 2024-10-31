@@ -1,6 +1,5 @@
 package com.rperez.weatherapp.location
 
-import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
@@ -22,7 +21,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.test.assertFalse
 
@@ -82,7 +80,7 @@ class CoordsTest1 {
         weatherViewModel.coords = Pair(lat, lon)
 
         // Mock the repository's response
-        whenever(repository.getWeatherGeoData(lat, lon)).thenReturn(Result.success(weatherResponse))
+        whenever(repository.getWeatherGeoData(context, {""}, lat, lon)).thenReturn(Result.success(weatherResponse))
 
         weatherViewModel.getLocalWeather(context)
 

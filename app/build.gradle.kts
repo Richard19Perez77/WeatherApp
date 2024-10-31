@@ -27,7 +27,13 @@ android {
 
     buildTypes {
         release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             buildConfigField("String", "API_KEY", "\"${System.getenv("API_KEY")}\"")
+            signingConfig = signingConfigs.getByName("debug")
         }
         debug {
             buildConfigField("String", "API_KEY", "\"${System.getenv("API_KEY")}\"")
@@ -53,6 +59,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)

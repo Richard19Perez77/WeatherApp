@@ -1,5 +1,6 @@
 package com.rperez.weatherapp.repository
 
+import android.content.Context
 import com.rperez.weatherapp.BuildConfig
 import com.rperez.weatherapp.network.ApiClient
 import com.rperez.weatherapp.network.WeatherService
@@ -21,8 +22,6 @@ class WeatherException(message: String) : Exception(message)
  */
 class WeatherRepositoryImpl : WeatherRepository {
 
-    var apiKey = BuildConfig.API_KEY
-
     private val weatherService: WeatherService =
         ApiClient.retrofit.create(WeatherService::class.java)
 
@@ -36,10 +35,12 @@ class WeatherRepositoryImpl : WeatherRepository {
      *         or a WeatherException on failure.
      */
     override suspend fun getWeatherByCityData(
+        context: Context,
+        apiKey : (Context) -> String,
         cityName: String
     ): Result<WeatherResponse> {
         return try {
-            val response = weatherService.getWeather(cityName, apiKey)
+            val response = weatherService.getWeather(cityName, apiKey.invoke(context))
             Result.success(response)
         } catch (e: HttpException) {
             var code: Int = e.code()
@@ -66,11 +67,13 @@ class WeatherRepositoryImpl : WeatherRepository {
      *         or a WeatherException on failure.
      */
     override suspend fun getWeatherGeoData(
+        context: Context,
+        apiKey : (Context) -> String,
         lat: Double,
         lon: Double
     ): Result<WeatherResponse> {
         return try {
-            val response = weatherService.getGeoCoordWeather(lat, lon, apiKey)
+            val response = weatherService.getGeoCoordWeather(lat, lon, apiKey.invoke(context))
             Result.success(response)
         } catch (e: HttpException) {
             var code: Int = e.code()

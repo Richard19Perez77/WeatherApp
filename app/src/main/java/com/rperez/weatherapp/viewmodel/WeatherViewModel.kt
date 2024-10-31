@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.reflect.KFunction1
 
 /**
  * ViewModel that manages the weather data state and handles fetching weather information
@@ -32,6 +33,8 @@ import java.time.format.DateTimeFormatter
 class WeatherViewModel(
     private val repository: WeatherRepository,
 ) : ViewModel() {
+
+    var apiKeyFunction: (Context) -> String = { "" }
 
     lateinit var locationService: LocationService
 
@@ -105,7 +108,7 @@ class WeatherViewModel(
      * Fetches weather information based on the given city name. Resets the UI state and updates it
      * upon success or failure.
      */
-    fun getWeather() {
+    fun getWeather(context: Context) {
 
         if (getCityName().isNotEmpty()) {
 
@@ -119,7 +122,7 @@ class WeatherViewModel(
                             name = currState.name
                         )
                     }
-                    val result = repository.getWeatherByCityData(getCityName())
+                    val result = repository.getWeatherByCityData(context, apiKeyFunction, getCityName())
                     result.onSuccess { res ->
                         // todo prevent state trigger if all values are equal, make state and compare then set in update{}
                         _uiState.update {
@@ -166,7 +169,7 @@ class WeatherViewModel(
                         WeatherUI() // Reset UI state to initial loading state
                     }
 
-                    val result = repository.getWeatherGeoData(coords.first, coords.second)
+                    val result = repository.getWeatherGeoData(context, apiKeyFunction, coords.first, coords.second)
 
                     result.onSuccess {
                         var res = result.getOrNull()
@@ -218,7 +221,7 @@ class WeatherViewModel(
                         .setNegativeButton(
                             context.getString(R.string.cancel),
                             DialogInterface.OnClickListener { _, _ ->
-                                getWeather() // Fallback default city if permission is denied
+                                getWeather(context) // Fallback default city if permission is denied
                             }
                         ).show()
                 }
@@ -243,5 +246,13 @@ class WeatherViewModel(
     override fun onCleared() {
         super.onCleared()
         currentJob?.cancel()
+    }
+
+    fun setGetAPIKEY(getAPIKEY: (Context) -> String) {
+        apiKeyFunction = getAPIKEY
+    }
+
+    fun getGetAPIKEY(): (Context) -> String {
+        return apiKeyFunction
     }
 }

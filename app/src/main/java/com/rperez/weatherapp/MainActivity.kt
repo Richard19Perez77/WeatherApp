@@ -1,9 +1,13 @@
 package com.rperez.weatherapp
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.rperez.weatherapp.service.LocationService
 import com.rperez.weatherapp.ui.navigation.WeatherAppNavHost
 import com.rperez.weatherapp.ui.theme.WeatherAppTheme
@@ -47,7 +51,7 @@ class MainActivity : ComponentActivity() {
             if (isGranted) {
                 weatherViewModel.getLocalWeather(context = this.applicationContext)
             } else {
-                weatherViewModel.getWeather()
+                weatherViewModel.getWeather(context = this.applicationContext)
             }
         }
 
@@ -68,6 +72,9 @@ class MainActivity : ComponentActivity() {
         weatherViewModel.setupLocationService(LocationService(this, requestLocationPermissionLauncher))
         weatherViewModel.setupWeatherObserver(temperatureViewModel::insertTemperature)
         weatherViewModel.setCityName(savedCity)
+        storeApiKey(this)
+        weatherViewModel.setGetAPIKEY(::retrieveApiKey)
+
         weatherViewModel.getLocalWeather(this)
 
         setContent {
@@ -90,4 +97,30 @@ class MainActivity : ComponentActivity() {
             apply()
         }
     }
+
+
+    fun getEncryptedSharedPrefs(context: Context): SharedPreferences {
+        val masterKey = MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+
+        return EncryptedSharedPreferences.create(
+            context,
+            "secret_shared_prefs", // File name for SharedPreferences
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
+    }
+
+    fun storeApiKey(context: Context, apiKey: String = BuildConfig.API_KEY) {
+        val sharedPreferences = getEncryptedSharedPrefs(context)
+        sharedPreferences.edit().putString("API_KEY", apiKey).apply()
+    }
+
+    fun retrieveApiKey(context: Context): String {
+        val sharedPreferences = getEncryptedSharedPrefs(context)
+        return sharedPreferences.getString("API_KEY", "") ?: ""
+    }
 }
+

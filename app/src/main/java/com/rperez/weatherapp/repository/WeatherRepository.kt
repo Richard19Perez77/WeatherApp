@@ -1,5 +1,6 @@
 package com.rperez.weatherapp.repository
 
+import android.content.Context
 import com.rperez.weatherapp.network.model.WeatherResponse
 
 
@@ -17,7 +18,9 @@ interface WeatherRepository {
      * @param cityName The name of the city for which to fetch weather data.
      * @return A Result containing the WeatherResponse object or an error if the request fails.
      */
-    suspend fun getWeatherByCityData(cityName: String): Result<WeatherResponse>
+    suspend fun getWeatherByCityData(context: Context,
+                                     apiKey : (Context) -> String,
+                                     cityName: String): Result<WeatherResponse>
 
     /**
      * Retrieves weather data for a specified geographical location.
@@ -26,5 +29,7 @@ interface WeatherRepository {
      * @param lon The longitude of the location.
      * @return A Result containing the WeatherResponse object or an error if the request fails.
      */
-    suspend fun getWeatherGeoData(lat: Double, lon: Double): Result<WeatherResponse>
+    suspend fun getWeatherGeoData(context: Context,
+                                  apiKey : (Context) -> String,
+                                  lat: Double, lon: Double): Result<WeatherResponse>
 }

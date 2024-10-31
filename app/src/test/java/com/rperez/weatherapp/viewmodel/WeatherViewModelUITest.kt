@@ -31,7 +31,6 @@ class WeatherViewModelUITest {
     private lateinit var mockRepository: WeatherRepository
     private lateinit var mockContext: Context
     private lateinit var mockLauncher: ActivityResultLauncher<String>
-    private lateinit var locationService: LocationService
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
@@ -65,10 +64,10 @@ class WeatherViewModelUITest {
             name = cityName
         )
 
-        whenever(mockRepository.getWeatherByCityData(cityName)).thenReturn(Result.success(weatherResponse))
+        whenever(mockRepository.getWeatherByCityData(mockContext, {""}, cityName)).thenReturn(Result.success(weatherResponse))
 
         // When
-        weatherViewModel.getWeather()
+        weatherViewModel.getWeather(mockContext)
 
         // Assert loading state before advancing dispatcher
         assertTrue("Expected loading state to be true", weatherViewModel.uiState.value.isLoading)
@@ -89,11 +88,11 @@ class WeatherViewModelUITest {
         // Given
         val cityName = "UnknownCity"
         val errorMessage = "Network Error"
-        whenever(mockRepository.getWeatherByCityData(cityName)).thenReturn(Result.failure(Exception(errorMessage)))
+        whenever(mockRepository.getWeatherByCityData(mockContext, {""}, cityName)).thenReturn(Result.failure(Exception(errorMessage)))
         weatherViewModel.setCityName(cityName)
 
         // When
-        weatherViewModel.getWeather()
+        weatherViewModel.getWeather(mockContext)
 
         // Check initial loading state
         assertTrue("Expected loading state to be true initially", weatherViewModel.uiState.value.isLoading)
@@ -127,11 +126,11 @@ class WeatherViewModelUITest {
             weather = listOf(Weather(description = "Clear Sky", icon = "01d")),
             name = "Tokyo"
         )
-        whenever(mockRepository.getWeatherByCityData("Tokyo")).thenReturn(Result.success(weatherResponse))
+        whenever(mockRepository.getWeatherByCityData(mockContext, {""}, "Tokyo")).thenReturn(Result.success(weatherResponse))
 
         // Act
         weatherViewModel.setCityName("Tokyo")
-        weatherViewModel.getWeather()
+        weatherViewModel.getWeather(mockContext)
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Verify insertTemperature was called with the expected entity

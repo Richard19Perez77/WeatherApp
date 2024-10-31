@@ -42,7 +42,7 @@ fun WeatherScreen(
     modifier: Modifier,
     navController: NavController,
     setCityName: (String) -> Unit,
-    getWeather: () -> Unit,
+    getWeather: (Context) -> Unit,
     getLocalWeather: (Context) -> Unit,
     weatherUIState: StateFlow<WeatherUI>,
 ) {
@@ -78,7 +78,7 @@ fun WeatherScreen(
 @Composable
 fun WeatherButtons(
     isLandscape: Boolean,
-    getWeather: () -> Unit,
+    getWeather: (Context) -> Unit,
     getLocalWeather: (Context) -> Unit,
 ) {
     var context = LocalContext.current
@@ -89,7 +89,7 @@ fun WeatherButtons(
             verticalAlignment = Alignment.CenterVertically
         ) {
             WeatherButton(
-                onClick = { getWeather() },
+                onClick = { getWeather(context) },
                 tag = "search_button",
                 text = stringResource(R.string.search_city_weather),
                 description = stringResource(R.string.search_weather_for_the_entered_city)
@@ -103,7 +103,7 @@ fun WeatherButtons(
         }
     } else {
         WeatherButton(
-            onClick = { getWeather() },
+            onClick = { getWeather(context) },
             tag = "search_button",
             text = stringResource(R.string.search_city_weather),
             description = stringResource(R.string.search_weather_for_the_entered_city)

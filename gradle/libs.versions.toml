@@ -4,6 +4,7 @@ coilCompose = "2.7.0"
 coil = "2.7.0"
 composeLintChecks = "1.4.1"
 converterGson = "2.11.0"
+coreTesting = "2.2.0"
 gradle = "8.1.4"
 insertKoinKoinAndroid = "4.0.0"
 kotlin = "2.0.20"
@@ -34,6 +35,7 @@ uiautomator = "2.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 androidx-lint-gradle = { module = "androidx.lint:lint-gradle", version.ref = "lintGradle" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-navigation-dynamic-features-fragment = { module = "androidx.navigation:navigation-dynamic-features-fragment", version.ref = "navigationTesting" }

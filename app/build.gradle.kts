@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -23,6 +26,12 @@ android {
         buildConfig = true
     }
 
+    val localProperties = Properties().apply {
+        load(FileInputStream(rootProject.file("local.properties")))
+    }
+
+    val apiKey = localProperties.getProperty("API_KEY")
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -30,10 +39,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "API_KEY", "\"ef223f0f1b77ed7bce92fd0f1bfbb450\"")
+            buildConfigField("String", "API_KEY", apiKey)
         }
         debug {
-            buildConfigField("String", "API_KEY", "\"ef223f0f1b77ed7bce92fd0f1bfbb450\"")
+            buildConfigField("String", "API_KEY", apiKey)
         }
     }
     compileOptions {
@@ -88,10 +97,10 @@ dependencies {
     testImplementation(libs.koin.test.junit4)
     testImplementation(libs.androidx.runner)
     testImplementation(libs.androidx.core)
+    testImplementation(libs.androidx.core.testing)
     testImplementation(libs.robolectric)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
-    testImplementation("androidx.arch.core:core-testing:2.2.0")
     androidTestImplementation(libs.androidx.uiautomator)
     androidTestImplementation(libs.androidx.navigation.testing)
     androidTestImplementation(platform(libs.androidx.compose.bom))

@@ -98,7 +98,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
     fun getEncryptedSharedPrefs(context: Context): SharedPreferences {
         val masterKey = MasterKey.Builder(context)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -106,7 +105,7 @@ class MainActivity : ComponentActivity() {
 
         return EncryptedSharedPreferences.create(
             context,
-            "secret_shared_prefs", // File name for SharedPreferences
+            "secret_shared_prefs",
             masterKey,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
@@ -123,4 +122,3 @@ class MainActivity : ComponentActivity() {
         return sharedPreferences.getString("API_KEY", "") ?: ""
     }
 }
-

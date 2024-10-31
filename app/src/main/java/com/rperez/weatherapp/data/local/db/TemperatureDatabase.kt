@@ -13,7 +13,7 @@ import androidx.room.RoomDatabase
  * @Database annotation defines the entities and the version of the database.
  * The version should be incremented when there are schema changes.
  */
-@Database(entities = [TemperatureEntity::class], version = 1)
+@Database(entities = [TemperatureEntity::class], version = 1,  exportSchema = false)
 abstract class TemperatureDatabase : RoomDatabase() {
 
     // Provides the DAO to access temperature-related data operations.

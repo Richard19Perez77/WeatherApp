@@ -21,20 +21,43 @@
 #-renamesourcefileattribute SourceFile
 
 # Retrofit
-#-keep class retrofit2.** { *; }
-#-keepattributes Signature
-#-keepattributes *Annotation*
+# -keep class retrofit2.** { *; }
+# -keepattributes Signature
+# -keepattributes *Annotation*
 
 # Gson
-#-keep class com.google.gson.** { *; }
-#-keep class * {
+# -keep class com.google.gson.** { *; }
+# -keep class * {
 #    @com.google.gson.annotations.SerializedName <fields>;
 #}
 
 # Keep specific classes
-#-keep class com.rperez.weatherapp.network.model.* { *; }
+# -keep class com.rperez.weatherapp.network.model.* { *; }
 
 # Keep methods with specific annotations
-#-keep @com.google.gson.annotations.SerializedName class * { *; }
+# -keep @com.google.gson.annotations.SerializedName class * { *; }
 
-#-dontwarn javax.lang.model.element.Modifier
+# -dontwarn javax.lang.model.element.Modifier
+
+# Keep all fields in the Config class to prevent removal
+-keepclassmembers class com.rperez.weatherapp.BuildConfig {
+    <fields>;
+}
+
+# Obfuscate the Config class to hide its name while keeping its members
+-keep class com.rperez.weatherapp.BuildConfig {
+    <init>();   # Keep the default constructor
+}
+
+-keepattributes Signature
+-keepattributes *Annotation*
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keep interface retrofit2.** { *; }
+
+# Keep Koin module classes
+-keep class com.rperez.weatherapp.** { *; }  # Replace with your actual package name
+
+# Keep Koin's internal classes
+-keep class org.koin.** { *; }
+-dontwarn org.koin.**

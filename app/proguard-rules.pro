@@ -19,3 +19,22 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Retrofit
+#-keep class retrofit2.** { *; }
+#-keepattributes Signature
+#-keepattributes *Annotation*
+
+# Gson
+#-keep class com.google.gson.** { *; }
+#-keep class * {
+#    @com.google.gson.annotations.SerializedName <fields>;
+#}
+
+# Keep specific classes
+#-keep class com.rperez.weatherapp.network.model.* { *; }
+
+# Keep methods with specific annotations
+#-keep @com.google.gson.annotations.SerializedName class * { *; }
+
+#-dontwarn javax.lang.model.element.Modifier

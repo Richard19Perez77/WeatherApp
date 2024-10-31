@@ -1,6 +1,4 @@
 import org.gradle.kotlin.dsl.android
-import java.io.FileInputStream
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -27,29 +25,12 @@ android {
         buildConfig = true
     }
 
-    val localProperties = Properties().apply {
-        load(FileInputStream(rootProject.file("local.properties")))
-    }
-
-    // Use local properties to get the API key
-    val apiKey = localProperties.getProperty("API_KEY") ?: "default_value"
-
     buildTypes {
         release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-            buildConfigField("String", "API_KEY", "\"$apiKey\"")
+            buildConfigField("String", "API_KEY", "\"${System.getenv("API_KEY")}\"")
         }
         debug {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-            buildConfigField("String", "API_KEY", "\"$apiKey\"")
+            buildConfigField("String", "API_KEY", "\"${System.getenv("API_KEY")}\"")
         }
     }
 

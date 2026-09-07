@@ -6,11 +6,11 @@ Uses the [OpenWeather](https://openweathermap.org/) API.
 
 ## Screenshots
 
-<img src="https://github.com/user-attachments/assets/d9bd9eca-3d9a-4e6d-9739-ef77ecfc3075" alt="weather search" width="250"/>
+<img src="https://github.com/user-attachments/assets/d9bd9eca-3d9a-4e6d-9739-ef77ecfc3075" alt="weather search" width="220"/>
 
-<img src="https://github.com/user-attachments/assets/738899b0-0853-47a2-b916-ede9dbac67ca" alt="zoom" width="250"/>
+<img src="https://github.com/user-attachments/assets/738899b0-0853-47a2-b916-ede9dbac67ca" alt="zoom" width="220"/>
 
-<img src="https://github.com/user-attachments/assets/53062299-ba37-415a-b613-f2f0cf55a6cc" alt="health" width="250"/>
+<img src="https://github.com/user-attachments/assets/53062299-ba37-415a-b613-f2f0cf55a6cc" alt="health" width="220"/>
 
 ## Features
 
